@@ -25,28 +25,19 @@ public class Main {
 
         System.out.printf("Burst time (%d): ", process);
         int[] burst = new int[process];
-        List<Process> processList = new ArrayList<>();
+        List<ConcreteProcess> processList = new ArrayList<>();
 
         for (int i = 0; i < process; i++) {
             burst[i] = scanner.nextInt();
-            processList.add(new Process(arrival[i], burst[i]));
+            processList.add(new ConcreteProcess(arrival[i], burst[i]));
         }
 
         System.out.print("Time quantum for RR: ");
         int quantum = scanner.nextInt();
 
-        RoundRobin rr = new RoundRobin(processList);
-        Timer t = new Timer();
-        t.scheduleAtFixedRate(new TimerTask() {
-            boolean rrComplete = false;
-
-            @Override
-            public void run() {
-                if (!rrComplete) {
-                    rrComplete = rr.run();
-                }
-            }
-        }, 0L, 1000L);
+        Scheduler scheduler = new Scheduler();
+        RoundRobin roundRobin = new RoundRobin(scheduler);
+        scheduler.start(roundRobin, processList);
     }
 
 }
