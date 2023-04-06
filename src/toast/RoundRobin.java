@@ -1,22 +1,13 @@
 package toast;
 
-import java.util.List;
-
-public class RoundRobin extends Scheduler {
-    private static int count = 0;
-
-    public RoundRobin(List<Process> processList) {
-        super(processList);
+public class RoundRobin extends Algorithm {
+    public RoundRobin(Scheduler scheduler) {
+        super(scheduler);
     }
 
     @Override
-    public boolean run() {
-        if (count > 3) {
-            System.out.println("[RR] Complete!");
-            return true;
-        }
-
-        System.out.printf("[RR] Processing... (%ds)%n", count++);
-        return false;
+    public void run() {
+        int time = getElapsedTime();
+        System.out.printf("[RR] Processing... (%ds)%n", time);
     }
 }

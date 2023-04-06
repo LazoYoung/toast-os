@@ -1,19 +1,33 @@
 package toast;
 
 import java.util.List;
+import java.util.Timer;
 
-public abstract class Scheduler {
-    protected List<Process> processList;
+public class Scheduler {
+    private final Timer timer = new Timer();
+    private SchedulerTask task = null;
+    private boolean started = false;
 
-    public Scheduler(List<Process> processList) {
-        this.processList = processList;
+    public void start(Algorithm algorithm, List<ConcreteProcess> processList) {
+        if (started) {
+            throw new IllegalStateException("Scheduler already started.");
+        }
+
+        task = new SchedulerTask(algorithm);
+        started = true;
+        timer.scheduleAtFixedRate(task, 0L, 1000L);
     }
 
-    /**
-     * Implement your scheduling algorithm here!
-     * This method repeats every 1 second.
-     * @return true if every process is completed
-     */
-    public abstract boolean run();
+    public void stop() {
+        if (!started) {
+            throw new IllegalStateException("Scheduler not started yet.");
+        }
 
+        started = false;
+        task.cancel();
+    }
+
+    public int getElapsedTime() {
+        return (task != null) ? task.getElapsedTime() : 0;
+    }
 }
