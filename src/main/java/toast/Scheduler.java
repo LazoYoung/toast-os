@@ -1,51 +1,26 @@
 package toast;
 
 import java.util.List;
-import java.util.Timer;
+import java.util.Optional;
 
-public class Scheduler {
-    private final Timer timer = new Timer();
-    private SchedulerTask task = null;
-    private boolean started = false;
-
-    public void start(Algorithm algorithm, List<ConcreteProcess> processList) {
-        if (started) {
-            throw new IllegalStateException("Scheduler already started.");
-        }
-
-        task = new SchedulerTask(algorithm);
-        started = true;
-        timer.scheduleAtFixedRate(task, 0L, 1000L);
-    }
-
-    public void stop() {
-        if (!started) {
-            throw new IllegalStateException("Scheduler not started yet.");
-        }
-
-        started = false;
-        task.cancel();
-    }
-
-    public int getElapsedTime() {
-        return (task != null) ? task.getElapsedTime() : 0;
-    }
+public interface Scheduler {
 
     /**
-     * Retrieve a processor that has no process running in the background.
-     * @return a sleeping core. (Expect null if every processor is busy)
+     * Tells how many seconds have passed after this Scheduler started.
+     * @return number of seconds
      */
-    public Processor getIdleProcessor() {
-        // todo method stub
-        return null;
-    }
+    int getElapsedTime();
 
     /**
-     * Retrieve all processors.
-     * @return List of all cores
+     * Returns a processor that has no process running in the background.
+     * @return an {@link Optional} wrapping a {@link Processor}. If optional is empty, you can assume every processor is busy
      */
-    public List<Processor> getProcessorList() {
-        // todo method stub
-        return null;
-    }
+    Optional<Processor> getIdleProcessor();
+
+    /**
+     * Returns all processors.
+     * @return {@link List} of all cores
+     */
+    List<Processor> getProcessorList();
+
 }

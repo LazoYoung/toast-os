@@ -1,5 +1,7 @@
 package toast;
 
+import java.util.Optional;
+
 public enum Core implements Processor {
     EFFICIENCY(1, 1),
     PERFORMANCE(2, 3);
@@ -41,8 +43,8 @@ public enum Core implements Processor {
 
 
     @Override
-    public Process getRunningProcess() {
-        return process;
+    public Optional<Process> getRunningProcess() {
+        return Optional.of(process);
     }
 
     @Override
