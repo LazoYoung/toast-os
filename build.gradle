@@ -13,6 +13,11 @@ tasks.jar {
     }
 }
 
+run {
+    // Fix ./gradlew run
+    standardInput = System.in
+}
+
 repositories {
     mavenCentral()
 }
