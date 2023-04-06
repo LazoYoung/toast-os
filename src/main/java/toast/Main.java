@@ -3,41 +3,68 @@ package toast;
 import java.util.*;
 
 public class Main {
-
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+        List<Core> coreList = getCoreList();
+        List<ConcreteProcess> processList = getProcessList();
+        int timeQuantum = getTimeQuantum();
 
-        System.out.print("# of processor: ");
-        int processor = scanner.nextInt();
+        // Algorithm you want to simulate
+        ShortestProcessNext spn = new ShortestProcessNext();
 
-        System.out.print("# of P core: ");
-        int pCore = scanner.nextInt();
+        Scheduler scheduler = new Scheduler(spn);
+        scheduler.start(processList);
+    }
 
-        System.out.print("# of process: ");
-        int process = scanner.nextInt();
+    private static List<ConcreteProcess> getProcessList() {
+        List<ConcreteProcess> list = new ArrayList<>();
 
-        System.out.printf("Arrival time (%d): ", process);
-        int[] arrival = new int[process];
+        try (Scanner scanner = new Scanner(System.in)) {
+            System.out.print("# of process: ");
+            int process = scanner.nextInt();
 
-        for (int i = 0; i < process; i++) {
-            arrival[i] = scanner.nextInt();
+            System.out.printf("Arrival time (%d): ", process);
+            int[] arrival = new int[process];
+
+            for (int i = 0; i < process; i++) {
+                arrival[i] = scanner.nextInt();
+            }
+
+            System.out.printf("Burst time (%d): ", process);
+            int[] burst = new int[process];
+
+            for (int i = 0; i < process; i++) {
+                burst[i] = scanner.nextInt();
+                list.add(new ConcreteProcess(arrival[i], burst[i]));
+            }
         }
 
-        System.out.printf("Burst time (%d): ", process);
-        int[] burst = new int[process];
-        List<ConcreteProcess> processList = new ArrayList<>();
+        return list;
+    }
 
-        for (int i = 0; i < process; i++) {
-            burst[i] = scanner.nextInt();
-            processList.add(new ConcreteProcess(arrival[i], burst[i]));
+    private static List<Core> getCoreList() {
+        List<Core> list = new ArrayList<>();
+
+        try (Scanner scanner = new Scanner(System.in)) {
+            System.out.print("# of processor: ");
+            int processor = scanner.nextInt();
+
+            System.out.print("# of P core: ");
+            int pCore = scanner.nextInt();
+
+            while (processor-- > 0) {
+                Core core = (pCore-- > 0) ? Core.PERFORMANCE : Core.EFFICIENCY;
+                list.add(core);
+            }
         }
 
-        System.out.print("Time quantum for RR: ");
-        int quantum = scanner.nextInt();
+        return list;
+    }
 
-        Scheduler scheduler = new Scheduler();
-        RoundRobin roundRobin = new RoundRobin(scheduler);
-        scheduler.start(roundRobin, processList);
+    private static int getTimeQuantum() {
+        try (Scanner scanner = new Scanner(System.in)) {
+            System.out.print("Time quantum for RR: ");
+            return scanner.nextInt();
+        }
     }
 
 }
