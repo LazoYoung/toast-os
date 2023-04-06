@@ -31,8 +31,24 @@ public enum Core implements Processor {
     }
 
     @Override
+    public void preempt() {
+        if (process == null) {
+            throw new IllegalStateException("Process is empty!");
+        }
+
+        process = null;
+    }
+
+
+    @Override
     public Process getRunningProcess() {
         return process;
+    }
+
+    @Override
+    public int getPowerConsumed() {
+        // todo method stub
+        return 0;
     }
 
     public int getRunningTime() {

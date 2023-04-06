@@ -30,4 +30,22 @@ public class Scheduler {
     public int getElapsedTime() {
         return (task != null) ? task.getElapsedTime() : 0;
     }
+
+    /**
+     * Retrieve a processor that has no process running in the background.
+     * @return a sleeping core. (Expect null if every processor is busy)
+     */
+    public Processor getIdleProcessor() {
+        // todo method stub
+        return null;
+    }
+
+    /**
+     * Retrieve all processors.
+     * @return List of all cores
+     */
+    public List<Processor> getProcessorList() {
+        // todo method stub
+        return null;
+    }
 }

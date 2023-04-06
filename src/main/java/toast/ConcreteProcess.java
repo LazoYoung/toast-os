@@ -25,6 +25,24 @@ public class ConcreteProcess implements Process {
     }
 
     @Override
+    public int getWaitingTime() {
+        // todo method stub
+        return 0;
+    }
+
+    @Override
+    public int getTurnaroundTime() {
+        // todo method stub
+        return 0;
+    }
+
+    @Override
+    public int getNormalizedTurnaroundTime() {
+        // todo method stub
+        return 0;
+    }
+
+    @Override
     public int getWorkload() {
         return workload;
     }

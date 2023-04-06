@@ -13,6 +13,10 @@ public abstract class Algorithm {
      */
     public abstract void run();
 
+    /**
+     * Tells how many seconds have passed after this Scheduler started.
+     * @return number of seconds
+     */
     public int getElapsedTime() {
         return scheduler.getElapsedTime();
     }
