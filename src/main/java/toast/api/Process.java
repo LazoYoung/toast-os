@@ -1,4 +1,4 @@
-package toast;
+package toast.api;
 
 public interface Process {
     int getId();

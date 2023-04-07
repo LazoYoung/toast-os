@@ -1,4 +1,6 @@
-package toast;
+package toast.algorithm;
+
+import toast.api.Scheduler;
 
 public interface Algorithm {
 

@@ -1,6 +1,8 @@
-package toast;
+package toast.impl;
 
-public class ConcreteProcess implements Process {
+import toast.api.Process;
+
+public class ToastProcess implements Process {
     private static int nextId = 0;
     private final int pid;
     private final int arrival;
@@ -8,7 +10,7 @@ public class ConcreteProcess implements Process {
     private int counter;
     private int burstTime;
 
-    public ConcreteProcess(int arrival, int workload) {
+    public ToastProcess(int arrival, int workload) {
         this.pid = nextId++;
         this.arrival = arrival;
         this.workload = workload;

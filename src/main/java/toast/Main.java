@@ -1,24 +1,31 @@
 package toast;
 
+import toast.algorithm.Algorithm;
+import toast.algorithm.ShortestProcessNext;
+import toast.api.Core;
+import toast.impl.ToastProcess;
+import toast.impl.ToastProcessor;
+import toast.impl.ToastScheduler;
+
 import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        List<Core> coreList = getCoreList(scanner);
-        List<ConcreteProcess> processList = getProcessList(scanner);
+        List<ToastProcessor> coreList = getCoreList(scanner);
+        List<ToastProcess> processList = getProcessList(scanner);
         int timeQuantum = getTimeQuantum(scanner);
         scanner.close();
 
-        // Algorithm you want to simulate
-        ShortestProcessNext spn = new ShortestProcessNext();
+        // Scheduling algorithm you want to simulate
+        Algorithm algorithm = new ShortestProcessNext();
 
-        ConcreteScheduler scheduler = new ConcreteScheduler(spn);
-        scheduler.start(processList);
+        ToastScheduler scheduler = new ToastScheduler(coreList, processList);
+        scheduler.start(algorithm);
     }
 
-    private static List<ConcreteProcess> getProcessList(Scanner scanner) {
-        List<ConcreteProcess> list = new ArrayList<>();
+    private static List<ToastProcess> getProcessList(Scanner scanner) {
+        List<ToastProcess> list = new ArrayList<>();
         System.out.print("# of process: ");
         int process = scanner.nextInt();
 
@@ -34,22 +41,22 @@ public class Main {
 
         for (int i = 0; i < process; i++) {
             burst[i] = scanner.nextInt();
-            list.add(new ConcreteProcess(arrival[i], burst[i]));
+            list.add(new ToastProcess(arrival[i], burst[i]));
         }
         return list;
     }
 
-    private static List<Core> getCoreList(Scanner scanner) {
-        List<Core> list = new ArrayList<>();
+    private static List<ToastProcessor> getCoreList(Scanner scanner) {
+        List<ToastProcessor> list = new ArrayList<>();
         System.out.print("# of processor: ");
-        int processor = scanner.nextInt();
+        int pCount = scanner.nextInt();
 
         System.out.print("# of P core: ");
         int pCore = scanner.nextInt();
 
-        while (processor-- > 0) {
+        while (pCount-- > 0) {
             Core core = (pCore-- > 0) ? Core.PERFORMANCE : Core.EFFICIENCY;
-            list.add(core);
+            list.add(new ToastProcessor(core));
         }
         return list;
     }

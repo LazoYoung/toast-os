@@ -1,15 +1,17 @@
-package toast;
+package toast.impl;
+
+import toast.algorithm.Algorithm;
 
 import java.util.TimerTask;
 
-public class SchedulerTask extends TimerTask {
-    private final ConcreteScheduler scheduler;
+public class ToastTask extends TimerTask {
+    private final ToastScheduler scheduler;
     private final Algorithm algorithm;
     private int elapsedTime = 0;
 
-    public SchedulerTask(ConcreteScheduler scheduler) {
+    public ToastTask(ToastScheduler scheduler, Algorithm algorithm) {
         this.scheduler = scheduler;
-        this.algorithm = scheduler.getAlgorithm();
+        this.algorithm = algorithm;
     }
 
     @Override

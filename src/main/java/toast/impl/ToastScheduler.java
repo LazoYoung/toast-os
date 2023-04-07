@@ -1,26 +1,32 @@
-package toast;
+package toast.impl;
+
+import toast.algorithm.Algorithm;
+import toast.api.Processor;
+import toast.api.Scheduler;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.Timer;
 
-public class ConcreteScheduler implements Scheduler {
-    private final Algorithm algorithm;
+public class ToastScheduler implements Scheduler {
+    private final List<ToastProcessor> coreList;
+    private final List<ToastProcess> processList;
     private final Timer timer = new Timer();
-    private SchedulerTask task = null;
+    private ToastTask task = null;
     private boolean started = false;
 
-    public ConcreteScheduler(Algorithm algorithm) {
-        this.algorithm = algorithm;
+    public ToastScheduler(List<ToastProcessor> processorList, List<ToastProcess> processList) {
+        this.coreList = processorList;
+        this.processList = processList;
     }
 
-    public void start(List<ConcreteProcess> processList) {
+    public void start(Algorithm algorithm) {
         if (started) {
             throw new IllegalStateException("Scheduler already started.");
         }
 
-        task = new SchedulerTask(this);
         started = true;
+        task = new ToastTask(this, algorithm);
         timer.scheduleAtFixedRate(task, 0L, 1000L);
     }
 
@@ -31,10 +37,6 @@ public class ConcreteScheduler implements Scheduler {
 
         started = false;
         task.cancel();
-    }
-
-    public Algorithm getAlgorithm() {
-        return algorithm;
     }
 
     @Override
@@ -50,7 +52,9 @@ public class ConcreteScheduler implements Scheduler {
 
     @Override
     public List<Processor> getProcessorList() {
-        // todo method stub
-        return List.of();
+        // todo sort the list so that preferred cores stay up front
+        return coreList.stream()
+                .map(c -> (Processor) c)
+                .toList();
     }
 }

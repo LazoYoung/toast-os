@@ -1,4 +1,4 @@
-package toast;
+package toast.api;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,14 +12,13 @@ public interface Scheduler {
     int getElapsedTime();
 
     /**
-     * Returns a processor that has no process running in the background.
+     * Returns a processor having no process running.
      * @return an {@link Optional} wrapping a {@link Processor}. If optional is empty, you can assume every processor is busy
      */
     Optional<Processor> getIdleProcessor();
 
     /**
-     * Returns all processors.
-     * @return {@link List} of all cores
+     * @return a {@link List} of all processors
      */
     List<Processor> getProcessorList();
 
