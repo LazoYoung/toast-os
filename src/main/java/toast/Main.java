@@ -7,7 +7,9 @@ import toast.impl.ToastProcess;
 import toast.impl.ToastProcessor;
 import toast.impl.ToastScheduler;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
@@ -17,10 +19,13 @@ public class Main {
         int timeQuantum = getTimeQuantum(scanner);
         scanner.close();
 
-        // Scheduling algorithm you want to simulate
+        // Scheduling algorithm to simulate
         Algorithm algorithm = new ShortestProcessNext();
 
-        ToastScheduler scheduler = new ToastScheduler(coreList, processList);
+        // Preferred core
+        Core primaryCore = Core.PERFORMANCE;
+
+        ToastScheduler scheduler = new ToastScheduler(primaryCore, coreList, processList);
         scheduler.start(algorithm);
     }
 

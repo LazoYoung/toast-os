@@ -9,6 +9,7 @@ import java.util.Optional;
 public class ToastProcessor implements Processor {
     private final Core core;
     private ToastProcess process;
+    private double powerConsumed = 0;
 
     public ToastProcessor(Core core) {
         this.core = core;
@@ -23,14 +24,13 @@ public class ToastProcessor implements Processor {
             throw new IllegalStateException("Failed to dispatch: processor is already running");
         }
 
-        // todo method stub
+        this.process = (ToastProcess) process;
+        this.powerConsumed += core.getWattPerBoot();
     }
 
     @Override
     public void preempt() {
-        if (process == null) {
-            throw new IllegalStateException("Failed to preempt: processor is idle");
-        }
+        if (process == null) return;
 
         process = null;
     }
@@ -46,9 +46,8 @@ public class ToastProcessor implements Processor {
     }
 
     @Override
-    public int getPowerConsumed() {
-        // todo method stub
-        return 0;
+    public double getPowerConsumed() {
+        return powerConsumed;
     }
 
     @Override
@@ -58,7 +57,8 @@ public class ToastProcessor implements Processor {
 
     public void run() {
         if (process != null) {
-            process.work();
+            process.work(core.getWorkload());
+            powerConsumed += core.getWattPerWork();
         }
     }
 }

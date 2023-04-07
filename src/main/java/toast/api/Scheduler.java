@@ -2,14 +2,15 @@ package toast.api;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Queue;
 
 public interface Scheduler {
 
     /**
-     * Tells how many seconds have passed after this Scheduler started.
-     * @return number of seconds
+     * Returns a ready queue sorted by arrival time of each process. <br>
+     * @return {@link List} of every process waiting to be dispatched
      */
-    int getElapsedTime();
+    Queue<Process> getReadyQueue();
 
     /**
      * Returns a processor having no process running.
@@ -21,5 +22,11 @@ public interface Scheduler {
      * @return a {@link List} of all processors
      */
     List<Processor> getProcessorList();
+
+    /**
+     * Tells how many seconds have passed after this Scheduler started.
+     * @return number of seconds
+     */
+    int getElapsedTime();
 
 }

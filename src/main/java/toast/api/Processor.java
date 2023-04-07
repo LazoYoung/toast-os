@@ -22,23 +22,26 @@ public interface Processor {
     Optional<Process> getRunningProcess();
 
     /**
-     * Tells how much power this processor has consumed
+     * Tells how much power has this processor consumed
+     *
      * @return number of watt
      */
-    int getPowerConsumed();
+    double getPowerConsumed();
 
     /**
      * Dispatch a process to this processor. <br>
-     * If this processor is not idle, make sure to {@link Processor#preempt()} first!
+     * If processor is not idle, make sure to {@link Processor#preempt()} first! <br>
+     * Please ensure that you remove the process from ready queue. Refer to {@link Scheduler#getReadyQueue()}
      * @param process The {@link Process} you want to dispatch
      * @throws IllegalStateException thrown if processor is already running
+     * @throws IllegalArgumentException thrown if process implementation is incompatible
      */
     void dispatch(Process process);
 
     /**
-     * Halts the running process and push it back to the ready queue. <br>
-     * As a result, this processor becomes idle.
-     * @throws IllegalStateException thrown if processor is idle
+     * Halts the running process. <br>
+     * Eventually this processor becomes idle. <br>
+     * If there were no process running, this method does nothing.
      */
     void preempt();
 

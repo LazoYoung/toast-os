@@ -5,8 +5,10 @@ import toast.api.Scheduler;
 public interface Algorithm {
 
     /**
-     * Implement your scheduling algorithm here!
-     * This method repeats every 1 second.
+     * Write your scheduling algorithm here! <br>
+     * In every second, this method is executed before each processor runs. <br>
+     * Refer to {@link toast.impl.ToastScheduler} for implementation under the hood.
+     * @param scheduler Scheduler API
      */
     void run(Scheduler scheduler);
 

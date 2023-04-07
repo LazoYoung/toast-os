@@ -1,26 +1,29 @@
 package toast.api;
 
-import java.util.Optional;
-
 public enum Core {
-    EFFICIENCY(1, 1),
-    PERFORMANCE(2, 3);
+    EFFICIENCY(1, 1, 0.1),
+    PERFORMANCE(2, 3, 0.5);
 
-    private final int workPerSec;
-    private final int wattPerSec;
+    private final int workload;
+    private final int wattPerWork;
+    private final double wattPerBoot;
 
-    Core(int workPerSec, int wattPerSec) {
-        this.workPerSec = workPerSec;
-        this.wattPerSec = wattPerSec;
+    Core(int workload, int wattPerWork, double wattPerBoot) {
+        this.workload = workload;
+        this.wattPerWork = wattPerWork;
+        this.wattPerBoot = wattPerBoot;
     }
 
 
-    public int getWorkPerSec() {
-        return workPerSec;
+    public int getWorkload() {
+        return workload;
     }
 
-    public int getWattPerSec() {
-        return wattPerSec;
+    public int getWattPerWork() {
+        return wattPerWork;
     }
 
+    public double getWattPerBoot() {
+        return wattPerBoot;
+    }
 }

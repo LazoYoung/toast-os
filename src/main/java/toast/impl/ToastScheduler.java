@@ -1,23 +1,33 @@
 package toast.impl;
 
 import toast.algorithm.Algorithm;
+import toast.api.Core;
+import toast.api.Process;
 import toast.api.Processor;
 import toast.api.Scheduler;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Timer;
+import java.util.*;
 
 public class ToastScheduler implements Scheduler {
-    private final List<ToastProcessor> coreList;
-    private final List<ToastProcess> processList;
+    private final List<Processor> processorList;
+    private final List<Process> processList;
+    private final Queue<Process> readyQueue = new LinkedList<>();
     private final Timer timer = new Timer();
     private ToastTask task = null;
     private boolean started = false;
 
-    public ToastScheduler(List<ToastProcessor> processorList, List<ToastProcess> processList) {
-        this.coreList = processorList;
-        this.processList = processList;
+    public ToastScheduler(Core primaryCore, List<ToastProcessor> processorList, List<ToastProcess> processList) {
+        this.processorList = processorList.stream()
+                .sorted((p1, p2) -> {
+                    boolean pref1 = p1.getCore().equals(primaryCore);
+                    boolean pref2 = p2.getCore().equals(primaryCore);
+                    return (pref1 == pref2) ? 0 : ((pref1) ? -1 : 1);
+                })
+                .map(e -> (Processor) e)
+                .toList();
+        this.processList = processList.stream()
+                .map(e -> (Process) e)
+                .toList();
     }
 
     public void start(Algorithm algorithm) {
@@ -45,16 +55,23 @@ public class ToastScheduler implements Scheduler {
     }
 
     @Override
+    public Queue<Process> getReadyQueue() {
+        return readyQueue;
+    }
+
+    @Override
     public Optional<Processor> getIdleProcessor() {
-        // todo method stub
-        return Optional.empty();
+        return processorList.stream()
+                .filter(Processor::isIdle)
+                .findFirst();
     }
 
     @Override
     public List<Processor> getProcessorList() {
-        // todo sort the list so that preferred cores stay up front
-        return coreList.stream()
-                .map(c -> (Processor) c)
-                .toList();
+        return processorList;
+    }
+
+    public List<Process> getProcessList() {
+        return processList;
     }
 }

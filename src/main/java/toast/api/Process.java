@@ -5,7 +5,7 @@ public interface Process {
     int getArrivalTime();
     int getWaitingTime();
     int getTurnaroundTime();
-    int getNormalizedTurnaroundTime();
+    double getNormalizedTurnaroundTime();
     int getWorkload();
     int getRemainingWorkload();
 }

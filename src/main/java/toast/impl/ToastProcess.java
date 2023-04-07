@@ -4,11 +4,13 @@ import toast.api.Process;
 
 public class ToastProcess implements Process {
     private static int nextId = 0;
+
     private final int pid;
     private final int arrival;
     private final int workload;
-    private int counter;
+    private int progress;
     private int burstTime;
+    private int waitingTime;
 
     public ToastProcess(int arrival, int workload) {
         this.pid = nextId++;
@@ -28,20 +30,21 @@ public class ToastProcess implements Process {
 
     @Override
     public int getWaitingTime() {
-        // todo method stub
-        return 0;
+        return waitingTime;
     }
 
     @Override
     public int getTurnaroundTime() {
-        // todo method stub
-        return 0;
+        if (!isComplete()) {
+            throw new IllegalStateException("Process not complete!");
+        }
+
+        return waitingTime + burstTime;
     }
 
     @Override
-    public int getNormalizedTurnaroundTime() {
-        // todo method stub
-        return 0;
+    public double getNormalizedTurnaroundTime() {
+        return (double) getTurnaroundTime() / burstTime;
     }
 
     @Override
@@ -51,15 +54,19 @@ public class ToastProcess implements Process {
 
     @Override
     public int getRemainingWorkload() {
-        return workload - counter;
+        return workload - progress;
     }
 
     public boolean isComplete() {
-        return counter >= workload;
+        return progress >= workload;
     }
 
-    public void work() {
-        counter++;
+    public void standby() {
+        waitingTime++;
+    }
+
+    public void work(int amount) {
+        progress += amount;
         burstTime++;
     }
 }
