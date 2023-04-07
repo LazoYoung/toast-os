@@ -2,9 +2,13 @@ package toast.impl;
 
 import toast.api.Process;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ToastProcess implements Process {
     private static int nextId = 0;
 
+    private final List<Runnable> completionListeners = new ArrayList<>();
     private final int pid;
     private final int arrival;
     private final int workload;
@@ -57,8 +61,9 @@ public class ToastProcess implements Process {
         return workload - progress;
     }
 
-    public boolean isComplete() {
-        return progress >= workload;
+    @Override
+    public void addCompletionListener(Runnable listener) {
+        completionListeners.add(listener);
     }
 
     public void standby() {
@@ -68,5 +73,13 @@ public class ToastProcess implements Process {
     public void work(int amount) {
         progress += amount;
         burstTime++;
+
+        if (isComplete()) {
+            completionListeners.forEach(Runnable::run);
+        }
+    }
+
+    private boolean isComplete() {
+        return progress >= workload;
     }
 }

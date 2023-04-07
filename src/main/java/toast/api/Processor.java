@@ -42,7 +42,8 @@ public interface Processor {
      * Halts the running process. <br>
      * Eventually this processor becomes idle. <br>
      * If there were no process running, this method does nothing.
+     * @return The halted process
      */
-    void preempt();
+    Process preempt();
 
 }

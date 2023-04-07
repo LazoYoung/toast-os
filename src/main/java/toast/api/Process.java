@@ -8,4 +8,5 @@ public interface Process {
     double getNormalizedTurnaroundTime();
     int getWorkload();
     int getRemainingWorkload();
+    void addCompletionListener(Runnable listener);
 }
