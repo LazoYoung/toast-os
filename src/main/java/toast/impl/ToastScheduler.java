@@ -11,7 +11,7 @@ import java.util.*;
 public class ToastScheduler implements Scheduler {
     private final List<Processor> processorList;
     private final List<Process> processList;
-    private List<Process> readyQueue = new ArrayList<>();
+    private final LinkedList<Process> readyQueue = new LinkedList<>();
     private final Timer timer = new Timer();
     private ToastTask task = null;
     private boolean started = false;
@@ -57,7 +57,7 @@ public class ToastScheduler implements Scheduler {
     }
 
     @Override
-    public List<Process> getReadyQueue() {
+    public Queue<Process> getReadyQueue() {
         return readyQueue;
     }
 
@@ -87,8 +87,8 @@ public class ToastScheduler implements Scheduler {
         validateProcessor(processor);
         validateProcess(process);
 
-        Process halted = processor.preempt();
-        readyQueue.add(halted);
+        Process halted = processor.halt();
+        readyQueue.addLast(halted);
         dispatch(processor, process);
     }
 
@@ -109,16 +109,5 @@ public class ToastScheduler implements Scheduler {
         if (!readyQueue.contains(process)) {
             throw new IllegalStateException("Failed to dispatch: process not in ready queue");
         }
-    }
-
-    private Process dequeueReadyProcess() {
-        Queue<Process> queue = new LinkedList<>(readyQueue);
-        Process process = queue.poll();
-        readyQueue = queue.stream().toList();
-        return process;
-    }
-
-    private void enqueueReadyProcess(Process process) {
-        readyQueue.add(process);
     }
 }

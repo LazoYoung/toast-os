@@ -30,11 +30,11 @@ public interface Processor {
 
     /**
      * Dispatch a process to this processor. <br>
-     * If processor is not idle, make sure to {@link Processor#preempt()} first! <br>
+     * If processor is not idle, make sure to {@link Processor#halt()} first! <br>
      * Please ensure that you remove the process from ready queue. Refer to {@link Scheduler#getReadyQueue()}
      * @param process The {@link Process} you want to dispatch
-     * @throws IllegalStateException thrown if processor is already running
-     * @throws IllegalArgumentException thrown if process implementation is incompatible
+     * @throws IllegalStateException processor is already running
+     * @throws IllegalArgumentException process implementation is incompatible
      */
     void dispatch(Process process);
 
@@ -44,6 +44,6 @@ public interface Processor {
      * If there were no process running, this method does nothing.
      * @return The halted process
      */
-    Process preempt();
+    Process halt();
 
 }

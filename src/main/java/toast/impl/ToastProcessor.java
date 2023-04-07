@@ -26,11 +26,11 @@ public class ToastProcessor implements Processor {
 
         this.powerConsumed += core.getWattPerBoot();
         this.process = (ToastProcess) process;
-        this.process.addCompletionListener(this::preempt);
+        this.process.addCompletionListener(this::halt);
     }
 
     @Override
-    public Process preempt() {
+    public Process halt() {
         if (process == null) return null;
 
         Process halted = process;

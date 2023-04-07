@@ -20,7 +20,7 @@ public class ToastTask extends TimerTask {
 
     @Override
     public void run() {
-        List<Process> readyQueue = scheduler.getReadyQueue();
+        Queue<Process> readyQueue = scheduler.getReadyQueue();
 
         enqueueProcesses(readyQueue);
         algorithm.run(scheduler);
@@ -38,7 +38,7 @@ public class ToastTask extends TimerTask {
         return elapsedTime;
     }
 
-    private void enqueueProcesses(List<Process> readyQueue) {
+    private void enqueueProcesses(Queue<Process> readyQueue) {
         Iterator<Process> iter = newProcesses.iterator();
 
         while (iter.hasNext()) {
