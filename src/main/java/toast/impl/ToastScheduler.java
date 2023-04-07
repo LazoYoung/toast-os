@@ -11,7 +11,7 @@ import java.util.*;
 public class ToastScheduler implements Scheduler {
     private final List<Processor> processorList;
     private final List<Process> processList;
-    private final Queue<Process> readyQueue = new LinkedList<>();
+    private List<Process> readyQueue = new ArrayList<>();
     private final Timer timer = new Timer();
     private ToastTask task = null;
     private boolean started = false;
@@ -40,13 +40,15 @@ public class ToastScheduler implements Scheduler {
         timer.scheduleAtFixedRate(task, 0L, 1000L);
     }
 
-    public void stop() {
+    @Override
+    public void finish() {
         if (!started) {
             throw new IllegalStateException("Scheduler not started yet.");
         }
 
         started = false;
         task.cancel();
+        // todo collect result
     }
 
     @Override
@@ -55,7 +57,7 @@ public class ToastScheduler implements Scheduler {
     }
 
     @Override
-    public Queue<Process> getReadyQueue() {
+    public List<Process> getReadyQueue() {
         return readyQueue;
     }
 
@@ -71,7 +73,52 @@ public class ToastScheduler implements Scheduler {
         return processorList;
     }
 
+    @Override
+    public void dispatch(Processor processor, Process process) {
+        validateProcessor(processor);
+        validateProcess(process);
+
+        readyQueue.remove(process);
+        processor.dispatch(process);
+    }
+
+    @Override
+    public void preempt(Processor processor, Process process) {
+        validateProcessor(processor);
+        validateProcess(process);
+
+        Process halted = processor.preempt();
+        readyQueue.add(halted);
+        dispatch(processor, process);
+    }
+
     public List<Process> getProcessList() {
         return processList;
+    }
+
+    private void validateProcessor(Processor processor) {
+        if (!(processor instanceof ToastProcessor)) {
+            throw new IllegalArgumentException("Failed to dispatch: incompatible processor");
+        }
+        if (!processor.isIdle()) {
+            throw new IllegalArgumentException("Failed to dispatch: processor already running");
+        }
+    }
+
+    private void validateProcess(Process process) {
+        if (!readyQueue.contains(process)) {
+            throw new IllegalStateException("Failed to dispatch: process not in ready queue");
+        }
+    }
+
+    private Process dequeueReadyProcess() {
+        Queue<Process> queue = new LinkedList<>(readyQueue);
+        Process process = queue.poll();
+        readyQueue = queue.stream().toList();
+        return process;
+    }
+
+    private void enqueueReadyProcess(Process process) {
+        readyQueue.add(process);
     }
 }

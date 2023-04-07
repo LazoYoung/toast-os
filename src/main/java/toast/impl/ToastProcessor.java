@@ -24,15 +24,18 @@ public class ToastProcessor implements Processor {
             throw new IllegalStateException("Failed to dispatch: processor is already running");
         }
 
-        this.process = (ToastProcess) process;
         this.powerConsumed += core.getWattPerBoot();
+        this.process = (ToastProcess) process;
+        this.process.addCompletionListener(this::preempt);
     }
 
     @Override
-    public void preempt() {
-        if (process == null) return;
+    public Process preempt() {
+        if (process == null) return null;
 
+        Process halted = process;
         process = null;
+        return halted;
     }
 
     @Override
@@ -56,9 +59,9 @@ public class ToastProcessor implements Processor {
     }
 
     public void run() {
-        if (process != null) {
-            process.work(core.getWorkload());
-            powerConsumed += core.getWattPerWork();
-        }
+        if (process == null) return;
+
+        process.work(core.getWorkload());
+        powerConsumed += core.getWattPerWork();
     }
 }
