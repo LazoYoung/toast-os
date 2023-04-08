@@ -9,9 +9,9 @@ import toast.api.Scheduler;
 import java.util.*;
 
 public class ToastScheduler implements Scheduler {
+    public final LinkedList<Process> readyQueue = new LinkedList<>();
     private final List<Processor> processorList;
     private final List<Process> processList;
-    private final LinkedList<Process> readyQueue = new LinkedList<>();
     private final Timer timer = new Timer();
     private ToastTask task = null;
     private boolean started = false;
@@ -57,8 +57,8 @@ public class ToastScheduler implements Scheduler {
     }
 
     @Override
-    public Queue<Process> getReadyQueue() {
-        return readyQueue;
+    public List<Process> getReadyQueue() {
+        return Collections.unmodifiableList(readyQueue);
     }
 
     @Override

@@ -5,14 +5,14 @@ import toast.api.Processor;
 import toast.api.Scheduler;
 
 import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
-import java.util.Queue;
 
 public class ShortestProcessNext implements Algorithm {
     @Override
     public void run(Scheduler scheduler) {
         Optional<Processor> idleProcessor = scheduler.getIdleProcessor();
-        Queue<Process> readyQueue = scheduler.getReadyQueue();
+        List<Process> readyQueue = scheduler.getReadyQueue();
 
         if (idleProcessor.isPresent() && !readyQueue.isEmpty()) {
             Processor processor = idleProcessor.get();

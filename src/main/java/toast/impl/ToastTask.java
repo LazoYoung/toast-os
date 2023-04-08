@@ -4,7 +4,10 @@ import toast.algorithm.Algorithm;
 import toast.api.Process;
 import toast.api.Processor;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.TimerTask;
 
 public class ToastTask extends TimerTask {
     private final ToastScheduler scheduler;
@@ -20,14 +23,12 @@ public class ToastTask extends TimerTask {
 
     @Override
     public void run() {
-        Queue<Process> readyQueue = scheduler.getReadyQueue();
-
-        enqueueProcesses(readyQueue);
+        enqueueProcesses();
         algorithm.run(scheduler);
         int activeProcessors = runProcessors();
         updateWaitingProcesses();
 
-        if (activeProcessors == 0 && newProcesses.isEmpty() && readyQueue.isEmpty()) {
+        if (activeProcessors == 0 && newProcesses.isEmpty() && scheduler.readyQueue.isEmpty()) {
             scheduler.finish();
         } else {
             elapsedTime++;
@@ -38,14 +39,14 @@ public class ToastTask extends TimerTask {
         return elapsedTime;
     }
 
-    private void enqueueProcesses(Queue<Process> readyQueue) {
+    private void enqueueProcesses() {
         Iterator<Process> iter = newProcesses.iterator();
 
         while (iter.hasNext()) {
             Process process = iter.next();
 
             if (process.getArrivalTime() <= elapsedTime) {
-                readyQueue.add(process);
+                scheduler.readyQueue.add(process);
                 iter.remove();
             }
         }

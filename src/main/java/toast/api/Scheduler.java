@@ -2,18 +2,15 @@ package toast.api;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Queue;
 
 public interface Scheduler {
 
     /**
      * Returns a ready queue sorted by arrival time of each process. <br>
-     * Note that manipulating this queue has no effect in the system. <br>
-     * You don't need to because {@link Scheduler#dispatch(Processor, Process)} and {@link Scheduler#preempt(Processor, Process)}
-     * functions take care of the queue for you.
-     * @return {@link Queue} of every process waiting to be dispatched
+     * Modifying this queue will throw {@link UnsupportedOperationException}.
+     * @return {@link List} of every process waiting to be dispatched
      */
-    Queue<Process> getReadyQueue();
+    List<Process> getReadyQueue();
 
     /**
      * Returns a processor having no process running.
