@@ -1,18 +1,36 @@
 package toast;
 
-import java.util.*;
+import toast.algorithm.Algorithm;
+import toast.algorithm.ShortestProcessNext;
+import toast.api.Core;
+import toast.impl.ToastProcess;
+import toast.impl.ToastProcessor;
+import toast.impl.ToastScheduler;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
 public class Main {
-
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
+        List<ToastProcessor> coreList = getCoreList(scanner);
+        List<ToastProcess> processList = getProcessList(scanner);
+        int timeQuantum = getTimeQuantum(scanner);
+        scanner.close();
 
-        System.out.print("# of processor: ");
-        int processor = scanner.nextInt();
+        // Scheduling algorithm to simulate
+        Algorithm algorithm = new ShortestProcessNext();
 
-        System.out.print("# of P core: ");
-        int pCore = scanner.nextInt();
+        // Preferred core
+        Core primaryCore = Core.PERFORMANCE;
 
+        ToastScheduler scheduler = new ToastScheduler(primaryCore, coreList, processList);
+        scheduler.start(algorithm);
+    }
+
+    private static List<ToastProcess> getProcessList(Scanner scanner) {
+        List<ToastProcess> list = new ArrayList<>();
         System.out.print("# of process: ");
         int process = scanner.nextInt();
 
@@ -25,28 +43,32 @@ public class Main {
 
         System.out.printf("Burst time (%d): ", process);
         int[] burst = new int[process];
-        List<Process> processList = new ArrayList<>();
 
         for (int i = 0; i < process; i++) {
             burst[i] = scanner.nextInt();
-            processList.add(new Process(arrival[i], burst[i]));
+            list.add(new ToastProcess(arrival[i], burst[i]));
         }
+        return list;
+    }
 
+    private static List<ToastProcessor> getCoreList(Scanner scanner) {
+        List<ToastProcessor> list = new ArrayList<>();
+        System.out.print("# of processor: ");
+        int pCount = scanner.nextInt();
+
+        System.out.print("# of P core: ");
+        int pCore = scanner.nextInt();
+
+        while (pCount-- > 0) {
+            Core core = (pCore-- > 0) ? Core.PERFORMANCE : Core.EFFICIENCY;
+            list.add(new ToastProcessor(core));
+        }
+        return list;
+    }
+
+    private static int getTimeQuantum(Scanner scanner) {
         System.out.print("Time quantum for RR: ");
-        int quantum = scanner.nextInt();
-
-        RoundRobin rr = new RoundRobin(processList);
-        Timer t = new Timer();
-        t.scheduleAtFixedRate(new TimerTask() {
-            boolean rrComplete = false;
-
-            @Override
-            public void run() {
-                if (!rrComplete) {
-                    rrComplete = rr.run();
-                }
-            }
-        }, 0L, 1000L);
+        return scanner.nextInt();
     }
 
 }
