@@ -7,6 +7,7 @@ import toast.api.Processor;
 import toast.api.Scheduler;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ToastScheduler implements Scheduler {
     public final LinkedList<Process> readyQueue = new LinkedList<>();
@@ -62,15 +63,15 @@ public class ToastScheduler implements Scheduler {
     }
 
     @Override
-    public Optional<Processor> getIdleProcessor() {
-        return processorList.stream()
+    public List<Processor> getIdleProcessorList() {
+        return getProcessorList().stream()
                 .filter(Processor::isIdle)
-                .findFirst();
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<Processor> getProcessorList() {
-        return processorList;
+        return new ArrayList<>(processorList);
     }
 
     @Override

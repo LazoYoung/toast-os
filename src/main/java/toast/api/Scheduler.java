@@ -1,7 +1,6 @@
 package toast.api;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface Scheduler {
 
@@ -9,18 +8,20 @@ public interface Scheduler {
      * Returns a ready queue sorted by arrival time of each process. <br>
      * Modifying this queue will throw {@link UnsupportedOperationException}. <br>
      * 프로세스가 도착한 순서대로 정렬된 대기열을 반환한다
-     * @return {@link List} of every process waiting to be dispatched
+     * @return {@link List} of every {@link Process} waiting to be dispatched
      */
     List<Process> getReadyQueue();
 
     /**
-     * Returns a processor having no process running. <br>
-     * 할당된 프로세스가 없는 프로세서를 반환한다
-     * @return an {@link Optional} wrapping a {@link Processor}. If optional is empty, you can assume every processor is busy
+     * Returns processors having no process running. <br>
+     * 할당된 프로세스가 없는 프로세서 목록을 반환한다
+     * @return {@link List} of every idle {@link Processor}. If it's empty, you can assume every processor is busy
      */
-    Optional<Processor> getIdleProcessor();
+    List<Processor> getIdleProcessorList();
 
     /**
+     * Returns every processor. <br>
+     * 프로세서 목록을 반환한다
      * @return a {@link List} of all processors
      */
     List<Processor> getProcessorList();
