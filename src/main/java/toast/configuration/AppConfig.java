@@ -10,6 +10,6 @@ public class AppConfig {
     }
 
     public Algorithm algorithm(int timeQuantum) {
-        return new RoundRobin(timeQuantum);
+        return new ShortestRemainingTimeNext();
     }
 }
