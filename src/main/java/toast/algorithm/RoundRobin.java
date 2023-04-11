@@ -21,12 +21,12 @@ public class RoundRobin implements Algorithm {
 
         runWith(scheduler, readyQueueIterator, timeOverProcessors);
 
-        if(isEndFor(readyQueueIterator)) {
-            return;
+        if(!isEndFor(readyQueueIterator)) {
+            Iterator<Processor> idleProcessorIterator = scheduler.getIdleProcessorList().iterator();
+            runWith(scheduler, readyQueueIterator, idleProcessorIterator);
         }
 
-        Iterator<Processor> idleProcessorIterator = scheduler.getIdleProcessorList().iterator();
-        runWith(scheduler, readyQueueIterator, idleProcessorIterator);
+        System.out.printf("[SPN] Elapsed time: %ds%n", scheduler.getElapsedTime());
     }
 
     private static void runWith(Scheduler scheduler, Iterator<Process> readyQueueIterator,
@@ -69,8 +69,16 @@ public class RoundRobin implements Algorithm {
         String coreName = idleProcessor.getCore().getName();
         int pid = nextProcess.getId();
 
-        nextProcess.addCompletionListener(() -> System.out.printf("[SPN] Process #%d completed%n", pid));
+
+        if(isFirstRun(nextProcess)) {
+            nextProcess.addCompletionListener(() -> System.out.printf("[SPN] Process #%d completed%n", pid));
+        }
+
         System.out.printf("[SPN] Dispatched process #%d to %s%n", pid, coreName);
+    }
+
+    private static boolean isFirstRun(Process nextProcess) {
+        return nextProcess.getWorkload() == nextProcess.getRemainingWorkload();
     }
 
     private static boolean canExecute(Iterator<Process> readyQueueIterator, Iterator<Processor> idleProcessorIterator) {
