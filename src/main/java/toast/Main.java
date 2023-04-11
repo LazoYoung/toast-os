@@ -1,7 +1,5 @@
 package toast;
 
-import toast.algorithm.Algorithm;
-import toast.algorithm.ShortestProcessNext;
 import toast.api.Core;
 import toast.configuration.AppConfig;
 import toast.impl.ToastProcess;
@@ -30,14 +28,14 @@ public class Main {
         System.out.print("# of process: ");
         int process = scanner.nextInt();
 
-        System.out.printf("Arrival time (%d): ", process);
+        System.out.printf("│Arrival time (%d): ", process);
         int[] arrival = new int[process];
 
         for (int i = 0; i < process; i++) {
             arrival[i] = scanner.nextInt();
         }
 
-        System.out.printf("Burst time (%d): ", process);
+        System.out.printf("│Burst time (%d): ", process);
         int[] burst = new int[process];
 
         for (int i = 0; i < process; i++) {
@@ -64,7 +62,9 @@ public class Main {
 
     private static int getTimeQuantum(Scanner scanner) {
         System.out.print("Time quantum for RR: ");
-        return scanner.nextInt();
+        int nextInt = scanner.nextInt();
+        System.out.println();
+        return nextInt;
     }
 
 }
