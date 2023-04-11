@@ -1,6 +1,7 @@
 package toast;
 
 import toast.algorithm.Algorithm;
+import toast.algorithm.RoundRobin;
 import toast.algorithm.ShortestProcessNext;
 import toast.api.Core;
 import toast.impl.ToastProcess;
@@ -20,7 +21,7 @@ public class Main {
         scanner.close();
 
         // Scheduling algorithm to simulate
-        Algorithm algorithm = new ShortestProcessNext();
+        Algorithm algorithm = new RoundRobin(timeQuantum);
 
         // Preferred core
         Core primaryCore = Core.PERFORMANCE;
