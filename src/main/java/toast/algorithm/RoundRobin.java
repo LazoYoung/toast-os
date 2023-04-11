@@ -26,8 +26,6 @@ public class RoundRobin implements Algorithm {
         if(hasWait) {
             runWith(scheduler, readyQueueIterator, scheduler.getIdleProcessorList().iterator());
         }
-
-        System.out.printf("│[SPN] Elapsed time: %ds%n", scheduler.getElapsedTime());
     }
 
     private static void runWith(Scheduler scheduler, Iterator<Process> readyQueueIterator,
