@@ -3,6 +3,7 @@ package toast;
 import toast.algorithm.Algorithm;
 import toast.algorithm.ShortestProcessNext;
 import toast.api.Core;
+import toast.configuration.AppConfig;
 import toast.impl.ToastProcess;
 import toast.impl.ToastProcessor;
 import toast.impl.ToastScheduler;
@@ -16,17 +17,12 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         List<ToastProcessor> coreList = getCoreList(scanner);
         List<ToastProcess> processList = getProcessList(scanner);
+
         int timeQuantum = getTimeQuantum(scanner);
         scanner.close();
 
-        // Scheduling algorithm to simulate
-        Algorithm algorithm = new ShortestProcessNext();
-
-        // Preferred core
-        Core primaryCore = Core.PERFORMANCE;
-
-        ToastScheduler scheduler = new ToastScheduler(primaryCore, coreList, processList);
-        scheduler.start(algorithm);
+        ToastScheduler scheduler = AppConfig.scheduler(coreList, processList);
+        scheduler.start();
     }
 
     private static List<ToastProcess> getProcessList(Scanner scanner) {

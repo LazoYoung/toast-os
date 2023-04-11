@@ -11,27 +11,44 @@ import java.util.stream.Collectors;
 
 public class ToastScheduler implements Scheduler {
     public final LinkedList<Process> readyQueue = new LinkedList<>();
+
     private final List<Processor> processorList;
     private final List<Process> processList;
+
     private final Timer timer = new Timer();
+
+    private final Algorithm algorithm;
+
     private ToastTask task = null;
+
     private boolean started = false;
 
-    public ToastScheduler(Core primaryCore, List<ToastProcessor> processorList, List<ToastProcess> processList) {
-        this.processorList = processorList.stream()
+    public ToastScheduler(List<ToastProcessor> processorList, List<ToastProcess> processList, Core primaryCore,
+                          Algorithm algorithm) {
+        this.processorList = fillProcessors(primaryCore, processorList);
+        this.processList = fillProcesses(processList);
+        this.algorithm = algorithm;
+
+    }
+
+    private static List<Processor> fillProcessors(Core primaryCore, List<ToastProcessor> processorList) {
+        return processorList.stream()
                 .sorted((p1, p2) -> {
                     boolean pref1 = p1.getCore().equals(primaryCore);
                     boolean pref2 = p2.getCore().equals(primaryCore);
                     return (pref1 == pref2) ? 0 : ((pref1) ? -1 : 1);
                 })
                 .map(e -> (Processor) e)
-                .toList();
-        this.processList = processList.stream()
-                .map(e -> (Process) e)
-                .toList();
+                .collect(Collectors.toList());
     }
 
-    public void start(Algorithm algorithm) {
+    private List<Process> fillProcesses(List<ToastProcess> processList) {
+        return processList.stream()
+                .map(e -> (Process) e)
+                .collect(Collectors.toList());
+    }
+
+    public void start() {
         if (started) {
             throw new IllegalStateException("Scheduler already started.");
         }
