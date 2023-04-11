@@ -39,13 +39,13 @@ public class ToastScheduler implements Scheduler {
                     return (pref1 == pref2) ? 0 : ((pref1) ? -1 : 1);
                 })
                 .map(e -> (Processor) e)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private List<Process> fillProcesses(List<ToastProcess> processList) {
         return processList.stream()
                 .map(e -> (Process) e)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public void start() {
