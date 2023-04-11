@@ -1,8 +1,7 @@
 package toast;
 
-import toast.algorithm.Algorithm;
-import toast.algorithm.ShortestProcessNext;
 import toast.api.Core;
+import toast.configuration.AppConfig;
 import toast.impl.ToastProcess;
 import toast.impl.ToastProcessor;
 import toast.impl.ToastScheduler;
@@ -16,17 +15,18 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         List<ToastProcessor> coreList = getCoreList(scanner);
         List<ToastProcess> processList = getProcessList(scanner);
+
         int timeQuantum = getTimeQuantum(scanner);
         scanner.close();
 
-        // Scheduling algorithm to simulate
-        Algorithm algorithm = new ShortestProcessNext();
+        ToastScheduler scheduler = scheduler(timeQuantum, coreList, processList);
+        scheduler.start();
+    }
 
-        // Preferred core
-        Core primaryCore = Core.PERFORMANCE;
+    private static ToastScheduler scheduler(int timeQuantum, List<ToastProcessor> coreList, List<ToastProcess> processList) {
+        AppConfig appConfig = new AppConfig();
 
-        ToastScheduler scheduler = new ToastScheduler(primaryCore, coreList, processList);
-        scheduler.start(algorithm);
+        return new ToastScheduler(coreList, processList, appConfig.primaryCore(), appConfig.algorithm(timeQuantum));
     }
 
     private static List<ToastProcess> getProcessList(Scanner scanner) {
@@ -34,14 +34,14 @@ public class Main {
         System.out.print("# of process: ");
         int process = scanner.nextInt();
 
-        System.out.printf("Arrival time (%d): ", process);
+        System.out.printf("│Arrival time (%d): ", process);
         int[] arrival = new int[process];
 
         for (int i = 0; i < process; i++) {
             arrival[i] = scanner.nextInt();
         }
 
-        System.out.printf("Burst time (%d): ", process);
+        System.out.printf("│Burst time (%d): ", process);
         int[] burst = new int[process];
 
         for (int i = 0; i < process; i++) {
@@ -68,7 +68,9 @@ public class Main {
 
     private static int getTimeQuantum(Scanner scanner) {
         System.out.print("Time quantum for RR: ");
-        return scanner.nextInt();
+        int nextInt = scanner.nextInt();
+        System.out.println();
+        return nextInt;
     }
 
 }
