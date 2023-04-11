@@ -1,6 +1,5 @@
 package toast.algorithm;
 
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import toast.api.Process;
@@ -17,13 +16,15 @@ public class RoundRobin implements Algorithm {
     @Override
     public void run(Scheduler scheduler) {
         Iterator<Process> readyQueueIterator = getReadyQueueIterator(scheduler);
+        //동시 접근 방지 위해 상단에 배치
+        boolean hasWait = readyQueueIterator.hasNext();
+
         List<Processor> timeOverProcessors = getTimeOverProcessors(scheduler.getProcessorList());
 
         runWith(scheduler, readyQueueIterator, timeOverProcessors);
 
-        if(!isEndFor(readyQueueIterator)) {
-            Iterator<Processor> idleProcessorIterator = scheduler.getIdleProcessorList().iterator();
-            runWith(scheduler, readyQueueIterator, idleProcessorIterator);
+        if(hasWait) {
+            runWith(scheduler, readyQueueIterator, scheduler.getIdleProcessorList().iterator());
         }
 
         System.out.printf("[SPN] Elapsed time: %ds%n", scheduler.getElapsedTime());
@@ -59,9 +60,7 @@ public class RoundRobin implements Algorithm {
     }
 
     private static Iterator<Process> getReadyQueueIterator(Scheduler scheduler) {
-        return scheduler.getReadyQueue().stream()
-                .sorted(Comparator.comparingInt(Process::getWorkload))
-                .iterator();
+        return scheduler.getReadyQueue().stream().iterator();
     }
 
     private static void dispatch(Scheduler scheduler, Processor idleProcessor, Process nextProcess) {
@@ -85,11 +84,9 @@ public class RoundRobin implements Algorithm {
         return idleProcessorIterator.hasNext() && readyQueueIterator.hasNext();
     }
 
-    private static boolean isEndFor(Iterator<Process> readyQueue) {
-        return !readyQueue.hasNext();
-    }
-
     private boolean isOverContinuousBurstTime(Processor processor) {
+        assert(processor.getRunningProcess().isPresent());
+
         return processor.getRunningProcess().get().getContinuousBurstTime() >= timeQuantum;
     }
 
