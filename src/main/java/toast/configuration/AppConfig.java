@@ -10,7 +10,7 @@ public class AppConfig {
         return Core.PERFORMANCE;
     }
 
-    public Algorithm algorithm() {
+    public Algorithm algorithm(int timeQuantum) {
         return new ShortestProcessNext();
     }
 }
