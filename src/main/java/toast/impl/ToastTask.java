@@ -24,8 +24,10 @@ public class ToastTask extends TimerTask {
     @Override
     public void run() {
         enqueueProcesses();
+        System.out.printf("┌[SPN] Start time: %ds\n", elapsedTime);
         algorithm.run(scheduler);
         int activeProcessors = runProcessors();
+        System.out.printf("└[SPN] Elapsed time: %ds%n\n", elapsedTime + 1);
         updateWaitingProcesses();
 
         if (activeProcessors == 0 && newProcesses.isEmpty() && scheduler.readyQueue.isEmpty()) {
