@@ -88,9 +88,14 @@ public class ToastScheduler implements Scheduler {
         validateProcessor(processor);
         validateProcess(process);
 
+        halt(processor);
+        dispatch(processor, process);
+    }
+
+    @Override
+    public void halt(Processor processor) {
         Process halted = processor.halt();
         readyQueue.addLast(halted);
-        dispatch(processor, process);
     }
 
     public List<Process> getProcessList() {
