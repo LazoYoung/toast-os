@@ -19,8 +19,14 @@ public class Main {
         int timeQuantum = getTimeQuantum(scanner);
         scanner.close();
 
-        ToastScheduler scheduler = AppConfig.scheduler(coreList, processList);
+        ToastScheduler scheduler = scheduler(coreList, processList);
         scheduler.start();
+    }
+
+    private static ToastScheduler scheduler(List<ToastProcessor> coreList, List<ToastProcess> processList) {
+        AppConfig appConfig = new AppConfig();
+
+        return new ToastScheduler(coreList, processList, appConfig.primaryCore(), appConfig.algorithm());
     }
 
     private static List<ToastProcess> getProcessList(Scanner scanner) {
