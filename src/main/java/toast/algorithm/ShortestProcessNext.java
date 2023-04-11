@@ -5,20 +5,19 @@ import toast.api.Processor;
 import toast.api.Scheduler;
 
 import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.Iterator;
 
 public class ShortestProcessNext implements Algorithm {
     @Override
     public void run(Scheduler scheduler) {
-        Optional<Processor> idleProcessor = scheduler.getIdleProcessor();
-        List<Process> readyQueue = scheduler.getReadyQueue();
+        Iterator<Processor> processors = scheduler.getIdleProcessorList().iterator();
+        Iterator<Process> readyQueue = scheduler.getReadyQueue().stream()
+                .sorted(Comparator.comparingInt(Process::getWorkload))
+                .iterator();
 
-        if (idleProcessor.isPresent() && !readyQueue.isEmpty()) {
-            Processor processor = idleProcessor.get();
-            Process process = readyQueue.stream()
-                    .min(Comparator.comparingInt(Process::getWorkload))
-                    .orElseThrow();
+        while (readyQueue.hasNext() && processors.hasNext()) {
+            Processor processor = processors.next();
+            Process process = readyQueue.next();
             String coreName = processor.getCore().getName();
             int pid = process.getId();
 
