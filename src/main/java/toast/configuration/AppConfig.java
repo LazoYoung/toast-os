@@ -1,7 +1,6 @@
 package toast.configuration;
 
-import toast.algorithm.Algorithm;
-import toast.algorithm.ShortestProcessNext;
+import toast.algorithm.*;
 import toast.api.Core;
 
 public class AppConfig {
@@ -11,6 +10,6 @@ public class AppConfig {
     }
 
     public Algorithm algorithm(int timeQuantum) {
-        return new ShortestProcessNext();
+        return new RoundRobin(timeQuantum);
     }
 }
