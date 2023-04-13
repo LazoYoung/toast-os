@@ -16,7 +16,7 @@ public class ToastProcessor implements Processor {
     }
 
     @Override
-    public void dispatch(Process process) {
+    public int dispatch(Process process) {
         if (!(process instanceof ToastProcess)) {
             throw new IllegalArgumentException("Failed to dispatch: incompatible process");
         }
@@ -26,7 +26,9 @@ public class ToastProcessor implements Processor {
 
         this.powerConsumed += core.getWattPerBoot();
         this.process = (ToastProcess) process;
-        this.process.addCompletionListener(this::halt);
+
+        return this.process.addCompletionListener(this::halt);
+
     }
 
     @Override

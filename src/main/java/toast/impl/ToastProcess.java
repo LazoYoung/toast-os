@@ -62,9 +62,18 @@ public class ToastProcess implements Process {
     }
 
     @Override
-    public void addCompletionListener(Runnable listener) {
+    public int addCompletionListener(Runnable listener) {
         completionListeners.add(listener);
+
+        return completionListeners.size() - 1;
     }
+
+    @Override
+    public void removeListener(int listenerId) {
+        completionListeners.remove(listenerId);
+
+    }
+
 
     public void standby() {
         waitingTime++;
