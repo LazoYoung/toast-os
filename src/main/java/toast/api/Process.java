@@ -63,4 +63,14 @@ public interface Process {
      * @return listener id
      */
     int addCompletionListener(Runnable listener);
+
+    /**
+     * 프로세스를 정지함; 연속 실행 시간을 0으로 초기화함.
+     */
+    void halt();
+
+    /**
+     * 프로세스의 연속 실행 시간을 반환함.
+     */
+    int getContinuousBurstTime();
 }
