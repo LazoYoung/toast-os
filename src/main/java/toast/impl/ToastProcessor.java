@@ -45,7 +45,7 @@ public class ToastProcessor implements Processor {
 
     @Override
     public Optional<Process> getRunningProcess() {
-        return Optional.of(process);
+        return Optional.ofNullable(process);
     }
 
     @Override
