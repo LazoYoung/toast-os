@@ -28,7 +28,6 @@ public class ToastScheduler implements Scheduler {
         this.processorList = fillProcessors(primaryCore, processorList);
         this.processList = fillProcesses(processList);
         this.algorithm = algorithm;
-
     }
 
     private static List<Processor> fillProcessors(Core primaryCore, List<ToastProcessor> processorList) {
@@ -110,6 +109,7 @@ public class ToastScheduler implements Scheduler {
         validateProcess(process);
 
         Process halted = processor.halt();
+
         readyQueue.addLast(halted);
         dispatch(processor, process);
     }
