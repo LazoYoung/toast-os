@@ -23,15 +23,11 @@ public class ToastScheduler implements Scheduler {
 
     private boolean started = false;
 
-    private final Map<Integer, Integer> pidAndListenerId;
-
     public ToastScheduler(List<ToastProcessor> processorList, List<ToastProcess> processList, Core primaryCore,
                           Algorithm algorithm) {
         this.processorList = fillProcessors(primaryCore, processorList);
         this.processList = fillProcesses(processList);
         this.algorithm = algorithm;
-
-        this.pidAndListenerId = new HashMap<>();
     }
 
     private static List<Processor> fillProcessors(Core primaryCore, List<ToastProcessor> processorList) {
@@ -100,9 +96,6 @@ public class ToastScheduler implements Scheduler {
         validateProcess(process);
 
         readyQueue.remove(process);
-        Integer eventId = processor.dispatch(process);
-
-        pidAndListenerId.put(process.getId(), eventId);
     }
 
     @Override
@@ -111,8 +104,7 @@ public class ToastScheduler implements Scheduler {
         validateProcess(process);
 
         Process halted = processor.halt();
-        Integer listenerId = pidAndListenerId.get(halted.getId());
-        halted.removeListener(listenerId);
+
         readyQueue.addLast(halted);
         dispatch(processor, process);
     }
