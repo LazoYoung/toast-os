@@ -86,7 +86,8 @@ public class ToastProcess implements Process {
         ++continuousBurstTime;
 
         if (isComplete()) {
-            completionListeners.forEach(Runnable::run);
+            List<Runnable> listeners = new ArrayList<>(completionListeners);
+            listeners.forEach(Runnable::run);
         }
     }
 
