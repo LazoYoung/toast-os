@@ -11,27 +11,30 @@ import toast.api.Scheduler;
 public class ShortestRemainingTimeNext implements Algorithm {
     @Override
     public void run(Scheduler scheduler) {
-        PriorityQueue<Process> processorPQ = new PriorityQueue<>(new ProcessComparator());
-        processorPQ.addAll(scheduler.getReadyQueue());
-        Iterator<Processor> processors = scheduler.getIdleProcessorList().iterator();
+        PriorityQueue<Process> processPQ = new PriorityQueue<>(new ProcessComparator());
+        processPQ.addAll(scheduler.getReadyQueue());
+        Iterator<Processor> processors = scheduler.getProcessorList().iterator();
 
-        runWith(scheduler, processorPQ, processors);
-
-        if(!processorPQ.isEmpty()) {
-            runWith(scheduler, processorPQ);
+        if(!processPQ.isEmpty()) {
+            runWith(scheduler, processPQ);
         }
+        runWith(scheduler, processPQ, processors);
     }
 
-    private static void runWith(Scheduler scheduler, PriorityQueue<Process> ProcessorPQ,
+    private static void runWith(Scheduler scheduler, PriorityQueue<Process> processPQ,
                                   Iterator<Processor> processors) {
-        while(processors.hasNext() && !ProcessorPQ.isEmpty()) {
+        while(processors.hasNext() && !processPQ.isEmpty()) {
             Processor currentProcessor = processors.next();
 
-            preempt(scheduler, ProcessorPQ, currentProcessor);
+            if(currentProcessor.isIdle()) {
+                continue;
+            }
+
+            preempt(scheduler, processPQ, currentProcessor);
         }
     }
 
-    private static void preempt(Scheduler scheduler, PriorityQueue<Process> ProcessorPQ,
+    private static void preempt(Scheduler scheduler, PriorityQueue<Process> processPQ,
                                 Processor currentProcessor) {
         Optional<Process> runningProcess = currentProcessor.getRunningProcess();
 
@@ -39,13 +42,14 @@ public class ShortestRemainingTimeNext implements Algorithm {
             return;
         }
 
-        assert ProcessorPQ.peek() != null;
-        if(!hasShortTime(ProcessorPQ.peek(), runningProcess.get())) {
+        assert processPQ.peek() != null;
+        if(!hasShortTime(processPQ.peek(), runningProcess.get())) {
             return;
         }
 
+        processPQ.add(currentProcessor.getRunningProcess().get());
         scheduler.halt(currentProcessor);
-        dispatch(scheduler, currentProcessor, ProcessorPQ.poll());
+        dispatch(scheduler, currentProcessor, processPQ.poll());
     }
 
     private static boolean hasShortTime(Process peekedProcess, Process runProcess) {
