@@ -24,16 +24,15 @@ public class ToastTask extends TimerTask {
     @Override
     public void run() {
         enqueueProcesses();
-        System.out.printf("┌[SPN] Start time: %ds\n", elapsedTime);
+        System.out.printf("┌ Before run: %ds\n", elapsedTime);
         algorithm.run(scheduler);
         int activeProcessors = runProcessors();
-        System.out.printf("└[SPN] Elapsed time: %ds%n\n", elapsedTime + 1);
+        System.out.printf("└ After run: %ds%n\n", ++elapsedTime);
         updateWaitingProcesses();
 
         if (activeProcessors == 0 && newProcesses.isEmpty() && scheduler.readyQueue.isEmpty()) {
             scheduler.finish();
-        } else {
-            elapsedTime++;
+            printResult();
         }
     }
 
@@ -76,6 +75,18 @@ public class ToastTask extends TimerTask {
         for (Process p : scheduler.getReadyQueue()) {
             ToastProcess process = (ToastProcess) p;
             process.standby();
+        }
+    }
+
+    private void printResult() {
+        System.out.println("--- Scheduling result ---");
+
+        for (Process process : scheduler.getProcessList()) {
+            System.out.printf("Process #%s%n", process.getId());
+            System.out.printf("└ Arrival time: %ds%n", process.getArrivalTime());
+            System.out.printf("└ Waiting time: %ds%n", process.getWaitingTime());
+            System.out.printf("└ Turnaround time: %ds%n", process.getTurnaroundTime());
+            System.out.printf("└ Normalized TT: %.2f%n", process.getNormalizedTurnaroundTime());
         }
     }
 }

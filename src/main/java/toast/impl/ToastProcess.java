@@ -6,15 +6,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ToastProcess implements Process {
-    private static int nextId = 0;
+    private static int nextId = 1;
 
     private final List<Runnable> completionListeners = new ArrayList<>();
     private final int pid;
     private final int arrival;
     private final int workload;
-    private int progress;
-    private int burstTime;
-    private int waitingTime;
+    private int progress = 0;
+    private int burstTime = 0;
+    private int waitingTime = 0;
 
     public ToastProcess(int arrival, int workload) {
         this.pid = nextId++;
@@ -76,6 +76,7 @@ public class ToastProcess implements Process {
 
         if (isComplete()) {
             completionListeners.forEach(Runnable::run);
+            System.out.printf("│ Process #%d completed%n", pid);
         }
     }
 

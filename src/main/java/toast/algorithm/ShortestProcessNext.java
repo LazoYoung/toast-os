@@ -23,13 +23,7 @@ public class ShortestProcessNext implements Algorithm {
         while (readyQueue.hasNext() && processors.hasNext()) {
             Processor processor = processors.next();
             Process process = readyQueue.next();
-
-            String coreName = processor.getCore().getName();
-            int pid = process.getId();
-
             scheduler.dispatch(processor, process);
-            process.addCompletionListener(() -> System.out.printf("│[SPN] Process #%d completed%n", pid));
-            System.out.printf("│[SPN] Dispatched process #%d to %s%n", pid, coreName);
         }
     }
 }
