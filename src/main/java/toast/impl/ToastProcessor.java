@@ -16,7 +16,7 @@ public class ToastProcessor implements Processor {
     }
 
     @Override
-    public Integer dispatch(Process process) {
+    public int dispatch(Process process) {
         if (!(process instanceof ToastProcess)) {
             throw new IllegalArgumentException("Failed to dispatch: incompatible process");
         }

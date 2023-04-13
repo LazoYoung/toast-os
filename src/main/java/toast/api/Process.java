@@ -51,12 +51,18 @@ public interface Process {
     int getRemainingWorkload();
 
     /**
-     * Registers a Process Completion event listener.
+     * 선점시 제거해야 하는 리스너를 ID를 통해 제거한다.
      *
+     * @param listenerId 종료할 리스너 이벤트의 아이디
+     */
+    void removeListener(int listenerId);
+
+    /**
+     * Registers a Process Completion event listener.
      * @param listener Runnable to be called once the process finishes
      * @return listener id
      */
-    Integer addCompletionListener(Runnable listener);
+    int addCompletionListener(Runnable listener);
 
     /**
      * 프로세스를 정지함; 연속 실행 시간을 0으로 초기화함.
@@ -67,11 +73,4 @@ public interface Process {
      * 프로세스의 연속 실행 시간을 반환함.
      */
     int getContinuousBurstTime();
-
-    /**
-     * 선점시 제거해야 하는 리스너를 ID를 통해 제거한다.
-     *
-     * @param listenerId 종료할 리스너 이벤트의 아이디
-     */
-    void removeListener(int listenerId);
 }

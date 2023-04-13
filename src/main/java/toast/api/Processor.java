@@ -40,7 +40,7 @@ public interface Processor {
      * @throws IllegalStateException processor is already running
      * @throws IllegalArgumentException process implementation is incompatible
      */
-    Integer dispatch(Process process);
+    int dispatch(Process process);
 
     /**
      * Halts the process and this processor becomes idle. <br>

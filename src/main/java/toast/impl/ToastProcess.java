@@ -63,11 +63,18 @@ public class ToastProcess implements Process {
     }
 
     @Override
-    public Integer addCompletionListener(Runnable listener) {
+    public int addCompletionListener(Runnable listener) {
         completionListeners.add(listener);
 
         return completionListeners.size() - 1;
     }
+
+    @Override
+    public void removeListener(int listenerId) {
+        completionListeners.remove(listenerId);
+
+    }
+
 
     public void standby() {
         waitingTime++;
@@ -86,13 +93,6 @@ public class ToastProcess implements Process {
     public int getContinuousBurstTime() {
         return continuousBurstTime;
     }
-
-    @Override
-    public void removeListener(int listenerId) {
-        completionListeners.remove(listenerId);
-
-    }
-
     private boolean isComplete() {
         return progress >= workload;
     }
