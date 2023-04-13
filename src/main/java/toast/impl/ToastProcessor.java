@@ -37,7 +37,7 @@ public class ToastProcessor implements Processor {
         Process halted = process;
 
         halted.halt();
-        halted.removeListener(processorListenerIndex);
+        halted.removeCompletionListener(processorListenerIndex);
 
         process = null;
         return halted;

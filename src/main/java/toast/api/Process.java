@@ -55,7 +55,7 @@ public interface Process {
      *
      * @param listenerId 종료할 리스너 이벤트의 아이디
      */
-    void removeListener(int listenerId);
+    void removeCompletionListener(int listenerId);
 
     /**
      * Registers a Process Completion event listener.

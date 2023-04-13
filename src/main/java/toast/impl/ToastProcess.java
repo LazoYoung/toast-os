@@ -70,7 +70,7 @@ public class ToastProcess implements Process {
     }
 
     @Override
-    public void removeListener(int listenerId) {
+    public void removeCompletionListener(int listenerId) {
         completionListeners.remove(listenerId);
 
     }
