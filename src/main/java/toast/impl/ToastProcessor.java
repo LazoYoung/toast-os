@@ -10,13 +10,14 @@ public class ToastProcessor implements Processor {
     private final Core core;
     private ToastProcess process;
     private double powerConsumed = 0;
+    private int processorListenerIndex;
 
     public ToastProcessor(Core core) {
         this.core = core;
     }
 
     @Override
-    public int dispatch(Process process) {
+    public void dispatch(Process process) {
         if (!(process instanceof ToastProcess)) {
             throw new IllegalArgumentException("Failed to dispatch: incompatible process");
         }
@@ -27,18 +28,18 @@ public class ToastProcessor implements Processor {
         this.powerConsumed += core.getWattPerBoot();
         this.process = (ToastProcess) process;
 
-        return this.process.addCompletionListener(this::halt);
-
+        this.processorListenerIndex = this.process.addCompletionListener(this::halt);
     }
 
     @Override
     public Process halt() {
         if (process == null) return null;
-
         Process halted = process;
-        halted.halt();
-        process = null;
 
+        halted.halt();
+        halted.removeCompletionListener(processorListenerIndex);
+
+        process = null;
         return halted;
     }
 

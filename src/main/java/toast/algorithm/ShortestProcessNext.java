@@ -6,11 +6,16 @@ import toast.api.Scheduler;
 
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.List;
 
 public class ShortestProcessNext implements Algorithm {
     @Override
     public void run(Scheduler scheduler) {
-        Iterator<Processor> processors = scheduler.getIdleProcessorList().iterator();
+        List<Processor> idleProcessors = scheduler.getIdleProcessorList();
+
+        if (idleProcessors.isEmpty()) return;
+
+        Iterator<Processor> processors = idleProcessors.iterator();
         Iterator<Process> readyQueue = scheduler.getReadyQueue().stream()
                 .sorted(Comparator.comparingInt(Process::getWorkload))
                 .iterator();
