@@ -7,12 +7,15 @@ import toast.api.Processor;
 import java.util.Optional;
 
 public class ToastProcessor implements Processor {
+    private static int newId = 1;
+    private final int id;
     private final Core core;
     private ToastProcess process;
     private double powerConsumed = 0;
     private int processorListenerIndex;
 
     public ToastProcessor(Core core) {
+        this.id = newId++;
         this.core = core;
     }
 
@@ -46,6 +49,11 @@ public class ToastProcessor implements Processor {
     @Override
     public boolean isIdle() {
         return process == null;
+    }
+
+    @Override
+    public int getId() {
+        return id;
     }
 
     @Override
