@@ -65,4 +65,10 @@ public interface Scheduler {
      */
     void finish();
 
+    /**
+     * 실행중인 프로세스를 종료시키고 큐의 맨 뒤에 넣는다.
+     *
+     * @param processor 종료시킬 프로세서
+     */
+    void halt(Processor processor);
 }
