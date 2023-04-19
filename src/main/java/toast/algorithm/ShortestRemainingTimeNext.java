@@ -15,7 +15,7 @@ public class ShortestRemainingTimeNext implements Algorithm {
         processPQ.addAll(scheduler.getReadyQueue());
         Iterator<Processor> processors = scheduler.getProcessorList().iterator();
 
-        if(!processPQ.isEmpty()) {
+        if(!processPQ.isEmpty()) { 
             runWith(scheduler, processPQ);
         }
         runWith(scheduler, processPQ, processors);
@@ -27,7 +27,7 @@ public class ShortestRemainingTimeNext implements Algorithm {
             Processor currentProcessor = processors.next();
 
             if(currentProcessor.isIdle()) {
-                continue;
+                continue; 
             }
 
             preempt(scheduler, processPQ, currentProcessor);
