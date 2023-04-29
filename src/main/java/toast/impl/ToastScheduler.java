@@ -95,6 +95,7 @@ public class ToastScheduler implements Scheduler {
         validateProcessor(processor);
         validateProcess(process);
 
+        processor.dispatch(process);
         readyQueue.remove(process);
     }
 
