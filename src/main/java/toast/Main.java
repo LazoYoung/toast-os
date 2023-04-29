@@ -48,7 +48,14 @@ public class Main {
 
         for (int i = 0; i < process; i++) {
             burst[i] = scanner.nextInt();
-            list.add(new ToastProcess(arrival[i], burst[i]));
+        }
+
+        System.out.printf("│Mission (%d): ", process);
+        boolean[] mission = new boolean[process];
+
+        for (int i = 0; i < process; i++) {
+            mission[i] = (scanner.nextInt() == 1);
+            list.add(new ToastProcess(arrival[i], burst[i], mission[i]));
         }
         return list;
     }
@@ -69,12 +76,12 @@ public class Main {
     }
 
     private static int getTimeQuantum(Scanner scanner) {
-        System.out.print("|Time quantum for RR: ");
+        System.out.print("│Time quantum for RR: ");
         return scanner.nextInt();
     }
 
     private static double getInitPower(Scanner scanner) {
-        System.out.print("|Init power for CustomAlgorithm: ");
+        System.out.print("│Init power for CustomAlgorithm: ");
         return scanner.nextDouble();
     }
 
