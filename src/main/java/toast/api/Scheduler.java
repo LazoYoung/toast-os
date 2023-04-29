@@ -34,6 +34,12 @@ public interface Scheduler {
     int getElapsedTime();
 
     /**
+     * 지금까지 사용한 전력량을 반환한다
+     * @return the amount of electrical power it has used until now
+     */
+    double getPowerConsumed();
+
+    /**
      * Dispatch the process to run. <br>
      * Upon success, the process gets removed from the queue. <br>
      * 대기열에 있는 프로세스를 프로세서에 할당한다. 성공한다면 해당 프로세스는 대기열에서 제거된다

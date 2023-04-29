@@ -47,8 +47,9 @@ public class ToastTask extends TimerTask {
         while (iter.hasNext()) {
             Process process = iter.next();
 
-            if (process.getArrivalTime() <= elapsedTime) {
+            if (elapsedTime >= process.getArrivalTime()) {
                 scheduler.readyQueue.add(process);
+                algorithm.onProcessReady(process);
                 iter.remove();
             }
         }

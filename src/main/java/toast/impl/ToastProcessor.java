@@ -69,6 +69,14 @@ public class ToastProcessor implements Processor {
         return core;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof ToastProcessor other) {
+            return (this.id == other.id);
+        }
+        return false;
+    }
+
     public void run() {
         if (process == null) return;
 

@@ -9,7 +9,7 @@ public class AppConfig {
         return Core.PERFORMANCE;
     }
 
-    public Algorithm algorithm(int timeQuantum) {
-        return new ShortestRemainingTimeNext();
+    public Algorithm algorithm(int timeQuantum, double initPower) {
+        return new CustomAlgorithm(timeQuantum, initPower);
     }
 }

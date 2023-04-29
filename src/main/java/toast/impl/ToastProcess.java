@@ -63,6 +63,11 @@ public class ToastProcess implements Process {
     }
 
     @Override
+    public boolean isMission() {
+        return false;
+    }
+
+    @Override
     public int addCompletionListener(Runnable listener) {
         completionListeners.add(listener);
 
@@ -75,6 +80,13 @@ public class ToastProcess implements Process {
 
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof ToastProcess other) {
+            return (this.pid == other.pid);
+        }
+        return false;
+    }
 
     public void standby() {
         waitingTime++;

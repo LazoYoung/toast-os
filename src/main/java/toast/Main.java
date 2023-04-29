@@ -17,16 +17,18 @@ public class Main {
         List<ToastProcess> processList = getProcessList(scanner);
 
         int timeQuantum = getTimeQuantum(scanner);
+        double initPower = getInitPower(scanner);
+        System.out.println();
         scanner.close();
 
-        ToastScheduler scheduler = scheduler(timeQuantum, coreList, processList);
+        ToastScheduler scheduler = scheduler(timeQuantum, initPower, coreList, processList);
         scheduler.start();
     }
 
-    private static ToastScheduler scheduler(int timeQuantum, List<ToastProcessor> coreList, List<ToastProcess> processList) {
+    private static ToastScheduler scheduler(int timeQuantum, double initPower, List<ToastProcessor> coreList, List<ToastProcess> processList) {
         AppConfig appConfig = new AppConfig();
 
-        return new ToastScheduler(coreList, processList, appConfig.primaryCore(), appConfig.algorithm(timeQuantum));
+        return new ToastScheduler(coreList, processList, appConfig.primaryCore(), appConfig.algorithm(timeQuantum, initPower));
     }
 
     private static List<ToastProcess> getProcessList(Scanner scanner) {
@@ -67,10 +69,13 @@ public class Main {
     }
 
     private static int getTimeQuantum(Scanner scanner) {
-        System.out.print("Time quantum for RR: ");
-        int nextInt = scanner.nextInt();
-        System.out.println();
-        return nextInt;
+        System.out.print("|Time quantum for RR: ");
+        return scanner.nextInt();
+    }
+
+    private static double getInitPower(Scanner scanner) {
+        System.out.print("|Init power for CustomAlgorithm: ");
+        return scanner.nextDouble();
     }
 
 }

@@ -55,6 +55,7 @@ public class ToastScheduler implements Scheduler {
         started = true;
         task = new ToastTask(this, algorithm);
         timer.scheduleAtFixedRate(task, 0L, 1000L);
+        algorithm.init(this);
     }
 
     @Override
@@ -71,6 +72,11 @@ public class ToastScheduler implements Scheduler {
     @Override
     public int getElapsedTime() {
         return (task != null) ? task.getElapsedTime() : 0;
+    }
+
+    @Override
+    public double getPowerConsumed() {
+        return 0;
     }
 
     @Override
