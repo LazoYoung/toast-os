@@ -12,7 +12,7 @@ public class ToastProcessor implements Processor {
     private final Core core;
     private ToastProcess process;
     private double powerConsumed = 0;
-    private int processorListenerIndex;
+    private int completionListenerIdx;
 
     public ToastProcessor(Core core) {
         this.id = newId++;
@@ -30,19 +30,17 @@ public class ToastProcessor implements Processor {
 
         this.powerConsumed += core.getWattPerBoot();
         this.process = (ToastProcess) process;
-
-        this.processorListenerIndex = this.process.addCompletionListener(this::halt);
+        this.completionListenerIdx = this.process.addCompletionListener(this::halt);
     }
 
     @Override
     public Process halt() {
         if (process == null) return null;
+
         Process halted = process;
-
-        halted.halt();
-        halted.removeCompletionListener(processorListenerIndex);
-
         process = null;
+        halted.halt();
+        halted.removeCompletionListener(completionListenerIdx);
         return halted;
     }
 
