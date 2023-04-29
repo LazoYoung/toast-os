@@ -92,7 +92,7 @@ public class ToastScheduler implements Scheduler {
 
     @Override
     public void dispatch(Processor processor, Process process) {
-        validateProcessor(processor);
+        validateProcessor(processor, false);
         validateProcess(process);
 
         processor.dispatch(process);
@@ -101,7 +101,7 @@ public class ToastScheduler implements Scheduler {
 
     @Override
     public void preempt(Processor processor, Process process) {
-        validateProcessor(processor);
+        validateProcessor(processor, true);
         validateProcess(process);
 
         halt(processor);
@@ -119,11 +119,11 @@ public class ToastScheduler implements Scheduler {
         return processList;
     }
 
-    private void validateProcessor(Processor processor) {
+    private void validateProcessor(Processor processor, boolean preempt) {
         if (!(processor instanceof ToastProcessor)) {
             throw new IllegalArgumentException("Failed to dispatch: incompatible processor");
         }
-        if (!processor.isIdle()) {
+        if (!preempt && !processor.isIdle()) {
             throw new IllegalArgumentException("Failed to dispatch: processor already running");
         }
     }
