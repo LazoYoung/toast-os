@@ -54,8 +54,9 @@ public class ToastScheduler implements Scheduler {
 
         started = true;
         task = new ToastTask(this, algorithm);
-        timer.scheduleAtFixedRate(task, 0L, 1000L);
+
         algorithm.init(this);
+        timer.scheduleAtFixedRate(task, 0L, 1000L);
     }
 
     @Override
