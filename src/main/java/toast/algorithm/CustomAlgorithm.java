@@ -11,10 +11,11 @@ import java.util.List;
 import java.util.Optional;
 
 public class CustomAlgorithm implements Algorithm {
-    private final double initPower;
-    private final int timeQuantum;
+
     private final Deque<Process> missionQueue = new LinkedList<>();
     private final Deque<Process> standardQueue = new LinkedList<>();
+    private final double initPower;
+    private final int timeQuantum;
     private Processor missionCore;
     private boolean singleCoreMode;
     private boolean singleCoreFlag;
@@ -46,11 +47,14 @@ public class CustomAlgorithm implements Algorithm {
     public void run(Scheduler scheduler) {
         if (!isPowerAvailable(scheduler)) {
             scheduler.finish();
+            System.out.println("│[CUSTOM] Battery discharged! Shutting down...");
             return;
         }
+
         if (this.singleCoreMode) {
-            Optional<Process> runningProcess = this.missionCore.getRunningProcess();
-            if (runningProcess.isEmpty()) {
+            Optional<Process> missionProcess = this.missionCore.getRunningProcess();
+
+            if (missionProcess.isEmpty()) {
                 Optional<Process> nextProcess = getNextProcess(singleCoreFlag);
 
                 if (nextProcess.isEmpty()) {
@@ -58,24 +62,26 @@ public class CustomAlgorithm implements Algorithm {
                     this.singleCoreFlag = !this.singleCoreFlag;
                     nextProcess = getNextProcess(singleCoreFlag);
                 }
-                if (nextProcess.isPresent()) {
-                    Process process = nextProcess.get();
-                    int pid = process.getId();
-                    scheduler.dispatch(this.missionCore, process);
-                    System.out.printf("│[CUSTOM] Dispatched process #%d to core #%d%n", pid, this.missionCore.getId());
-                }
+                nextProcess.ifPresent(e -> dispatch(scheduler, this.missionCore, e));
             } else if (++this.timer >= this.timeQuantum) {
-                Process process = runningProcess.get();
+                Process process = missionProcess.get();
                 getOppositeProcess(process).ifPresent(nextProcess -> {
                     scheduler.preempt(this.missionCore, nextProcess);
                     insertProcess(process);
                     this.timer = 0;
                 });
             }
+        } else {
+            for (Processor processor : scheduler.getIdleProcessorList()) {
+                boolean mission = processor.equals(missionCore);
+                getNextProcess(mission).ifPresent(e -> dispatch(scheduler, processor, e));
+            }
         }
+
         for (Processor processor : getTimeoutProcessors(scheduler)) {
             assert (processor.getRunningProcess().isPresent());
             if (this.standardQueue.isEmpty()) break;
+
             Process process = processor.getRunningProcess().get();
             Process nextProcess = this.standardQueue.removeFirst();
             scheduler.preempt(processor, nextProcess);
@@ -153,5 +159,13 @@ public class CustomAlgorithm implements Algorithm {
         } else {
             this.standardQueue.addFirst(process);
         }
+    }
+
+    private void dispatch(Scheduler scheduler, Processor processor, Process process) {
+        scheduler.dispatch(processor, process);
+
+        int pid = process.getId();
+        int cpuId = processor.getId();
+        System.out.printf("│[CUSTOM] Dispatched process #%d to core #%d%n", pid, cpuId);
     }
 }
