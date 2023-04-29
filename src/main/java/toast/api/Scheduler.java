@@ -34,8 +34,8 @@ public interface Scheduler {
     int getElapsedTime();
 
     /**
-     * 지금까지 사용한 전력량을 반환한다
-     * @return the amount of electrical power it has used until now
+     * 지금까지 소비한 총 전력량을 반환한다
+     * @return the amount of electrical power that entire system has used until now
      */
     double getPowerConsumed();
 

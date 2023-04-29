@@ -76,7 +76,7 @@ public class ToastScheduler implements Scheduler {
 
     @Override
     public double getPowerConsumed() {
-        return 0;
+        return (task != null) ? task.getPowerConsumed() : 0;
     }
 
     @Override

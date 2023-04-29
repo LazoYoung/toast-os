@@ -77,10 +77,15 @@ public class ToastProcessor implements Processor {
         return false;
     }
 
-    public void run() {
-        if (process == null) return;
+    /**
+     * @return amount of power drained
+     */
+    public double run() {
+        if (process == null) return 0;
 
+        double power = core.getWattPerWork();
         process.work(core.getWorkload());
-        powerConsumed += core.getWattPerWork();
+        powerConsumed += power;
+        return power;
     }
 }

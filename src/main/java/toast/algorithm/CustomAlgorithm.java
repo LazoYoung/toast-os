@@ -98,7 +98,6 @@ public class CustomAlgorithm implements Algorithm {
         System.out.printf("│[CUSTOM] Process #%d completed%n", process.getId());
     }
 
-
     private List<Processor> getTimeoutProcessors(Scheduler scheduler) {
         return scheduler.getProcessorList()
                 .stream()
