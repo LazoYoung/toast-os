@@ -12,15 +12,17 @@ public class ToastProcess implements Process {
     private final int pid;
     private final int arrival;
     private final int workload;
+    private final boolean isMission;
     private int progress;
     private int burstTime;
     private int waitingTime;
     private int continuousBurstTime;
 
-    public ToastProcess(int arrival, int workload) {
+    public ToastProcess(int arrival, int workload, boolean isMission) {
         this.pid = nextId++;
         this.arrival = arrival;
         this.workload = workload;
+        this.isMission = isMission;
     }
 
     @Override
@@ -64,7 +66,7 @@ public class ToastProcess implements Process {
 
     @Override
     public boolean isMission() {
-        return false;
+        return isMission;
     }
 
     @Override
