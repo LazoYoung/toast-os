@@ -14,6 +14,7 @@ public class ToastTask extends TimerTask {
     private final Algorithm algorithm;
     private final List<Process> newProcesses;
     private int elapsedTime = 0;
+    private double powerConsumed = 0;
 
     public ToastTask(ToastScheduler scheduler, Algorithm algorithm) {
         this.scheduler = scheduler;
@@ -41,14 +42,19 @@ public class ToastTask extends TimerTask {
         return elapsedTime;
     }
 
+    public double getPowerConsumed() {
+        return powerConsumed;
+    }
+
     private void enqueueProcesses() {
         Iterator<Process> iter = newProcesses.iterator();
 
         while (iter.hasNext()) {
             Process process = iter.next();
 
-            if (process.getArrivalTime() <= elapsedTime) {
+            if (elapsedTime >= process.getArrivalTime()) {
                 scheduler.readyQueue.add(process);
+                algorithm.onProcessReady(process);
                 iter.remove();
             }
         }
@@ -62,7 +68,7 @@ public class ToastTask extends TimerTask {
 
         for (Processor p : scheduler.getProcessorList()) {
             ToastProcessor processor = (ToastProcessor) p;
-            processor.run();
+            powerConsumed += processor.run();
 
             if (!p.isIdle()) {
                 active++;

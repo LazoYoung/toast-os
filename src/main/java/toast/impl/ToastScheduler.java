@@ -54,6 +54,8 @@ public class ToastScheduler implements Scheduler {
 
         started = true;
         task = new ToastTask(this, algorithm);
+
+        algorithm.init(this);
         timer.scheduleAtFixedRate(task, 0L, 1000L);
     }
 
@@ -71,6 +73,11 @@ public class ToastScheduler implements Scheduler {
     @Override
     public int getElapsedTime() {
         return (task != null) ? task.getElapsedTime() : 0;
+    }
+
+    @Override
+    public double getPowerConsumed() {
+        return (task != null) ? task.getPowerConsumed() : 0;
     }
 
     @Override
@@ -92,32 +99,38 @@ public class ToastScheduler implements Scheduler {
 
     @Override
     public void dispatch(Processor processor, Process process) {
-        validateProcessor(processor);
+        validateProcessor(processor, false);
         validateProcess(process);
 
+        processor.dispatch(process);
         readyQueue.remove(process);
     }
 
     @Override
     public void preempt(Processor processor, Process process) {
-        validateProcessor(processor);
+        validateProcessor(processor, true);
         validateProcess(process);
 
+        halt(processor);
+        dispatch(processor, process);
+    }
+
+    @Override
+    public void halt(Processor processor) {
         Process halted = processor.halt();
 
         readyQueue.addLast(halted);
-        dispatch(processor, process);
     }
 
     public List<Process> getProcessList() {
         return processList;
     }
 
-    private void validateProcessor(Processor processor) {
+    private void validateProcessor(Processor processor, boolean preempt) {
         if (!(processor instanceof ToastProcessor)) {
             throw new IllegalArgumentException("Failed to dispatch: incompatible processor");
         }
-        if (!processor.isIdle()) {
+        if (!preempt && !processor.isIdle()) {
             throw new IllegalArgumentException("Failed to dispatch: processor already running");
         }
     }
