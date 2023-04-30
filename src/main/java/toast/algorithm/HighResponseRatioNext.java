@@ -22,12 +22,7 @@ public class HighResponseRatioNext implements Algorithm {
         while (processors.hasNext() && processes.hasNext()) {
             Processor processor = processors.next();
             Process process = processes.next();
-            String coreName = processor.getCore().getName();
-            int pid = process.getId();
-
             scheduler.dispatch(processor, process);
-            process.addCompletionListener(() -> System.out.printf("│[HRRN] Process #%d completed%n", pid));
-            System.out.printf("│[HRRN] Dispatched process #%d to %s%n", pid, coreName);
         }
     }
 

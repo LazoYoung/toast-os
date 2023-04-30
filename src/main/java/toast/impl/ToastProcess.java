@@ -6,17 +6,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ToastProcess implements Process {
-    private static int nextId = 0;
+    private static int nextId = 1;
 
     private final List<Runnable> completionListeners = new ArrayList<>();
     private final int pid;
     private final int arrival;
     private final int workload;
     private final boolean isMission;
-    private int progress;
-    private int burstTime;
-    private int waitingTime;
-    private int continuousBurstTime;
+    private int progress = 0;
+    private int burstTime = 0;
+    private int waitingTime = 0;
+    private int continuousBurstTime = 0;
 
     public ToastProcess(int arrival, int workload, boolean isMission) {
         this.pid = nextId++;
@@ -79,7 +79,6 @@ public class ToastProcess implements Process {
     @Override
     public void removeCompletionListener(int listenerId) {
         completionListeners.remove(listenerId);
-
     }
 
     @Override
@@ -90,6 +89,7 @@ public class ToastProcess implements Process {
         return false;
     }
 
+
     public void standby() {
         waitingTime++;
     }
@@ -97,7 +97,7 @@ public class ToastProcess implements Process {
     public void work(int amount) {
         progress += amount;
         burstTime++;
-        ++continuousBurstTime;
+        continuousBurstTime++;
 
         if (isComplete()) {
             List<Runnable> listeners = new ArrayList<>(completionListeners);
@@ -108,11 +108,12 @@ public class ToastProcess implements Process {
     public int getContinuousBurstTime() {
         return continuousBurstTime;
     }
-    private boolean isComplete() {
-        return progress >= workload;
-    }
 
     public void halt() {
         continuousBurstTime = 0;
+    }
+
+    private boolean isComplete() {
+        return progress >= workload;
     }
 }
