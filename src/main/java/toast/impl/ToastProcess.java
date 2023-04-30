@@ -89,6 +89,7 @@ public class ToastProcess implements Process {
         return false;
     }
 
+
     public void standby() {
         waitingTime++;
     }
