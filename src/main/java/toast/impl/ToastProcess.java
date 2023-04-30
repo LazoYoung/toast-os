@@ -12,15 +12,17 @@ public class ToastProcess implements Process {
     private final int pid;
     private final int arrival;
     private final int workload;
+    private final boolean isMission;
     private int progress = 0;
     private int burstTime = 0;
     private int waitingTime = 0;
     private int continuousBurstTime = 0;
 
-    public ToastProcess(int arrival, int workload) {
+    public ToastProcess(int arrival, int workload, boolean isMission) {
         this.pid = nextId++;
         this.arrival = arrival;
         this.workload = workload;
+        this.isMission = isMission;
     }
 
     @Override
@@ -63,6 +65,11 @@ public class ToastProcess implements Process {
     }
 
     @Override
+    public boolean isMission() {
+        return isMission;
+    }
+
+    @Override
     public int addCompletionListener(Runnable listener) {
         completionListeners.add(listener);
 
@@ -74,6 +81,14 @@ public class ToastProcess implements Process {
         completionListeners.remove(listenerId);
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof ToastProcess other) {
+            return (this.pid == other.pid);
+        }
+        return false;
+    }
+    
     public void standby() {
         waitingTime++;
     }

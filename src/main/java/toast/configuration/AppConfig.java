@@ -1,7 +1,6 @@
 package toast.configuration;
 
-import toast.algorithm.Algorithm;
-import toast.algorithm.HighResponseRatioNext;
+import toast.algorithm.*;
 import toast.api.Core;
 
 public class AppConfig {
@@ -10,7 +9,7 @@ public class AppConfig {
         return Core.PERFORMANCE;
     }
 
-    public Algorithm algorithm(int timeQuantum) {
-        return new HighResponseRatioNext();
+    public Algorithm algorithm(int timeQuantum, double initPower) {
+        return new CustomAlgorithm(timeQuantum, initPower);
     }
 }

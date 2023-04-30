@@ -12,6 +12,13 @@ public interface Processor {
     boolean isIdle();
 
     /**
+     * 프로세서 고유 아이디를 반환한다
+     * @return the unique id of this processor
+     */
+    int getId();
+
+    /**
+     * 프로세서 코어 타입을 반환한다
      * @return the {@link Core} of this processor
      */
     Core getCore();

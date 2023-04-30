@@ -7,12 +7,15 @@ import toast.api.Processor;
 import java.util.Optional;
 
 public class ToastProcessor implements Processor {
+    private static int newId = 1;
+    private final int id;
     private final Core core;
     private ToastProcess process;
     private double powerConsumed = 0;
-    private int processorListenerIndex;
+    private int completionListenerIdx;
 
     public ToastProcessor(Core core) {
+        this.id = newId++;
         this.core = core;
     }
 
@@ -27,25 +30,28 @@ public class ToastProcessor implements Processor {
 
         this.powerConsumed += core.getWattPerBoot();
         this.process = (ToastProcess) process;
-
-        this.processorListenerIndex = this.process.addCompletionListener(this::halt);
+        this.completionListenerIdx = this.process.addCompletionListener(this::halt);
     }
 
     @Override
     public Process halt() {
         if (process == null) return null;
+
         Process halted = process;
-
-        halted.halt();
-        halted.removeCompletionListener(processorListenerIndex);
-
         process = null;
+        halted.halt();
+        halted.removeCompletionListener(completionListenerIdx);
         return halted;
     }
 
     @Override
     public boolean isIdle() {
         return process == null;
+    }
+
+    @Override
+    public int getId() {
+        return id;
     }
 
     @Override
@@ -63,10 +69,23 @@ public class ToastProcessor implements Processor {
         return core;
     }
 
-    public void run() {
-        if (process == null) return;
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof ToastProcessor other) {
+            return (this.id == other.id);
+        }
+        return false;
+    }
 
+    /**
+     * @return amount of power drained
+     */
+    public double run() {
+        if (process == null) return 0;
+
+        double power = core.getWattPerWork();
         process.work(core.getWorkload());
-        powerConsumed += core.getWattPerWork();
+        powerConsumed += power;
+        return power;
     }
 }
