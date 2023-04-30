@@ -86,13 +86,18 @@ public class ToastTask extends TimerTask {
 
     private void printResult() {
         System.out.println("--- Scheduling result ---");
+        System.out.printf("• Elapsed time: %ds%n", scheduler.getElapsedTime());
+        System.out.printf("• Power consumed: %.1fW%n", scheduler.getPowerConsumed());
+        System.out.println();
+        System.out.println("--- Process result ---");
 
         for (Process process : scheduler.getProcessList()) {
-            System.out.printf("Process #%s%n", process.getId());
-            System.out.printf("└ Arrival time: %ds%n", process.getArrivalTime());
-            System.out.printf("└ Waiting time: %ds%n", process.getWaitingTime());
-            System.out.printf("└ Turnaround time: %ds%n", process.getTurnaroundTime());
-            System.out.printf("└ Normalized TT: %.2f%n", process.getNormalizedTurnaroundTime());
+            String type = process.isMission() ? "Mission" : "Standard";
+            System.out.printf("%s Process #%s%n", type, process.getId());
+            System.out.printf("• Arrival time: %ds%n", process.getArrivalTime());
+            System.out.printf("• Waiting time: %ds%n", process.getWaitingTime());
+            System.out.printf("• Turnaround time: %ds%n", process.getTurnaroundTime());
+            System.out.printf("• Normalized TT: %.2f%n", process.getNormalizedTurnaroundTime());
         }
     }
 }

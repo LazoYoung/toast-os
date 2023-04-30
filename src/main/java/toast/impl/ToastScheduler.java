@@ -104,7 +104,6 @@ public class ToastScheduler implements Scheduler {
 
         processor.dispatch(process);
         readyQueue.remove(process);
-        processor.dispatch(process);
 
         int pid = process.getId();
         String coreName = processor.getCore().getName();
