@@ -72,17 +72,28 @@ public class CustomAlgorithm implements Algorithm {
         Optional<Process> runningProcess = this.missionCore.getRunningProcess();
 
         if (runningProcess.isEmpty()) {
-            if (hasNextProcess(this.singleCoreFlag) && !isSingleCoreTimeout(null)) {
-                Process process = pollNextProcess(this.singleCoreFlag);
+            boolean hasNext = hasNextProcess(this.singleCoreFlag);
+            boolean hasOpposite = hasNextProcess(!this.singleCoreFlag);
+            boolean isTimeout = isSingleCoreTimeout(null);
+            Process process = null;
+
+            if (!hasNext && hasOpposite) {
+                hasNext = true;
+                hasOpposite = false;
+                this.singleCoreFlag = !this.singleCoreFlag;
+                this.singleCoreTimer = 0;
+            }
+
+            if (isTimeout && hasOpposite) {
+                process = pollNextProcess(!this.singleCoreFlag);
+                this.singleCoreFlag = !this.singleCoreFlag;
+                this.singleCoreTimer = 0;
+            } else if (hasNext) {
+                process = pollNextProcess(this.singleCoreFlag);
+            }
+
+            if (process != null) {
                 dispatch(scheduler, this.missionCore, process);
-            } else {
-                final boolean negatedFlag = !this.singleCoreFlag;
-                if (hasNextProcess(negatedFlag)) {
-                    Process process = pollNextProcess(negatedFlag);
-                    dispatch(scheduler, this.missionCore, process);
-                    this.singleCoreFlag = negatedFlag;
-                    this.singleCoreTimer = 0;
-                }
             }
         } else {
             Process process = runningProcess.get();
