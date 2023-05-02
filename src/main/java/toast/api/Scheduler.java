@@ -8,8 +8,10 @@ public interface Scheduler {
      * Returns a ready queue sorted by arrival time of each process. <br>
      * Modifying this queue will throw {@link UnsupportedOperationException}. <br>
      * 프로세스가 도착한 순서대로 정렬된 대기열을 반환한다
+     * @deprecated Replaced by {@link toast.algorithm.Algorithm#onProcessReady(Process)} since issue-32
      * @return {@link List} of every {@link Process} waiting to be dispatched
      */
+    @Deprecated(forRemoval = true)
     List<Process> getReadyQueue();
 
     /**
@@ -40,15 +42,23 @@ public interface Scheduler {
     double getPowerConsumed();
 
     /**
+     * 평균 응답시간을 반환한다
+     * @return the average response time in seconds
+     */
+    double getAverageResponseTime();
+
+    /**
      * Dispatch the process to run. <br>
      * Upon success, the process gets removed from the queue. <br>
      * 대기열에 있는 프로세스를 프로세서에 할당한다. 성공한다면 해당 프로세스는 대기열에서 제거된다
+     * @deprecated Replaced by {@link Processor#dispatch(Process)} since issue-32
      * @param processor The processor that runs this process
      * @param process The process you want to dispatch
      * @throws IllegalStateException process is not in ready queue
      * @throws IllegalArgumentException processor is already running
      * @throws IllegalArgumentException process or processor implementation is incompatible
      */
+    @Deprecated(forRemoval = true)
     void dispatch(Processor processor, Process process);
 
     /**
@@ -57,12 +67,14 @@ public interface Scheduler {
      * and the existing process goes back to the end of queue. <br>
      * 대기열에 있는 프로세스를 프로세서에 할당한다. 성공한다면 해당 프로세스는 대기열에서 제거되고,
      * 이미 실행중이던 프로세스가 존재하면 선점 처리되어 중단되고 대기열 끝으로 돌아간다
+     * @deprecated Deprecated since issue-32
      * @param processor The process that runs this process
      * @param process The process you want to dispatch
      * @throws IllegalStateException process is not in ready queue
      * @throws IllegalArgumentException processor is already running
      * @throws IllegalArgumentException process or processor implementation is incompatible
      */
+    @Deprecated(forRemoval = true)
     void preempt(Processor processor, Process process);
 
     /**
@@ -74,7 +86,9 @@ public interface Scheduler {
     /**
      * 실행중인 프로세스를 종료시키고 큐의 맨 뒤에 넣는다.
      *
+     * @deprecated Replaced by {@link Processor#halt()} since issue-32
      * @param processor 종료시킬 프로세서
      */
+    @Deprecated(forRemoval = true)
     void halt(Processor processor);
 }
