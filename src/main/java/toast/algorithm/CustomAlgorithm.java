@@ -96,13 +96,12 @@ public class CustomAlgorithm implements Algorithm {
                 dispatch(scheduler, this.missionCore, process);
             }
         } else {
-            Process process = runningProcess.get();
             boolean negatedFlag = !this.singleCoreFlag;
 
-            if (isSingleCoreTimeout(process) && hasNextProcess(negatedFlag)) {
+            if (isSingleCoreTimeout(runningProcess.get()) && hasNextProcess(negatedFlag)) {
                 Process nextProcess = pollNextProcess(negatedFlag);
-                preempt(scheduler, missionCore, nextProcess);
-                insertProcess(process);
+                Process preempted = preempt(scheduler, missionCore, nextProcess);
+                insertProcess(preempted);
                 this.singleCoreFlag = negatedFlag;
             }
         }
@@ -122,10 +121,9 @@ public class CustomAlgorithm implements Algorithm {
             assert (processor.getRunningProcess().isPresent());
 
             if (hasNextProcess(false)) {
-                Process process = processor.getRunningProcess().get();
                 Process nextProcess = pollNextProcess(false);
-                preempt(scheduler, processor, nextProcess);
-                this.standardQueue.addLast(process);
+                Process preempted = preempt(scheduler, processor, nextProcess);
+                this.standardQueue.addLast(preempted);
             }
         }
     }
@@ -199,22 +197,24 @@ public class CustomAlgorithm implements Algorithm {
     }
 
     private void dispatch(Scheduler scheduler, Processor processor, Process process) {
-        scheduler.dispatch(processor, process);
+        processor.dispatch(process);
 
         int pid = process.getId();
         int cpuId = processor.getId();
         System.out.printf("│[CUSTOM] Dispatched process #%d to core #%d%n", pid, cpuId);
     }
 
-    private void preempt(Scheduler scheduler, Processor processor, Process process) {
-        if (processor.getRunningProcess().isEmpty()) {
+    private Process preempt(Scheduler scheduler, Processor processor, Process process) {
+        if (processor.isIdle()) {
             throw new IllegalStateException("Failed to preempt: processor not running");
         }
 
-        Process preempted = processor.getRunningProcess().get();
+        Process preempted = processor.halt();
         this.singleCoreTimer += preempted.getContinuousBurstTime();
 
-        scheduler.preempt(processor, process);
+        processor.dispatch(process);
         System.out.printf("│[CUSTOM] Process #%d preempted by #%d%n", preempted.getId(), process.getId());
+
+        return preempted;
     }
 }
