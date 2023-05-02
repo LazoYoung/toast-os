@@ -9,6 +9,7 @@ import toast.api.Scheduler;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("removal")
 public class ToastScheduler implements Scheduler {
     public final LinkedList<Process> readyQueue = new LinkedList<>();
 

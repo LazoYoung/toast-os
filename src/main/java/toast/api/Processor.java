@@ -39,9 +39,7 @@ public interface Processor {
 
     /**
      * Dispatch a process to this processor. <br>
-     * Please refrain from using this method as it's intended for internal use. <br>
-     * There is an alternative: {@link Scheduler#dispatch(Processor, Process)} <br>
-     * 처리할 프로세스를 선택하여 등록한다. 본 함수는 구현체 내부에서 사용되는 용도이므로 사용을 지양하시오
+     * 처리할 프로세스를 등록한다. 프로세서가 이미 실행중일 경우 {@link IllegalStateException} 발생.
      * @param process The {@link Process} you want to dispatch
      * @throws IllegalStateException processor is already running
      * @throws IllegalArgumentException process implementation is incompatible
@@ -51,7 +49,7 @@ public interface Processor {
     /**
      * Halts the process and this processor becomes idle. <br>
      * If there were no process running, then it has no effect. <br>
-     * 현재 실행중인 프로세스를 종료한다
+     * 현재 실행중인 프로세스를 종료하고 반환한다.
      * @return The halted process
      */
     Process halt();
