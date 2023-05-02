@@ -22,6 +22,7 @@ public class HighResponseRatioNext implements Algorithm {
     @Override
     public void onProcessReady(Process process) {
         this.readyQueue.add(process);
+        process.addCompletionListener(() -> System.out.printf("| Process #%d completed%n", process.getId()));
     }
 
     @Override
@@ -34,7 +35,6 @@ public class HighResponseRatioNext implements Algorithm {
             Process process = processIter.next();
             processIter.remove();
             processor.dispatch(process);
-            process.addCompletionListener(() -> System.out.printf("| Process #%d completed%n", process.getId()));
             System.out.printf("| Dispatch process #%d to core #%d%n", process.getId(), processor.getId());
         }
     }

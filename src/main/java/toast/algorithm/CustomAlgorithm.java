@@ -49,7 +49,7 @@ public class CustomAlgorithm implements Algorithm {
             scheduler.finish();
             System.out.println("│[CUSTOM] Battery discharged! Shutting down...");
         } else if (this.singleCoreMode) {
-            runSingleCore(scheduler);
+            runSingleCore();
         } else {
             runMultiCore(scheduler);
         }
@@ -68,7 +68,7 @@ public class CustomAlgorithm implements Algorithm {
         System.out.printf("│[CUSTOM] Process #%d completed%n", process.getId());
     }
 
-    private void runSingleCore(Scheduler scheduler) {
+    private void runSingleCore() {
         Optional<Process> runningProcess = this.missionCore.getRunningProcess();
 
         if (runningProcess.isEmpty()) {
@@ -93,14 +93,14 @@ public class CustomAlgorithm implements Algorithm {
             }
 
             if (process != null) {
-                dispatch(scheduler, this.missionCore, process);
+                dispatch(this.missionCore, process);
             }
         } else {
             boolean negatedFlag = !this.singleCoreFlag;
 
             if (isSingleCoreTimeout(runningProcess.get()) && hasNextProcess(negatedFlag)) {
                 Process nextProcess = pollNextProcess(negatedFlag);
-                Process preempted = preempt(scheduler, missionCore, nextProcess);
+                Process preempted = preempt(missionCore, nextProcess);
                 insertProcess(preempted);
                 this.singleCoreFlag = negatedFlag;
             }
@@ -113,7 +113,7 @@ public class CustomAlgorithm implements Algorithm {
 
             if (hasNextProcess(mission)) {
                 Process process = pollNextProcess(mission);
-                dispatch(scheduler, processor, process);
+                dispatch(processor, process);
             }
         }
 
@@ -122,7 +122,7 @@ public class CustomAlgorithm implements Algorithm {
 
             if (hasNextProcess(false)) {
                 Process nextProcess = pollNextProcess(false);
-                Process preempted = preempt(scheduler, processor, nextProcess);
+                Process preempted = preempt(processor, nextProcess);
                 this.standardQueue.addLast(preempted);
             }
         }
@@ -196,7 +196,7 @@ public class CustomAlgorithm implements Algorithm {
         }
     }
 
-    private void dispatch(Scheduler scheduler, Processor processor, Process process) {
+    private void dispatch(Processor processor, Process process) {
         processor.dispatch(process);
 
         int pid = process.getId();
@@ -204,7 +204,7 @@ public class CustomAlgorithm implements Algorithm {
         System.out.printf("│[CUSTOM] Dispatched process #%d to core #%d%n", pid, cpuId);
     }
 
-    private Process preempt(Scheduler scheduler, Processor processor, Process process) {
+    private Process preempt(Processor processor, Process process) {
         if (processor.isIdle()) {
             throw new IllegalStateException("Failed to preempt: processor not running");
         }
