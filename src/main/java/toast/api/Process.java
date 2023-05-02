@@ -51,6 +51,11 @@ public interface Process {
     int getRemainingWorkload();
 
     /**
+     * 프로세스의 연속 실행 시간을 반환함.
+     */
+    int getContinuousBurstTime();
+
+    /**
      * 프로세스 미션 여부를 반환한다
      * @return true if this process is a critical mission for satellite system
      */
@@ -69,14 +74,4 @@ public interface Process {
      * @return listener id
      */
     int addCompletionListener(Runnable listener);
-
-    /**
-     * 프로세스를 정지함; 연속 실행 시간을 0으로 초기화함.
-     */
-    void halt();
-
-    /**
-     * 프로세스의 연속 실행 시간을 반환함.
-     */
-    int getContinuousBurstTime();
 }

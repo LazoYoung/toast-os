@@ -42,6 +42,12 @@ public interface Scheduler {
     double getPowerConsumed();
 
     /**
+     * 평균 응답시간을 반환한다
+     * @return the average response time in seconds
+     */
+    double getAverageResponseTime();
+
+    /**
      * Dispatch the process to run. <br>
      * Upon success, the process gets removed from the queue. <br>
      * 대기열에 있는 프로세스를 프로세서에 할당한다. 성공한다면 해당 프로세스는 대기열에서 제거된다

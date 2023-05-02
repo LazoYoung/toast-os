@@ -13,16 +13,19 @@ public class ToastProcess implements Process {
     private final int arrival;
     private final int workload;
     private final boolean isMission;
+    private ToastProcessor processor = null;
     private int progress = 0;
     private int burstTime = 0;
-    private int waitingTime = 0;
     private int continuousBurstTime = 0;
+    private int waitingTime = 0;
+    private int lastHaltTime;
 
     public ToastProcess(int arrival, int workload, boolean isMission) {
         this.pid = nextId++;
         this.arrival = arrival;
         this.workload = workload;
         this.isMission = isMission;
+        this.lastHaltTime = arrival;
     }
 
     @Override
@@ -65,6 +68,11 @@ public class ToastProcess implements Process {
     }
 
     @Override
+    public int getContinuousBurstTime() {
+        return continuousBurstTime;
+    }
+
+    @Override
     public boolean isMission() {
         return isMission;
     }
@@ -89,28 +97,34 @@ public class ToastProcess implements Process {
         return false;
     }
 
-
-    public void standby() {
-        waitingTime++;
+    public void assign(ToastProcessor processor) {
+        this.processor = processor;
+        this.waitingTime += (processor.getCurrentTime() - this.lastHaltTime);
     }
 
-    public void work(int amount) {
-        progress += amount;
-        burstTime++;
-        continuousBurstTime++;
+    public void work(int workload) {
+        this.progress += workload;
+        this.burstTime++;
+        this.continuousBurstTime++;
 
         if (isComplete()) {
-            List<Runnable> listeners = new ArrayList<>(completionListeners);
+            List<Runnable> listeners = new ArrayList<>(this.completionListeners);
             listeners.forEach(Runnable::run);
         }
     }
 
-    public int getContinuousBurstTime() {
-        return continuousBurstTime;
+    public void halt() {
+        if (isIdle()) {
+            throw new IllegalStateException("Failed to halt: process not running!");
+        }
+
+        this.lastHaltTime = this.processor.getCurrentTime();
+        this.processor = null;
+        this.continuousBurstTime = 0;
     }
 
-    public void halt() {
-        continuousBurstTime = 0;
+    private boolean isIdle() {
+        return processor == null;
     }
 
     private boolean isComplete() {

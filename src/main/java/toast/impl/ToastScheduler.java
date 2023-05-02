@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 @SuppressWarnings("removal")
 public class ToastScheduler implements Scheduler {
+    // todo deprecated element
     public final LinkedList<Process> readyQueue = new LinkedList<>();
 
     private final List<Processor> processorList;
@@ -79,6 +80,14 @@ public class ToastScheduler implements Scheduler {
     @Override
     public double getPowerConsumed() {
         return (task != null) ? task.getPowerConsumed() : 0;
+    }
+
+    @Override
+    public double getAverageResponseTime() {
+        int sum = processList.stream()
+                .mapToInt(Process::getWaitingTime)
+                .sum();
+        return (double) sum / processList.size();
     }
 
     @Override
