@@ -18,17 +18,18 @@ public class Main {
 
         int timeQuantum = getTimeQuantum(scanner);
         double initPower = getInitPower(scanner);
+        double powerThreshold = getPowerThreshold(scanner);
         System.out.println();
         scanner.close();
 
-        ToastScheduler scheduler = scheduler(timeQuantum, initPower, coreList, processList);
+        ToastScheduler scheduler = scheduler(timeQuantum, initPower, powerThreshold, coreList, processList);
         scheduler.start();
     }
 
-    private static ToastScheduler scheduler(int timeQuantum, double initPower, List<ToastProcessor> coreList, List<ToastProcess> processList) {
+    private static ToastScheduler scheduler(int timeQuantum, double initPower, double powerThreshold, List<ToastProcessor> coreList, List<ToastProcess> processList) {
         AppConfig appConfig = new AppConfig();
 
-        return new ToastScheduler(coreList, processList, appConfig.primaryCore(), appConfig.algorithm(timeQuantum, initPower));
+        return new ToastScheduler(coreList, processList, appConfig.primaryCore(), appConfig.algorithm(timeQuantum, initPower, powerThreshold));
     }
 
     private static List<ToastProcess> getProcessList(Scanner scanner) {
@@ -36,21 +37,21 @@ public class Main {
         System.out.print("# of process: ");
         int process = scanner.nextInt();
 
-        System.out.printf("│Arrival time (%d): ", process);
+        System.out.printf("│ Arrival time (%d): ", process);
         int[] arrival = new int[process];
 
         for (int i = 0; i < process; i++) {
             arrival[i] = scanner.nextInt();
         }
 
-        System.out.printf("│Burst time (%d): ", process);
+        System.out.printf("│ Burst time (%d): ", process);
         int[] burst = new int[process];
 
         for (int i = 0; i < process; i++) {
             burst[i] = scanner.nextInt();
         }
 
-        System.out.printf("│Mission (%d): ", process);
+        System.out.printf("│ Mission (%d): ", process);
         boolean[] mission = new boolean[process];
 
         for (int i = 0; i < process; i++) {
@@ -76,12 +77,17 @@ public class Main {
     }
 
     private static int getTimeQuantum(Scanner scanner) {
-        System.out.print("│Time quantum for RR: ");
+        System.out.print("│ Time quantum: ");
         return scanner.nextInt();
     }
 
     private static double getInitPower(Scanner scanner) {
-        System.out.print("│Init power for CustomAlgorithm: ");
+        System.out.print("│ Initial power: ");
+        return scanner.nextDouble();
+    }
+
+    private static double getPowerThreshold(Scanner scanner) {
+        System.out.print("│ Power threshold: ");
         return scanner.nextDouble();
     }
 

@@ -5,25 +5,32 @@ import toast.api.Process;
 import toast.api.Processor;
 import toast.api.Scheduler;
 
-import java.util.Deque;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
-public class CustomAlgorithm implements Algorithm {
+public class CustomSatellite implements Algorithm {
 
-    private final Deque<Process> missionQueue = new LinkedList<>();
-    private final Deque<Process> standardQueue = new LinkedList<>();
+    private Deque<Process> missionQueue;
+    private Deque<Process> standardQueue;
+    private List<Processor> activeProcessors;
     private final double initPower;
+    private final double powerMargin;
     private final int timeQuantum;
     private Processor missionCore;
+    private Processor monoCore;
+    private boolean powerMode;
     private boolean singleCoreMode;
     private boolean singleCoreFlag;
     private int singleCoreTimer;
 
-    public CustomAlgorithm(int timeQuantum, double initPower) {
+    public CustomSatellite(int timeQuantum, double initPower, double powerThreshold) {
+        if (initPower < 0)
+            throw new IllegalArgumentException("Invalid range of initPower!");
+        if (powerThreshold < 0 || powerThreshold > 1)
+            throw new IllegalArgumentException("Invalid range of powerThreshold!");
+
         this.timeQuantum = timeQuantum;
         this.initPower = initPower;
+        this.powerMargin = powerThreshold * initPower;
     }
 
     @Override
@@ -34,9 +41,14 @@ public class CustomAlgorithm implements Algorithm {
             throw new RuntimeException("Failed to initialize: no processor available");
         }
 
+        this.missionQueue = new ArrayDeque<>();
+        this.standardQueue = new ArrayDeque<>();
+        this.activeProcessors = new ArrayList<>(scheduler.getProcessorList());
         this.singleCoreTimer = 0;
         this.singleCoreFlag = true;
         this.singleCoreMode = (pList.size() == 1);
+        this.powerMode = false;
+        this.monoCore = null;
         this.missionCore = this.singleCoreMode ? pList.get(0) : pList.stream()
                 .filter(e -> e.getCore().equals(Core.PERFORMANCE))
                 .findAny()
@@ -45,10 +57,13 @@ public class CustomAlgorithm implements Algorithm {
 
     @Override
     public void run(Scheduler scheduler) {
-        if (isBatteryDischarged(scheduler)) {
+        if (getAvailablePower(scheduler) <= 0) {
             scheduler.finish();
-            System.out.println("│[CUSTOM] Battery discharged! Shutting down...");
-        } else if (this.singleCoreMode) {
+            System.out.println("│ Battery discharged! Shutting down...");
+            return;
+        }
+
+        if (this.singleCoreMode) {
             runSingleCore();
         } else {
             runMultiCore(scheduler);
@@ -65,7 +80,7 @@ public class CustomAlgorithm implements Algorithm {
         if (this.singleCoreMode) {
             this.singleCoreTimer += process.getContinuousBurstTime();
         }
-        System.out.printf("│[CUSTOM] Process #%d completed%n", process.getId());
+        System.out.printf("│ Process #%d completed%n", process.getId());
     }
 
     private void runSingleCore() {
@@ -108,7 +123,11 @@ public class CustomAlgorithm implements Algorithm {
     }
 
     private void runMultiCore(Scheduler scheduler) {
-        for (Processor processor : scheduler.getIdleProcessorList()) {
+        if (!this.powerMode && isPowerLow(scheduler)) {
+            enterPowerMode();
+        }
+
+        for (Processor processor : getIdleProcessors()) {
             boolean mission = processor.equals(missionCore);
 
             if (hasNextProcess(mission)) {
@@ -117,7 +136,7 @@ public class CustomAlgorithm implements Algorithm {
             }
         }
 
-        for (Processor processor : getTimeoutProcessors(scheduler)) {
+        for (Processor processor : getTimeoutProcessors()) {
             assert (processor.getRunningProcess().isPresent());
 
             if (hasNextProcess(false)) {
@@ -128,6 +147,32 @@ public class CustomAlgorithm implements Algorithm {
         }
     }
 
+    private void enterPowerMode() {
+        List<Processor> standardCores = this.activeProcessors.stream()
+                .filter(p -> p != missionCore)
+                .toList();
+        this.monoCore = standardCores.stream()
+                .filter(p -> p.getRunningProcess().isPresent())
+                .max(getCoreAgeComparator())
+                .orElse(standardCores.get(0));
+        this.powerMode = true;
+
+        standardCores.stream()
+                .filter(p -> p != this.monoCore)
+                .forEach(this::deactivateProcessor);
+
+        System.out.println("│ Power-mode engaged");
+    }
+
+    private void deactivateProcessor(Processor processor) {
+        if (processor.getRunningProcess().isPresent()) {
+            Process halted = processor.halt();
+            this.standardQueue.addLast(halted);
+        }
+        this.activeProcessors.remove(processor);
+        System.out.printf("│ Processor #%d deactivated%n", processor.getId());
+    }
+
     private boolean hasNextProcess(boolean mission) {
         return mission ? !this.missionQueue.isEmpty() : !this.standardQueue.isEmpty();
     }
@@ -136,19 +181,41 @@ public class CustomAlgorithm implements Algorithm {
         return mission ? this.missionQueue.pollFirst() : this.standardQueue.pollFirst();
     }
 
+    private boolean isPowerLow(Scheduler scheduler) {
+        return getAvailablePower(scheduler) < this.powerMargin;
+    }
+
     /**
      * @return List of standard Processors that used up all of their time quantum
      */
-    private List<Processor> getTimeoutProcessors(Scheduler scheduler) {
-        return scheduler.getProcessorList()
-                .stream()
+    private List<Processor> getTimeoutProcessors() {
+        return this.activeProcessors.stream()
                 .filter(this::isTimeoutProcessor)
-                .sorted(this::compareProcessorTime)
+                .sorted(getCoreAgeComparator().reversed())
                 .toList();
     }
 
-    private boolean isBatteryDischarged(Scheduler s) {
-        return s.getPowerConsumed() >= this.initPower;
+    private List<Processor> getIdleProcessors() {
+        return this.activeProcessors.stream()
+                .filter(Processor::isIdle)
+                .toList();
+    }
+
+    private Comparator<Processor> getCoreAgeComparator() {
+        return (p1, p2) -> {
+            if (p1.getRunningProcess().isEmpty())
+                throw new IllegalArgumentException("Failed to compare processor time: p1 not running!");
+            if (p2.getRunningProcess().isEmpty())
+                throw new IllegalArgumentException("Failed to compare processor time: p2 not running!");
+
+            int bt1 = p1.getRunningProcess().get().getContinuousBurstTime();
+            int bt2 = p2.getRunningProcess().get().getContinuousBurstTime();
+            return bt1 - bt2;
+        };
+    }
+
+    private double getAvailablePower(Scheduler scheduler) {
+        return this.initPower - scheduler.getPowerConsumed();
     }
 
     private boolean isSingleCoreTimeout(Process process) {
@@ -172,14 +239,6 @@ public class CustomAlgorithm implements Algorithm {
         }
     }
 
-    private int compareProcessorTime(Processor p1, Processor p2) {
-        assert (p1.getRunningProcess().isPresent());
-        assert (p2.getRunningProcess().isPresent());
-        int bt1 = p1.getRunningProcess().get().getContinuousBurstTime();
-        int bt2 = p2.getRunningProcess().get().getContinuousBurstTime();
-        return bt2 - bt1;
-    }
-
     private void enqueueProcess(Process process) {
         if (process.isMission()) {
             this.missionQueue.addLast(process);
@@ -201,7 +260,7 @@ public class CustomAlgorithm implements Algorithm {
 
         int pid = process.getId();
         int cpuId = processor.getId();
-        System.out.printf("│[CUSTOM] Dispatched process #%d to core #%d%n", pid, cpuId);
+        System.out.printf("│ Dispatched process #%d to core #%d%n", pid, cpuId);
     }
 
     private Process preempt(Processor processor, Process process) {
@@ -213,7 +272,7 @@ public class CustomAlgorithm implements Algorithm {
         this.singleCoreTimer += preempted.getContinuousBurstTime();
 
         processor.dispatch(process);
-        System.out.printf("│[CUSTOM] Process #%d preempted by #%d%n", preempted.getId(), process.getId());
+        System.out.printf("│ Process #%d preempted by #%d%n", preempted.getId(), process.getId());
 
         return preempted;
     }
