@@ -1,7 +1,7 @@
 package toast.configuration;
 
 import toast.algorithm.Algorithm;
-import toast.algorithm.FirstComeFirstService;
+import toast.algorithm.CustomSatellite;
 import toast.api.Core;
 
 public class AppConfig {
@@ -10,7 +10,7 @@ public class AppConfig {
         return Core.PERFORMANCE;
     }
 
-    public Algorithm algorithm(int timeQuantum, double initPower) {
-        return new FirstComeFirstService();
+    public Algorithm algorithm(int timeQuantum, double initPower, double powerThreshold) {
+        return new CustomSatellite(timeQuantum, initPower, powerThreshold);
     }
 }
