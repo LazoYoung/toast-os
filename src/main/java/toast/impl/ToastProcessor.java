@@ -12,6 +12,7 @@ public class ToastProcessor implements Processor {
     private final Core core;
     private ToastProcess process;
     private double powerConsumed = 0;
+    private boolean bootRequired = true;
     private int completionListenerIdx;
 
     public ToastProcessor(Core core) {
@@ -28,7 +29,6 @@ public class ToastProcessor implements Processor {
             throw new IllegalStateException("Failed to dispatch: processor is already running");
         }
 
-        this.powerConsumed += core.getWattPerBoot();
         this.process = (ToastProcess) process;
         this.completionListenerIdx = this.process.addCompletionListener(this::halt);
     }
@@ -81,11 +81,22 @@ public class ToastProcessor implements Processor {
      * @return amount of power drained
      */
     public double run() {
-        if (process == null) return 0;
+        if (process == null) {
+            this.bootRequired = true;
+            return 0;
+        }
 
+        int workload = core.getWorkload();
         double power = core.getWattPerWork();
-        process.work(core.getWorkload());
-        powerConsumed += power;
+
+        if (this.bootRequired) {
+            power += core.getWattPerBoot();
+        }
+
+        this.powerConsumed += power;
+        this.bootRequired = false;
+
+        process.work(workload);
         return power;
     }
 }
