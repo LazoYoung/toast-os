@@ -15,6 +15,7 @@ public class ToastTask extends TimerTask {
     private final List<Process> newProcesses;
     private int elapsedTime = 0;
     private double powerConsumed = 0;
+    private boolean finish = false;
 
     public ToastTask(ToastScheduler scheduler, Algorithm algorithm) {
         this.scheduler = scheduler;
@@ -24,18 +25,18 @@ public class ToastTask extends TimerTask {
 
     @Override
     public void run() {
-        boolean wasIdle = isIdle();
-
         System.out.printf("┌ Before run: %ds\n", elapsedTime);
+
         enqueueProcesses();
         algorithm.run(scheduler);
-        runProcessors();
+        if (finish) return;
 
-        if (newProcesses.isEmpty() && wasIdle && isIdle()) {
+        if (newProcesses.isEmpty() && isIdle()) {
             scheduler.finish();
             System.out.print("└ End of simulation\n\n");
             printResult();
         } else {
+            runProcessors();
             elapsedTime++;
             syncProcessorTime();
             System.out.printf("└ After run: %ds%n\n", elapsedTime);
@@ -55,6 +56,11 @@ public class ToastTask extends TimerTask {
 
     public double getPowerConsumed() {
         return powerConsumed;
+    }
+
+    public void finish() {
+        this.cancel();
+        this.finish = true;
     }
 
     private boolean isIdle() {

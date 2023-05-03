@@ -21,6 +21,7 @@ public class ShortestProcessNext implements Algorithm {
     @Override
     public void onProcessReady(Process process) {
         this.readyQueue.add(process);
+        process.addCompletionListener(() -> System.out.printf("│[SPN] Process #%d completed%n", process.getId()));
     }
 
     @Override
@@ -40,7 +41,6 @@ public class ShortestProcessNext implements Algorithm {
 
             int pid = process.getId();
             int processorId = processor.getId();
-            process.addCompletionListener(() -> System.out.printf("│[SPN] Process #%d completed%n", pid));
             System.out.printf("│[SPN] Dispatched process #%d to #%d%n", pid, processorId);
         }
     }

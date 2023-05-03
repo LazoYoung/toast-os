@@ -21,6 +21,7 @@ public class ShortestRemainingTimeNext implements Algorithm {
     @Override
     public void onProcessReady(Process process) {
         this.readyQueue.add(process);
+        process.addCompletionListener(() -> System.out.printf("│[SRTN] Process #%d completed%n", process.getId()));
     }
 
     @Override
@@ -82,15 +83,7 @@ public class ShortestRemainingTimeNext implements Algorithm {
         String coreName = idleProcessor.getCore().getName();
         int pid = nextProcess.getId();
 
-        if(isFirstRun(nextProcess)) {
-            nextProcess.addCompletionListener(() -> System.out.printf("│[SRTN] Process #%d completed%n", pid));
-        }
-
         System.out.printf("│[SRTN] Dispatched process #%d to %s%n", pid, coreName);
-    }
-
-    private static boolean isFirstRun(Process nextProcess) {
-        return nextProcess.getWorkload() == nextProcess.getRemainingWorkload();
     }
 
     private static boolean canExecute(PriorityQueue<Process> processorPQ, Iterator<Processor> idleProcessorIterator) {

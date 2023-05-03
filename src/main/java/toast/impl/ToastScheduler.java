@@ -68,8 +68,7 @@ public class ToastScheduler implements Scheduler {
         }
 
         started = false;
-        task.cancel();
-        // todo collect result
+        task.finish();
     }
 
     @Override
