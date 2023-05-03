@@ -1,54 +1,59 @@
 package toast.algorithm;
 
+import java.util.ArrayDeque;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Queue;
 import toast.api.Process;
 import toast.api.Processor;
 import toast.api.Scheduler;
 
 public class RoundRobin implements Algorithm {
     private final Integer timeQuantum;
+    private Queue<Process> readyQueue = null;
 
     public RoundRobin(int timeQuantum) {
         this.timeQuantum = timeQuantum;
     }
 
     @Override
-    public void run(Scheduler scheduler) {
-        Iterator<Process> readyQueueIterator = getReadyQueueIterator(scheduler);
-        //동시 접근 방지 위해 상단에 배치
-        boolean hasWait = readyQueueIterator.hasNext();
+    public void init(Scheduler scheduler) {
+        this.readyQueue = new ArrayDeque<>();
+    }
 
+    @Override
+    public void onProcessReady(Process process) {
+        this.readyQueue.add(process);
+    }
+
+    @Override
+    public void run(Scheduler scheduler) {
         List<Processor> timeOverProcessors = getTimeOverProcessors(scheduler.getProcessorList());
 
-        runWith(scheduler, readyQueueIterator, timeOverProcessors);
+        runWith(timeOverProcessors);
 
-        if(hasWait) {
-            runWith(scheduler, readyQueueIterator, scheduler.getIdleProcessorList().iterator());
+        if (!this.readyQueue.isEmpty()) {
+            runWith(scheduler.getIdleProcessorList().iterator());
         }
 
         System.out.printf("│[SPN] Elapsed time: %ds%n", scheduler.getElapsedTime());
     }
 
-    private static void runWith(Scheduler scheduler, Iterator<Process> readyQueueIterator,
-                                  Iterator<Processor> idleProcessorIterator) {
-        while(canExecute(readyQueueIterator, idleProcessorIterator)) {
+    private void runWith(Iterator<Processor> idleProcessorIterator) {
+        while (canExecute(idleProcessorIterator)) {
             Processor idleProcessor = idleProcessorIterator.next();
-            Process nextProcess = readyQueueIterator.next();
+            Process nextProcess = this.readyQueue.poll();
 
-            dispatch(scheduler, idleProcessor, nextProcess);
+            dispatch(idleProcessor, nextProcess);
         }
     }
 
-    private static void runWith(Scheduler scheduler, Iterator<Process> readyQueueIterator,
-                                  List<Processor> timeOverProcessors) {
+    private void runWith(List<Processor> timeOverProcessors) {
         for (Processor timeOverProcessor : timeOverProcessors) {
-            scheduler.halt(timeOverProcessor);
 
-            assert(readyQueueIterator.hasNext());
-            Process nextProcess = readyQueueIterator.next();
-
-            dispatch(scheduler, timeOverProcessor, nextProcess);
+            this.readyQueue.add(timeOverProcessor.halt());
+            Process nextProcess = this.readyQueue.poll();
+            dispatch(timeOverProcessor, nextProcess);
         }
     }
 
@@ -59,17 +64,12 @@ public class RoundRobin implements Algorithm {
                 .toList();
     }
 
-    private static Iterator<Process> getReadyQueueIterator(Scheduler scheduler) {
-        return scheduler.getReadyQueue().stream().iterator();
-    }
-
-    private static void dispatch(Scheduler scheduler, Processor idleProcessor, Process nextProcess) {
-        scheduler.dispatch(idleProcessor, nextProcess);
+    private static void dispatch(Processor idleProcessor, Process nextProcess) {
+        idleProcessor.dispatch(nextProcess);
         String coreName = idleProcessor.getCore().getName();
         int pid = nextProcess.getId();
 
-
-        if(isFirstRun(nextProcess)) {
+        if (isFirstRun(nextProcess)) {
             nextProcess.addCompletionListener(() -> System.out.printf("│[SPN] Process #%d completed%n", pid));
         }
 
@@ -80,13 +80,11 @@ public class RoundRobin implements Algorithm {
         return nextProcess.getWorkload() == nextProcess.getRemainingWorkload();
     }
 
-    private static boolean canExecute(Iterator<Process> readyQueueIterator, Iterator<Processor> idleProcessorIterator) {
-        return idleProcessorIterator.hasNext() && readyQueueIterator.hasNext();
+    private boolean canExecute(Iterator<Processor> idleProcessorIterator) {
+        return idleProcessorIterator.hasNext() && !this.readyQueue.isEmpty();
     }
 
     private boolean isOverContinuousBurstTime(Processor processor) {
-        assert(processor.getRunningProcess().isPresent());
-
         return processor.getRunningProcess().get().getContinuousBurstTime() >= timeQuantum;
     }
 
