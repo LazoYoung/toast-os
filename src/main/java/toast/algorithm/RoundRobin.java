@@ -1,12 +1,14 @@
 package toast.algorithm;
 
+import toast.api.Algorithm;
+import toast.api.Process;
+import toast.api.Processor;
+import toast.api.Scheduler;
+
 import java.util.ArrayDeque;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Queue;
-import toast.api.Process;
-import toast.api.Processor;
-import toast.api.Scheduler;
 
 public class RoundRobin implements Algorithm {
     private final Integer timeQuantum;

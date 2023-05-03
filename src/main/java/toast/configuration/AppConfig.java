@@ -1,7 +1,7 @@
 package toast.configuration;
 
-import toast.algorithm.Algorithm;
-import toast.algorithm.*;
+import toast.algorithm.CustomSatellite;
+import toast.api.Algorithm;
 import toast.api.Core;
 
 public class AppConfig {

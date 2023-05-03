@@ -1,5 +1,6 @@
 package toast.algorithm;
 
+import toast.api.Algorithm;
 import toast.api.Process;
 import toast.api.Processor;
 import toast.api.Scheduler;

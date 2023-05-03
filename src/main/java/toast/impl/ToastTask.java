@@ -1,6 +1,6 @@
 package toast.impl;
 
-import toast.algorithm.Algorithm;
+import toast.api.Algorithm;
 import toast.api.Process;
 import toast.api.Processor;
 
