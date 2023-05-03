@@ -15,6 +15,7 @@ public class ToastTask extends TimerTask {
     private final List<Process> newProcesses;
     private int elapsedTime = 0;
     private double powerConsumed = 0;
+    private boolean finish = false;
 
     public ToastTask(ToastScheduler scheduler, Algorithm algorithm) {
         this.scheduler = scheduler;
@@ -24,16 +25,28 @@ public class ToastTask extends TimerTask {
 
     @Override
     public void run() {
-        enqueueProcesses();
         System.out.printf("┌ Before run: %ds\n", elapsedTime);
-        algorithm.run(scheduler);
-        int activeProcessors = runProcessors();
-        System.out.printf("└ After run: %ds%n\n", ++elapsedTime);
-        updateWaitingProcesses();
 
-        if (activeProcessors == 0 && newProcesses.isEmpty() && scheduler.readyQueue.isEmpty()) {
+        enqueueProcesses();
+        algorithm.run(scheduler);
+        if (finish) return;
+
+        if (newProcesses.isEmpty() && isIdle()) {
             scheduler.finish();
+            System.out.print("└ End of simulation\n\n");
             printResult();
+        } else {
+            runProcessors();
+            elapsedTime++;
+            syncProcessorTime();
+            System.out.printf("└ After run: %ds%n\n", elapsedTime);
+        }
+    }
+
+    private void syncProcessorTime() {
+        for (Processor p : scheduler.getProcessorList()) {
+            ToastProcessor processor = (ToastProcessor) p;
+            processor.updateTime(this.elapsedTime);
         }
     }
 
@@ -45,6 +58,17 @@ public class ToastTask extends TimerTask {
         return powerConsumed;
     }
 
+    public void finish() {
+        this.cancel();
+        this.finish = true;
+    }
+
+    private boolean isIdle() {
+        return scheduler.getProcessorList()
+                .stream()
+                .allMatch(Processor::isIdle);
+    }
+
     private void enqueueProcesses() {
         Iterator<Process> iter = newProcesses.iterator();
 
@@ -52,49 +76,30 @@ public class ToastTask extends TimerTask {
             Process process = iter.next();
 
             if (elapsedTime >= process.getArrivalTime()) {
-                scheduler.readyQueue.add(process);
                 algorithm.onProcessReady(process);
                 iter.remove();
             }
         }
     }
 
-    /**
-     * @return number of active processors
-     */
-    private int runProcessors() {
-        int active = 0;
-
+    private void runProcessors() {
         for (Processor p : scheduler.getProcessorList()) {
             ToastProcessor processor = (ToastProcessor) p;
             powerConsumed += processor.run();
-
-            if (!p.isIdle()) {
-                active++;
-            }
-        }
-
-        return active;
-    }
-
-    private void updateWaitingProcesses() {
-        for (Process p : scheduler.getReadyQueue()) {
-            ToastProcess process = (ToastProcess) p;
-            process.standby();
         }
     }
 
     private void printResult() {
         System.out.println("--- Scheduling result ---");
         System.out.printf("• Elapsed time: %ds%n", scheduler.getElapsedTime());
-        System.out.printf("• Power consumed: %.1fW%n", scheduler.getPowerConsumed());
+        System.out.printf("• Power consumption: %.1fW∙s%n", scheduler.getPowerConsumed());
+        System.out.printf("• Average response time: %.1fs", scheduler.getAverageResponseTime());
         System.out.println();
         System.out.println("--- Process result ---");
 
         for (Process process : scheduler.getProcessList()) {
             String type = process.isMission() ? "Mission" : "Standard";
             System.out.printf("%s Process #%s%n", type, process.getId());
-            System.out.printf("• Arrival time: %ds%n", process.getArrivalTime());
             System.out.printf("• Waiting time: %ds%n", process.getWaitingTime());
             System.out.printf("• Turnaround time: %ds%n", process.getTurnaroundTime());
             System.out.printf("• Normalized TT: %.2f%n", process.getNormalizedTurnaroundTime());

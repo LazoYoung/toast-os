@@ -13,6 +13,7 @@ public class ToastProcessor implements Processor {
     private ToastProcess process;
     private double powerConsumed = 0;
     private boolean bootRequired = true;
+    private int currentTime = 0;
     private int completionListenerIdx;
 
     public ToastProcessor(Core core) {
@@ -31,16 +32,18 @@ public class ToastProcessor implements Processor {
 
         this.process = (ToastProcess) process;
         this.completionListenerIdx = this.process.addCompletionListener(this::halt);
+
+        this.process.assign(this);
     }
 
     @Override
     public Process halt() {
-        if (process == null) return null;
+        if (this.process == null) return null;
 
-        Process halted = process;
-        process = null;
+        ToastProcess halted = this.process;
+        this.process = null;
         halted.halt();
-        halted.removeCompletionListener(completionListenerIdx);
+        halted.removeCompletionListener(this.completionListenerIdx);
         return halted;
     }
 
@@ -75,6 +78,14 @@ public class ToastProcessor implements Processor {
             return (this.id == other.id);
         }
         return false;
+    }
+
+    public int getCurrentTime() {
+        return currentTime;
+    }
+
+    public void updateTime(int time) {
+        this.currentTime = time;
     }
 
     /**
