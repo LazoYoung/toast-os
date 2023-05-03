@@ -11,6 +11,6 @@ public class AppConfig {
     }
 
     public Algorithm algorithm(int timeQuantum, double initPower) {
-        return new HighResponseRatioNext();
+        return new FirstComeFirstService();
     }
 }
