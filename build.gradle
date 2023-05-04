@@ -32,6 +32,10 @@ repositories {
     mavenCentral()
 }
 
+dependencies {
+    implementation 'io.github.palexdev:materialfx:11.16.1'
+}
+
 test {
     useJUnitPlatform()
 }
