@@ -3,22 +3,24 @@ package toast.impl;
 import toast.api.Process;
 import toast.api.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("removal")
 public class ToastScheduler implements Scheduler {
     // todo deprecated element
     public final LinkedList<Process> readyQueue = new LinkedList<>();
-
     private final List<Processor> processorList;
     private final List<Process> processList;
-
-    private final Timer timer = new Timer();
-
     private final Algorithm algorithm;
-
     private ToastTask task = null;
+    private ScheduledFuture<?> taskFuture = null;
 
     private boolean started = false;
 
@@ -53,9 +55,9 @@ public class ToastScheduler implements Scheduler {
 
         started = true;
         task = new ToastTask(this, algorithm);
-
+        taskFuture = Executors.newSingleThreadScheduledExecutor()
+                .scheduleAtFixedRate(task, 0L, 1, TimeUnit.SECONDS);
         algorithm.init(this);
-        timer.scheduleAtFixedRate(task, 0L, 1000L);
     }
 
     @Override
@@ -66,6 +68,7 @@ public class ToastScheduler implements Scheduler {
 
         started = false;
         task.finish();
+        taskFuture.cancel(false);
     }
 
     @Override
@@ -104,6 +107,11 @@ public class ToastScheduler implements Scheduler {
     }
 
     @Override
+    public List<Process> getProcessList() {
+        return processList;
+    }
+
+    @Override
     public void dispatch(Processor processor, Process process) {
         validateProcessor(processor, false);
         validateProcess(process);
@@ -132,8 +140,8 @@ public class ToastScheduler implements Scheduler {
         readyQueue.addLast(halted);
     }
 
-    public List<Process> getProcessList() {
-        return processList;
+    public void addTickListener(Runnable runnable) {
+        task.addTickListener(runnable);
     }
 
     private void validateProcessor(Processor processor, boolean preempt) {
