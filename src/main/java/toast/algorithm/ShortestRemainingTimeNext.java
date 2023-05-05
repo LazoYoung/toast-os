@@ -4,6 +4,8 @@ import toast.api.Algorithm;
 import toast.api.Process;
 import toast.api.Processor;
 import toast.api.Scheduler;
+import toast.event.ToastEvent;
+import toast.event.process.ProcessPreemptEvent;
 
 import java.util.Comparator;
 import java.util.Iterator;
@@ -22,20 +24,19 @@ public class ShortestRemainingTimeNext implements Algorithm {
     @Override
     public void onProcessReady(Process process) {
         this.readyQueue.add(process);
-        process.addCompletionListener(() -> System.out.printf("│[SRTN] Process #%d completed%n", process.getId()));
     }
 
     @Override
     public void run(Scheduler scheduler) {
-        Iterator<Processor> processors = scheduler.getProcessorList().iterator();
+        Iterator<Processor> processors = scheduler.getActiveProcessorList().iterator();
 
         if(!this.readyQueue.isEmpty()) {
             runWith(scheduler, this.readyQueue);
         }
-        runWith(this.readyQueue, processors);
+        runWith(this.readyQueue, processors, scheduler);
     }
 
-    private static void runWith(PriorityQueue<Process> processPQ, Iterator<Processor> processors) {
+    private static void runWith(PriorityQueue<Process> processPQ, Iterator<Processor> processors, Scheduler scheduler) {
         while(processors.hasNext() && !processPQ.isEmpty()) {
             Processor currentProcessor = processors.next();
 
@@ -43,11 +44,11 @@ public class ShortestRemainingTimeNext implements Algorithm {
                 continue;
             }
 
-            preempt(processPQ, currentProcessor);
+            preempt(processPQ, currentProcessor, scheduler);
         }
     }
 
-    private static void preempt(PriorityQueue<Process> processPQ, Processor currentProcessor) {
+    private static void preempt(PriorityQueue<Process> processPQ, Processor currentProcessor, Scheduler scheduler) {
         Optional<Process> runningProcess = currentProcessor.getRunningProcess();
 
         if(runningProcess.isEmpty()) {
@@ -59,9 +60,15 @@ public class ShortestRemainingTimeNext implements Algorithm {
             return;
         }
 
-        processPQ.add(runningProcess.get());
-        currentProcessor.halt();
-        dispatch(currentProcessor, processPQ.poll());
+        Process halted = currentProcessor.halt();
+        processPQ.add(halted);
+        Process nextProcess = processPQ.poll();
+        dispatch(currentProcessor, nextProcess);
+
+        // dispatch event
+        int time = scheduler.getElapsedTime();
+        var event = new ProcessPreemptEvent(halted, time, nextProcess);
+        ToastEvent.dispatch(event.getClass(), event);
     }
 
     private static boolean hasShortTime(Process peekedProcess, Process runProcess) {
@@ -81,10 +88,6 @@ public class ShortestRemainingTimeNext implements Algorithm {
 
     private static void dispatch(Processor idleProcessor, Process nextProcess) {
         idleProcessor.dispatch(nextProcess);
-        String coreName = idleProcessor.getCore().getName();
-        int pid = nextProcess.getId();
-
-        System.out.printf("│[SRTN] Dispatched process #%d to %s%n", pid, coreName);
     }
 
     private static boolean canExecute(PriorityQueue<Process> processorPQ, Iterator<Processor> idleProcessorIterator) {
