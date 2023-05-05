@@ -1,5 +1,10 @@
 package toast;
 
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 import toast.api.Core;
 import toast.configuration.AppConfig;
 import toast.impl.ToastProcess;
@@ -10,8 +15,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class Main {
+public class MainApp extends Application {
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        Parent root = FXMLLoader.load(getClass().getResource("scene.fxml"));
+        Scene scene = new Scene(root);
+        scene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
+
+        primaryStage.setTitle("Process Scheduling Simulator");
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+
     public static void main(String[] args) {
+        Application.launch(args);
+
         Scanner scanner = new Scanner(System.in);
         List<ToastProcessor> coreList = getCoreList(scanner);
         List<ToastProcess> processList = getProcessList(scanner);
@@ -90,5 +108,4 @@ public class Main {
         System.out.print("│ Power threshold: ");
         return scanner.nextDouble();
     }
-
 }
