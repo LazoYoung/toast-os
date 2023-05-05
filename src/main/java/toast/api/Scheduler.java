@@ -29,6 +29,13 @@ public interface Scheduler {
     List<Processor> getProcessorList();
 
     /**
+     * Returns every processes. <br>
+     * 프로세스 목록을 반환한다
+     * @return a {@link List} of all processes
+     */
+    List<Process> getProcessList();
+
+    /**
      * Tells how many seconds have passed after this Scheduler started. <br>
      * 스케줄러가 시작된 후 몇 초 지났는지 알려준다
      * @return number of seconds

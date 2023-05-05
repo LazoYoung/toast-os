@@ -10,6 +10,7 @@ import toast.configuration.AppConfig;
 import toast.impl.ToastProcess;
 import toast.impl.ToastProcessor;
 import toast.impl.ToastScheduler;
+import toast.ui.view.GanttChartView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,19 +18,7 @@ import java.util.Scanner;
 
 public class MainApp extends Application {
     @Override
-    public void start(Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("scene.fxml"));
-        Scene scene = new Scene(root);
-        scene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
-
-        primaryStage.setTitle("Process Scheduling Simulator");
-        primaryStage.setScene(scene);
-        primaryStage.show();
-    }
-
-    public static void main(String[] args) {
-        Application.launch(args);
-
+    public void start(Stage primaryStage) {
         Scanner scanner = new Scanner(System.in);
         List<ToastProcessor> coreList = getCoreList(scanner);
         List<ToastProcess> processList = getProcessList(scanner);
@@ -42,6 +31,27 @@ public class MainApp extends Application {
 
         ToastScheduler scheduler = scheduler(timeQuantum, initPower, powerThreshold, coreList, processList);
         scheduler.start();
+
+        try {
+//            Scene scene = getMainScene();
+            Scene scene = new Scene(new GanttChartView(scheduler));
+            primaryStage.setTitle("Process Scheduling Simulator");
+            primaryStage.setScene(scene);
+            primaryStage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void main(String[] args) {
+        Application.launch(MainApp.class, args);
+    }
+
+    private Scene getMainScene() throws Exception {
+        Parent root = FXMLLoader.load(getClass().getResource("scene.fxml"));
+        Scene scene = new Scene(root);
+        scene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
+        return scene;
     }
 
     private static ToastScheduler scheduler(int timeQuantum, double initPower, double powerThreshold, List<ToastProcessor> coreList, List<ToastProcess> processList) {
