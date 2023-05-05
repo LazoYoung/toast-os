@@ -65,13 +65,17 @@ public interface Process {
      * 선점시 제거해야 하는 리스너를 ID를 통해 제거한다
      *
      * @param listenerId 종료할 리스너 이벤트의 아이디
+     * @deprecated Replaced by {@link toast.event.process.ProcessCompleteEvent}
      */
+    @Deprecated(forRemoval = true)
     void removeCompletionListener(int listenerId);
 
     /**
      * Registers a Process Completion event listener.
      * @param listener Runnable to be called once the process finishes
      * @return listener id
+     * @deprecated Replaced by {@link toast.event.process.ProcessCompleteEvent}
      */
+    @Deprecated(forRemoval = true)
     int addCompletionListener(Runnable listener);
 }

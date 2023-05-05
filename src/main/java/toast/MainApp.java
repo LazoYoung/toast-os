@@ -87,9 +87,11 @@ public class MainApp extends Application {
         System.out.print("# of P core: ");
         int pCore = scanner.nextInt();
 
-        while (pCount-- > 0) {
-            Core core = (pCore-- > 0) ? Core.PERFORMANCE : Core.EFFICIENCY;
-            list.add(new ToastProcessor(core));
+        for (int i = 0; i < 4; i++) {
+            Core core = (pCore-- < 1) ? Core.EFFICIENCY : Core.PERFORMANCE;
+            boolean active = (pCount-- < 1);
+            ToastProcessor processor = new ToastProcessor(core, active);
+            list.add(processor);
         }
         return list;
     }

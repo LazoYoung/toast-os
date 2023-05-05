@@ -1,13 +1,17 @@
 package toast.impl;
 
 import toast.api.Process;
+import toast.event.ToastEvent;
+import toast.event.process.ProcessCompleteEvent;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("removal")
 public class ToastProcess implements Process {
     private static int nextId = 1;
 
+    @Deprecated
     private final List<Runnable> completionListeners = new ArrayList<>();
     private final int pid;
     private final int arrival;
@@ -108,8 +112,12 @@ public class ToastProcess implements Process {
         this.continuousBurstTime++;
 
         if (isComplete()) {
+            // Legacy dispatch (for removal)
             List<Runnable> listeners = new ArrayList<>(this.completionListeners);
             listeners.forEach(Runnable::run);
+
+            var event = new ProcessCompleteEvent(this, this.processor.getCurrentTime());
+            ToastEvent.dispatch(ProcessCompleteEvent.class, event);
         }
     }
 
