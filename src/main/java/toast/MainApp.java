@@ -89,7 +89,7 @@ public class MainApp extends Application {
 
         for (int i = 0; i < 4; i++) {
             Core core = (pCore-- < 1) ? Core.EFFICIENCY : Core.PERFORMANCE;
-            boolean active = (pCount-- < 1);
+            boolean active = (pCount-- > 0);
             ToastProcessor processor = new ToastProcessor(core, active);
             list.add(processor);
         }
