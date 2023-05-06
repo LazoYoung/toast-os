@@ -1,11 +1,10 @@
 package toast.impl;
 
+import java.util.ArrayList;
+import java.util.List;
 import toast.api.Process;
 import toast.event.ToastEvent;
 import toast.event.process.ProcessCompleteEvent;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @SuppressWarnings("removal")
 public class ToastProcess implements Process {
@@ -24,12 +23,16 @@ public class ToastProcess implements Process {
     private int waitingTime = 0;
     private int lastHaltTime;
 
-    public ToastProcess(int arrival, int workload, boolean isMission) {
-        this.pid = nextId++;
+    public ToastProcess(int pId, int arrival, int workload, boolean isMission) {
+        this.pid = pId;
         this.arrival = arrival;
         this.workload = workload;
         this.isMission = isMission;
         this.lastHaltTime = arrival;
+    }
+
+    public ToastProcess(int arrival, int workload, boolean isMission) {
+        this(nextId++, arrival, workload, isMission);
     }
 
     @Override
