@@ -26,6 +26,7 @@ public class ToastTask implements Runnable {
         this.algorithm = scheduler.getAlgorithm();
         this.newProcesses = new ArrayList<>(scheduler.getProcessList());
         this.tickListeners = new ArrayList<>();
+        algorithm.init(scheduler);
     }
 
     @Override

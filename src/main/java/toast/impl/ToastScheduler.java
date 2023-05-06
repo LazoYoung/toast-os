@@ -77,7 +77,6 @@ public class ToastScheduler implements Scheduler {
         this.task = new ToastTask(this);
         this.taskFuture = Executors.newSingleThreadScheduledExecutor()
                 .scheduleAtFixedRate(this.task, 0L, 1, TimeUnit.SECONDS);
-        algorithm.init(this);
 
         // dispatch event
         var event = new SchedulerStartEvent();
