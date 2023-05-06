@@ -6,10 +6,10 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import toast.api.Core;
-import toast.config.AppConfig;
 import toast.impl.ToastProcess;
 import toast.impl.ToastProcessor;
 import toast.impl.ToastScheduler;
+import toast.persistence.domain.AppConfig;
 
 import java.util.ArrayList;
 import java.util.List;

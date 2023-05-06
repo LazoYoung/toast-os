@@ -1,4 +1,4 @@
-package toast.config;
+package toast.persistence.domain;
 
 import toast.algorithm.CustomSatellite;
 import toast.api.Algorithm;
