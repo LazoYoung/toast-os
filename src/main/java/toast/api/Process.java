@@ -62,6 +62,12 @@ public interface Process {
     boolean isMission();
 
     /**
+     * 프로세스가 CPU Time 을 할당받아 실행중인지 여부를 반환한다
+     * @return true if this process is running on a processor
+     */
+    boolean isRunning();
+
+    /**
      * 선점시 제거해야 하는 리스너를 ID를 통해 제거한다
      *
      * @param listenerId 종료할 리스너 이벤트의 아이디

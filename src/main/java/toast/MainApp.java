@@ -5,12 +5,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import toast.algorithm.CustomSatellite;
 import toast.api.Core;
-import toast.config.AppConfig;
 import toast.impl.ToastProcess;
 import toast.impl.ToastProcessor;
 import toast.impl.ToastScheduler;
-import toast.ui.view.GanttChart;
+import toast.persistence.domain.SchedulerConfig;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,8 +19,26 @@ import java.util.Scanner;
 public class MainApp extends Application {
     @Override
     public void start(Stage primaryStage) {
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("scene.fxml"));
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
+
+            primaryStage.setTitle("Process Scheduling Simulator");
+            primaryStage.setScene(scene);
+            primaryStage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e.getMessage(), e.getCause());
+        }
+    }
+
+
+    public static void main(String[] args) {
+        Application.launch(args);
+
         Scanner scanner = new Scanner(System.in);
-        List<ToastProcessor> coreList = getCoreList(scanner);
+        List<ToastProcessor> processorList = getCoreList(scanner);
         List<ToastProcess> processList = getProcessList(scanner);
 
         int timeQuantum = getTimeQuantum(scanner);
@@ -29,35 +47,9 @@ public class MainApp extends Application {
         System.out.println();
         scanner.close();
 
-        ToastScheduler scheduler = scheduler(timeQuantum, initPower, powerThreshold, coreList, processList);
-        scheduler.start();
-
-        try {
-//            Scene scene = getMainScene();
-            Scene scene = new Scene(new GanttChart(scheduler));
-            primaryStage.setTitle("Process Scheduling Simulator");
-            primaryStage.setScene(scene);
-            primaryStage.show();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void main(String[] args) {
-        Application.launch(MainApp.class, args);
-    }
-
-    private Scene getMainScene() throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("scene.fxml"));
-        Scene scene = new Scene(root);
-        scene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
-        return scene;
-    }
-
-    private static ToastScheduler scheduler(int timeQuantum, double initPower, double powerThreshold, List<ToastProcessor> coreList, List<ToastProcess> processList) {
-        AppConfig appConfig = new AppConfig();
-
-        return new ToastScheduler(coreList, processList, appConfig.primaryCore(), appConfig.algorithm(timeQuantum, initPower, powerThreshold));
+        CustomSatellite algorithm = new CustomSatellite(timeQuantum, initPower, powerThreshold);
+        SchedulerConfig config = new SchedulerConfig(Core.PERFORMANCE, algorithm, processList, processorList);
+        ToastScheduler.getInstance().start(config);
     }
 
     private static List<ToastProcess> getProcessList(Scanner scanner) {

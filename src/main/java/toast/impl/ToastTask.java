@@ -21,9 +21,9 @@ public class ToastTask implements Runnable {
     private double powerConsumed = 0;
     private boolean finish = false;
 
-    public ToastTask(ToastScheduler scheduler, Algorithm algorithm) {
+    public ToastTask(ToastScheduler scheduler) {
         this.scheduler = scheduler;
-        this.algorithm = algorithm;
+        this.algorithm = scheduler.getAlgorithm();
         this.newProcesses = new ArrayList<>(scheduler.getProcessList());
         this.tickListeners = new ArrayList<>();
     }

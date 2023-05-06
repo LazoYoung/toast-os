@@ -1,7 +1,9 @@
 package toast.impl;
 
+import toast.api.Algorithm;
 import toast.api.Process;
-import toast.api.*;
+import toast.api.Processor;
+import toast.api.Scheduler;
 import toast.event.ToastEvent;
 import toast.event.process.ProcessCompleteEvent;
 import toast.event.process.ProcessDispatchEvent;
@@ -11,6 +13,7 @@ import toast.event.processor.ProcessorDeactivateEvent;
 import toast.event.processor.ProcessorRebootEvent;
 import toast.event.scheduler.SchedulerFinishEvent;
 import toast.event.scheduler.SchedulerStartEvent;
+import toast.persistence.domain.SchedulerConfig;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,26 +26,25 @@ import java.util.stream.Collectors;
 
 @SuppressWarnings("removal")
 public class ToastScheduler implements Scheduler {
+    private static final ToastScheduler instance = new ToastScheduler();
     // todo deprecated element
     public final LinkedList<Process> readyQueue = new LinkedList<>();
     private final List<Integer> listenerList = new ArrayList<>();
-    private final List<Processor> processorList;
-    private final List<Process> processList;
-    private final Algorithm algorithm;
+    private final List<Processor> processorList = new ArrayList<>();
+    private final List<Process> processList = new ArrayList<>();
+    private Algorithm algorithm = null;
     private ToastTask task = null;
     private ScheduledFuture<?> taskFuture = null;
-
     private boolean started = false;
 
-    public ToastScheduler(List<ToastProcessor> processorList, List<ToastProcess> processList, Core primaryCore,
-                          Algorithm algorithm) {
-        this.processorList = fillProcessors(primaryCore, processorList);
-        this.processList = fillProcesses(processList);
-        this.algorithm = algorithm;
+    public static ToastScheduler getInstance() {
+        return instance;
     }
 
-    private static List<Processor> fillProcessors(Core primaryCore, List<ToastProcessor> processorList) {
-        return processorList.stream()
+    private void populateProcessor(SchedulerConfig config) {
+        var primaryCore = config.getPrimaryCore();
+        var list = config.getProcessorList()
+                .stream()
                 .sorted((p1, p2) -> {
                     boolean pref1 = p1.getCore().equals(primaryCore);
                     boolean pref2 = p2.getCore().equals(primaryCore);
@@ -50,23 +52,31 @@ public class ToastScheduler implements Scheduler {
                 })
                 .map(e -> (Processor) e)
                 .toList();
+        this.processorList.clear();
+        this.processorList.addAll(list);
     }
 
-    private List<Process> fillProcesses(List<ToastProcess> processList) {
-        return processList.stream()
+    private void populateProcess(SchedulerConfig config) {
+        var list = config.getProcessList()
+                .stream()
                 .map(e -> (Process) e)
                 .toList();
+        this.processList.clear();
+        this.processList.addAll(list);
     }
 
-    public void start() {
-        if (started) {
+    public void start(SchedulerConfig config) {
+        if (this.started) {
             throw new IllegalStateException("Scheduler already started.");
         }
 
-        started = true;
-        task = new ToastTask(this, algorithm);
-        taskFuture = Executors.newSingleThreadScheduledExecutor()
-                .scheduleAtFixedRate(task, 0L, 1, TimeUnit.SECONDS);
+        populateProcessor(config);
+        populateProcess(config);
+        this.algorithm = config.getAlgorithm();
+        this.started = true;
+        this.task = new ToastTask(this);
+        this.taskFuture = Executors.newSingleThreadScheduledExecutor()
+                .scheduleAtFixedRate(this.task, 0L, 1, TimeUnit.SECONDS);
         algorithm.init(this);
 
         // dispatch event
@@ -238,5 +248,9 @@ public class ToastScheduler implements Scheduler {
     private void stopLoggingEvents() {
         this.listenerList.forEach(ToastEvent::unregisterListener);
         this.listenerList.clear();
+    }
+
+    public Algorithm getAlgorithm() {
+        return algorithm;
     }
 }
