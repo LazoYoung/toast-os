@@ -91,6 +91,15 @@ public class SettingController implements Initializable {
                 new TempProcess(Integer.parseInt(processId.getText()), Integer.parseInt(arrivalTime.getText()),
                         Integer.parseInt(workLoad.getText()), mission.getText())));
 
+        remove.setOnAction(event -> {
+            var item = table.getSelectionModel().getSelectedItem();
+            table.getItems().remove(item);
+        });
+
+        clear.setOnAction(event -> {
+            table.getItems().clear();
+        });
+
     }
 
     public static class TempProcess {
