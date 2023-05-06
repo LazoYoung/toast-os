@@ -18,7 +18,7 @@
         </Label>
     </children>
     <children>
-        <ChoiceBox layoutX="80.0" layoutY="91.0" />
+        <ChoiceBox fx:id="algorithmNameChoiceBox" layoutX="80.0" layoutY="91.0" />
         <Label layoutX="85.0" layoutY="62.0" prefHeight="17.0" prefWidth="71.0" text="Algorithm" />
     </children>
 </Pane>
