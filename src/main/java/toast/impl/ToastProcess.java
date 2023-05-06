@@ -12,7 +12,7 @@ public class ToastProcess implements Process {
 
     @Deprecated
     private final List<Runnable> completionListeners = new ArrayList<>();
-    private final int pid;
+    private final int id;
     private final int arrival;
     private final int workload;
     private final boolean isMission;
@@ -24,7 +24,7 @@ public class ToastProcess implements Process {
     private int lastHaltTime;
 
     public ToastProcess(int pId, int arrival, int workload, boolean isMission) {
-        this.pid = pId;
+        this.id = pId;
         this.arrival = arrival;
         this.workload = workload;
         this.isMission = isMission;
@@ -37,7 +37,7 @@ public class ToastProcess implements Process {
 
     @Override
     public int getId() {
-        return pid;
+        return id;
     }
 
     @Override
@@ -99,7 +99,7 @@ public class ToastProcess implements Process {
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof ToastProcess other) {
-            return (this.pid == other.pid);
+            return (this.id == other.id);
         }
         return false;
     }
