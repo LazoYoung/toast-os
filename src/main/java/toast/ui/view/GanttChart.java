@@ -16,10 +16,13 @@ public class GanttChart extends Pane {
 
     private final ToastScheduler scheduler;
     private final int timeSpan = 20;
-    private final int coreWidth = 150;
-    private final int rowHeight = 40;
     private final int cellStroke = 3;
-    private int timelineWidth;
+    private double coreWidth;
+    private double rowHeight;
+    private double bottomHeight;
+    private double timelineWidth;
+    private double coreFontSize;
+    private double timelineFontSize;
     private Canvas canvas;
 
     public GanttChart() {
@@ -30,10 +33,32 @@ public class GanttChart extends Pane {
         createView();
     }
 
+    public void setWidth(double width) {
+        setSize(width, getPrefHeight());
+    }
+
+    public void setHeight(double height) {
+        setSize(getPrefWidth(), height);
+    }
+
+    private void setSize(double width, double height) {
+        setPrefSize(width, height);
+        this.coreWidth = getPrefWidth() * 0.15;
+        this.rowHeight = getPrefHeight() * 0.18;
+        this.bottomHeight = rowHeight * 5;
+        this.timelineWidth = getPrefWidth() - this.coreWidth - 10;
+        this.coreFontSize = height * 0.08;
+        this.timelineFontSize = height * 0.07;
+        this.canvas.setWidth(width);
+        this.canvas.setHeight(height);
+        repaint();
+    }
+
     private void createView() {
-        setPrefSize(800, 230);
-        this.timelineWidth = (int) (getPrefWidth() - this.coreWidth);
-        this.canvas = new Canvas(getPrefWidth(), getPrefHeight());
+        double width = 800;
+        double height = 230;
+        this.canvas = new Canvas();
+        setSize(width, height);
         getChildren().add(this.canvas);
         repaint();
     }
@@ -47,15 +72,15 @@ public class GanttChart extends Pane {
         GraphicsContext g = this.canvas.getGraphicsContext2D();
         double width = this.canvas.getWidth();
         double height = this.canvas.getHeight();
-        int xMax = getTimelineX(this.timeSpan);
+        double xMax = getTimelineX(this.timeSpan);
         g.setFill(Color.WHITE);
         g.fillRect(0, 0, width, height);
         g.setStroke(Color.LIGHTGRAY);
         g.setLineWidth(this.cellStroke);
 
-        g.strokeLine(2, 2, 2, 199);
+        g.strokeLine(2, 2, 2, bottomHeight);
         g.strokeLine(2, 2, xMax, 2);
-        g.strokeLine(2, 199, xMax, 199);
+        g.strokeLine(2, bottomHeight, xMax, bottomHeight);
 
         for (int i = 1; i <= 4; i++) {
             g.strokeLine(2, this.rowHeight * i, xMax, this.rowHeight * i);
@@ -63,28 +88,28 @@ public class GanttChart extends Pane {
 
         g.setTextAlign(TextAlignment.CENTER);
         g.setTextBaseline(VPos.CENTER);
-        g.setFont(Font.font(16));
+        g.setFont(Font.font(coreFontSize));
         g.setFill(Color.DIMGRAY);
         g.fillText("Arrival Time", this.coreWidth / 2.0, this.rowHeight / 2.0, this.coreWidth);
         g.setFill(Color.BLACK);
 
         for (int i = 1; i <= 4; i++) {
-            g.fillText("OFF", this.coreWidth / 2.0, 20 + this.rowHeight * i, this.coreWidth);
+            g.fillText("OFF", this.coreWidth / 2.0, (2 * i + 1) * this.rowHeight / 2.0, this.coreWidth);
         }
     }
 
     private void drawTimeline() {
         GraphicsContext g = this.canvas.getGraphicsContext2D();
         g.setStroke(Color.LIGHTGRAY);
-        g.setFont(Font.font(14));
+        g.setFont(Font.font(timelineFontSize));
 
         g.setFill(Color.GRAY);
-        g.fillText(String.valueOf(getTime(0)), getTimelineX(0), 210);
-        g.fillText(String.valueOf(getTime(this.timeSpan)), getTimelineX(this.timeSpan), 210);
+        g.fillText(String.valueOf(getTime(0)), getTimelineX(0), bottomHeight + 10);
+        g.fillText(String.valueOf(getTime(this.timeSpan)), getTimelineX(this.timeSpan), bottomHeight + 10);
 
         for (int i = 0; i <= this.timeSpan; i++) {
-            int x = getTimelineX(i);
-            g.fillText(String.valueOf(getTime(i)), x, 210);
+            double x = getTimelineX(i);
+            g.fillText(String.valueOf(getTime(i)), x, bottomHeight + 10);
 
             if (i == 0 || i == this.timeSpan) {
                 g.setLineWidth(3);
@@ -94,20 +119,20 @@ public class GanttChart extends Pane {
                 g.setLineDashes(5, 5);
             }
 
-            g.strokeLine(x, 0, x, 199);
+            g.strokeLine(x, 0, x, bottomHeight);
         }
     }
 
     private void drawProcessBar() {
-        
+        // todo method stub
     }
 
-    private int getTimelineX(int index) {
+    private double getTimelineX(int index) {
         if (index < 0 || index > this.timeSpan) {
             throw new IllegalArgumentException("Timeline index out of range: " + index);
         }
 
-        int delta = this.timelineWidth / this.timeSpan;
+        double delta = this.timelineWidth / this.timeSpan;
         return this.coreWidth + delta * index;
     }
 
