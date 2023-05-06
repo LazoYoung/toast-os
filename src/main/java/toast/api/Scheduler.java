@@ -1,5 +1,7 @@
 package toast.api;
 
+import toast.event.scheduler.SchedulerFinishEvent;
+
 import java.util.List;
 
 public interface Scheduler {
@@ -8,11 +10,18 @@ public interface Scheduler {
      * Returns a ready queue sorted by arrival time of each process. <br>
      * Modifying this queue will throw {@link UnsupportedOperationException}. <br>
      * 프로세스가 도착한 순서대로 정렬된 대기열을 반환한다
-     * @deprecated Replaced by {@link toast.algorithm.Algorithm#onProcessReady(Process)} since issue-32
+     * @deprecated Replaced by {@link toast.api.Algorithm#onProcessReady(Process)} since issue-32
      * @return {@link List} of every {@link Process} waiting to be dispatched
      */
     @Deprecated(forRemoval = true)
     List<Process> getReadyQueue();
+
+    /**
+     * Returns every processor. <br>
+     * 모든 프로세서 목록을 반환한다
+     * @return a {@link List} of all processors
+     */
+    List<Processor> getProcessorList();
 
     /**
      * Returns processors having no process running. <br>
@@ -22,11 +31,18 @@ public interface Scheduler {
     List<Processor> getIdleProcessorList();
 
     /**
-     * Returns every processor. <br>
-     * 프로세서 목록을 반환한다
-     * @return a {@link List} of all processors
+     * Returns available processors. <br>
+     * 사용 가능한 프로세서 목록을 반환한다
+     * @return a {@link List} of available processors
      */
-    List<Processor> getProcessorList();
+    List<Processor> getActiveProcessorList();
+
+    /**
+     * Returns every processes. <br>
+     * 프로세스 목록을 반환한다
+     * @return a {@link List} of all processes
+     */
+    List<Process> getProcessList();
 
     /**
      * Tells how many seconds have passed after this Scheduler started. <br>
@@ -80,8 +96,9 @@ public interface Scheduler {
     /**
      * Finish the process scheduling simulation. <br>
      * 프로세스 스케줄링 시뮬레이터를 종료한다
+     * @param cause The cause of this event
      */
-    void finish();
+    void finish(SchedulerFinishEvent.Cause cause);
 
     /**
      * 실행중인 프로세스를 종료시키고 큐의 맨 뒤에 넣는다.
