@@ -1,9 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
+<?import io.github.palexdev.materialfx.controls.MFXButton?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.text.TextFlow?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2-ea"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="toast.FXMLController">
-   <TextFlow layoutX="112.0" layoutY="52.0" prefHeight="200.0" prefWidth="200.0"/>
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="toast.ui.controller.FXMLController">
+   <AnchorPane layoutX="-6.0" prefHeight="48.0" prefWidth="722.0" style="-fx-background-color: #343434;" />
+   <AnchorPane layoutY="48.0" prefHeight="432.0" prefWidth="46.0" style="-fx-background-color: #787878;">
+      <children>
+         <VBox prefHeight="442.0" prefWidth="122.0">
+            <children>
+               <MFXButton onAction="#page1" prefHeight="34.0" prefWidth="127.0" text="P1" />
+               <MFXButton onAction="#page2" prefHeight="34.0" prefWidth="127.0" text="P2" />
+               <MFXButton onAction="#page3" prefHeight="34.0" prefWidth="127.0" text="P3" />
+            </children>
+         </VBox>
+      </children>
+   </AnchorPane>
+   <AnchorPane layoutX="122.0" layoutY="48.0" prefHeight="442.0" prefWidth="585.0">
+      <children>
+         <StackPane fx:id="contentArea" prefHeight="0.0" prefWidth="0.0" />
+      </children>
+   </AnchorPane>
 </AnchorPane>
