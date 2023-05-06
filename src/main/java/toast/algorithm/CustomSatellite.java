@@ -2,6 +2,11 @@ package toast.algorithm;
 
 import toast.api.Process;
 import toast.api.*;
+import toast.event.ToastEvent;
+import toast.event.process.ProcessCompleteEvent;
+import toast.event.process.ProcessPreemptEvent;
+import toast.event.processor.ProcessorDeactivateEvent;
+import toast.event.scheduler.SchedulerFinishEvent;
 
 import java.util.*;
 
@@ -9,10 +14,10 @@ public class CustomSatellite implements Algorithm {
 
     private Deque<Process> missionQueue;
     private Deque<Process> standardQueue;
-    private List<Processor> activeProcessors;
     private final double initPower;
     private final double powerMargin;
     private final int timeQuantum;
+    private Scheduler scheduler;
     private Processor missionCore;
     private Processor monoCore;
     private boolean powerMode;
@@ -33,15 +38,15 @@ public class CustomSatellite implements Algorithm {
 
     @Override
     public void init(Scheduler scheduler) {
-        List<Processor> pList = scheduler.getProcessorList();
+        List<Processor> pList = scheduler.getActiveProcessorList();
 
         if (pList.isEmpty()) {
             throw new RuntimeException("Failed to initialize: no processor available");
         }
 
+        this.scheduler = scheduler;
         this.missionQueue = new ArrayDeque<>();
         this.standardQueue = new ArrayDeque<>();
-        this.activeProcessors = new ArrayList<>(scheduler.getProcessorList());
         this.singleCoreTimer = 0;
         this.singleCoreFlag = true;
         this.singleCoreMode = (pList.size() == 1);
@@ -55,30 +60,29 @@ public class CustomSatellite implements Algorithm {
 
     @Override
     public void run(Scheduler scheduler) {
-        if (getAvailablePower(scheduler) <= 0) {
-            scheduler.finish();
-            System.out.println("│ Battery discharged! Shutting down...");
+        if (getAvailablePower() <= 0) {
+            scheduler.finish(SchedulerFinishEvent.Cause.POWER_LOSS);
             return;
         }
 
         if (this.singleCoreMode) {
             runSingleCore();
         } else {
-            runMultiCore(scheduler);
+            runMultiCore();
         }
     }
 
     @Override
     public void onProcessReady(Process process) {
         enqueueProcess(process);
-        process.addCompletionListener(() -> onProcessComplete(process));
+        ToastEvent.registerListener(ProcessCompleteEvent.class, (ProcessCompleteEvent event) -> onProcessComplete(event));
     }
 
-    private void onProcessComplete(Process process) {
+    private void onProcessComplete(ProcessCompleteEvent event) {
+        Process process = event.getProcess();
         if (this.singleCoreMode) {
             this.singleCoreTimer += process.getContinuousBurstTime();
         }
-        System.out.printf("│ Process #%d completed%n", process.getId());
     }
 
     private void runSingleCore() {
@@ -120,12 +124,12 @@ public class CustomSatellite implements Algorithm {
         }
     }
 
-    private void runMultiCore(Scheduler scheduler) {
-        if (!this.powerMode && isPowerLow(scheduler)) {
+    private void runMultiCore() {
+        if (!this.powerMode && isPowerLow()) {
             enterPowerMode();
         }
 
-        for (Processor processor : getIdleProcessors()) {
+        for (Processor processor : this.scheduler.getIdleProcessorList()) {
             boolean mission = processor.equals(missionCore);
 
             if (hasNextProcess(mission)) {
@@ -146,7 +150,8 @@ public class CustomSatellite implements Algorithm {
     }
 
     private void enterPowerMode() {
-        List<Processor> standardCores = this.activeProcessors.stream()
+        List<Processor> standardCores = this.scheduler.getActiveProcessorList()
+                .stream()
                 .filter(p -> p != missionCore)
                 .toList();
         this.monoCore = standardCores.stream()
@@ -167,8 +172,7 @@ public class CustomSatellite implements Algorithm {
             Process halted = processor.halt();
             this.standardQueue.addLast(halted);
         }
-        this.activeProcessors.remove(processor);
-        System.out.printf("│ Processor #%d deactivated%n", processor.getId());
+        processor.deactivate(ProcessorDeactivateEvent.Cause.POWER_SAVING);
     }
 
     private boolean hasNextProcess(boolean mission) {
@@ -179,23 +183,18 @@ public class CustomSatellite implements Algorithm {
         return mission ? this.missionQueue.pollFirst() : this.standardQueue.pollFirst();
     }
 
-    private boolean isPowerLow(Scheduler scheduler) {
-        return getAvailablePower(scheduler) < this.powerMargin;
+    private boolean isPowerLow() {
+        return getAvailablePower() < this.powerMargin;
     }
 
     /**
      * @return List of standard Processors that used up all of their time quantum
      */
     private List<Processor> getTimeoutProcessors() {
-        return this.activeProcessors.stream()
+        return this.scheduler.getActiveProcessorList()
+                .stream()
                 .filter(this::isTimeoutProcessor)
                 .sorted(getCoreAgeComparator().reversed())
-                .toList();
-    }
-
-    private List<Processor> getIdleProcessors() {
-        return this.activeProcessors.stream()
-                .filter(Processor::isIdle)
                 .toList();
     }
 
@@ -212,8 +211,8 @@ public class CustomSatellite implements Algorithm {
         };
     }
 
-    private double getAvailablePower(Scheduler scheduler) {
-        return this.initPower - scheduler.getPowerConsumed();
+    private double getAvailablePower() {
+        return this.initPower - this.scheduler.getPowerConsumed();
     }
 
     private boolean isSingleCoreTimeout(Process process) {
@@ -255,10 +254,6 @@ public class CustomSatellite implements Algorithm {
 
     private void dispatch(Processor processor, Process process) {
         processor.dispatch(process);
-
-        int pid = process.getId();
-        int cpuId = processor.getId();
-        System.out.printf("│ Dispatched process #%d to core #%d%n", pid, cpuId);
     }
 
     private Process preempt(Processor processor, Process process) {
@@ -266,12 +261,16 @@ public class CustomSatellite implements Algorithm {
             throw new IllegalStateException("Failed to preempt: processor not running");
         }
 
-        Process preempted = processor.halt();
-        this.singleCoreTimer += preempted.getContinuousBurstTime();
+        Process halted = processor.halt();
+        this.singleCoreTimer += halted.getContinuousBurstTime();
 
         processor.dispatch(process);
-        System.out.printf("│ Process #%d preempted by #%d%n", preempted.getId(), process.getId());
 
-        return preempted;
+        // dispatch event
+        int time = this.scheduler.getElapsedTime();
+        var event = new ProcessPreemptEvent(halted, time, process);
+        ToastEvent.dispatch(event.getClass(), event);
+
+        return halted;
     }
 }

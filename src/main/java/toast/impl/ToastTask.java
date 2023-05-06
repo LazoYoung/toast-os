@@ -3,16 +3,20 @@ package toast.impl;
 import toast.api.Algorithm;
 import toast.api.Process;
 import toast.api.Processor;
+import toast.event.ToastEvent;
+import toast.event.process.ProcessReadyEvent;
+import toast.event.process.ProcessRunEvent;
+import toast.event.scheduler.SchedulerFinishEvent;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.TimerTask;
 
-public class ToastTask extends TimerTask {
+public class ToastTask implements Runnable {
     private final ToastScheduler scheduler;
     private final Algorithm algorithm;
     private final List<Process> newProcesses;
+    private final List<Runnable> tickListeners;
     private int elapsedTime = 0;
     private double powerConsumed = 0;
     private boolean finish = false;
@@ -20,7 +24,8 @@ public class ToastTask extends TimerTask {
     public ToastTask(ToastScheduler scheduler, Algorithm algorithm) {
         this.scheduler = scheduler;
         this.algorithm = algorithm;
-        newProcesses = new ArrayList<>(scheduler.getProcessList());
+        this.newProcesses = new ArrayList<>(scheduler.getProcessList());
+        this.tickListeners = new ArrayList<>();
     }
 
     @Override
@@ -32,7 +37,7 @@ public class ToastTask extends TimerTask {
         if (finish) return;
 
         if (newProcesses.isEmpty() && isIdle()) {
-            scheduler.finish();
+            scheduler.finish(SchedulerFinishEvent.Cause.COMPLETE);
             System.out.print("└ End of simulation\n\n");
             printResult();
         } else {
@@ -41,6 +46,8 @@ public class ToastTask extends TimerTask {
             syncProcessorTime();
             System.out.printf("└ After run: %ds%n\n", elapsedTime);
         }
+
+        tickListeners.forEach(Runnable::run);
     }
 
     private void syncProcessorTime() {
@@ -59,12 +66,15 @@ public class ToastTask extends TimerTask {
     }
 
     public void finish() {
-        this.cancel();
         this.finish = true;
     }
 
+    public void addTickListener(Runnable runnable) {
+        this.tickListeners.add(runnable);
+    }
+
     private boolean isIdle() {
-        return scheduler.getProcessorList()
+        return scheduler.getActiveProcessorList()
                 .stream()
                 .allMatch(Processor::isIdle);
     }
@@ -76,6 +86,8 @@ public class ToastTask extends TimerTask {
             Process process = iter.next();
 
             if (elapsedTime >= process.getArrivalTime()) {
+                var event = new ProcessReadyEvent(process, elapsedTime);
+                ToastEvent.dispatch(event.getClass(), event);
                 algorithm.onProcessReady(process);
                 iter.remove();
             }
@@ -83,9 +95,14 @@ public class ToastTask extends TimerTask {
     }
 
     private void runProcessors() {
-        for (Processor p : scheduler.getProcessorList()) {
+        for (Processor p : scheduler.getActiveProcessorList()) {
             ToastProcessor processor = (ToastProcessor) p;
             powerConsumed += processor.run();
+
+            processor.getRunningProcess().ifPresent(process -> {
+                var event = new ProcessRunEvent(process, elapsedTime, processor);
+                ToastEvent.dispatch(event.getClass(), event);
+            });
         }
     }
 

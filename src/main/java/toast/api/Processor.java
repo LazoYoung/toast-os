@@ -1,5 +1,7 @@
 package toast.api;
 
+import toast.event.processor.ProcessorDeactivateEvent;
+
 import java.util.Optional;
 
 public interface Processor {
@@ -10,6 +12,13 @@ public interface Processor {
      * @return false if a process is running
      */
     boolean isIdle();
+
+    /**
+     * Tells if this processor is currently available. <br>
+     * 현재 프로세서가 사용 가능한지 반환한다
+     * @return false if this processor is deactivated
+     */
+    boolean isActive();
 
     /**
      * 프로세서 고유 아이디를 반환한다
@@ -53,5 +62,12 @@ public interface Processor {
      * @return The halted process
      */
     Process halt();
+
+    /**
+     * Deactivate this processor. <br>
+     * 프로세스를 비활성화한다.
+     * @param cause Cause of this event
+     */
+    void deactivate(ProcessorDeactivateEvent.Cause cause);
 
 }
