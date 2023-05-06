@@ -11,12 +11,15 @@ import javafx.scene.layout.StackPane;
 
 public class FXMLController implements Initializable {
 
+    public static final String MAIN = "Main";
+    public static final String SETTING = "Setting";
+    public static final String RUN_AND_RESULT = "RunAndResult";
     @FXML
     private StackPane contentArea;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        changePage("page1");
+        changePage(MAIN);
     }
 
     private void changePage(String fileName) {
@@ -30,16 +33,16 @@ public class FXMLController implements Initializable {
         }
     }
 
-    public void page1() {
-        changePage("page1");
+    public void main() {
+        changePage(MAIN);
     }
 
-    public void page2() {
-        changePage("page2");
+    public void setting() {
+        changePage(SETTING);
     }
 
-    public void page3() {
-        changePage("page3");
+    public void runAndResult() {
+        changePage(RUN_AND_RESULT);
     }
 
 

@@ -12,9 +12,9 @@
       <children>
          <VBox prefHeight="442.0" prefWidth="122.0">
             <children>
-               <MFXButton onAction="#page1" prefHeight="34.0" prefWidth="127.0" text="P1" />
-               <MFXButton onAction="#page2" prefHeight="34.0" prefWidth="127.0" text="P2" />
-               <MFXButton onAction="#page3" prefHeight="34.0" prefWidth="127.0" text="P3" />
+               <MFXButton onAction="#main" prefHeight="34.0" prefWidth="127.0" text="P1" />
+               <MFXButton onAction="#setting" prefHeight="34.0" prefWidth="127.0" text="P2" />
+               <MFXButton onAction="#runAndResult" prefHeight="34.0" prefWidth="127.0" text="P3" />
             </children>
          </VBox>
       </children>
