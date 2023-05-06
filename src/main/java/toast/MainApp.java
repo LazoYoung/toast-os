@@ -17,15 +17,21 @@ import java.util.Scanner;
 
 public class MainApp extends Application {
     @Override
-    public void start(Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("scene.fxml"));
-        Scene scene = new Scene(root);
-        scene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
+    public void start(Stage primaryStage) {
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("scene.fxml"));
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
 
-        primaryStage.setTitle("Process Scheduling Simulator");
-        primaryStage.setScene(scene);
-        primaryStage.show();
+            primaryStage.setTitle("Process Scheduling Simulator");
+            primaryStage.setScene(scene);
+            primaryStage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e.getMessage(), e.getCause());
+        }
     }
+
 
     public static void main(String[] args) {
         Application.launch(args);
