@@ -1,4 +1,4 @@
-package toast;
+package toast.ui.controller;
 
 public class FXMLController {
 }
