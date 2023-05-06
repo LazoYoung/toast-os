@@ -1,4 +1,4 @@
-package toast.configuration;
+package toast.config;
 
 import toast.algorithm.CustomSatellite;
 import toast.api.Algorithm;

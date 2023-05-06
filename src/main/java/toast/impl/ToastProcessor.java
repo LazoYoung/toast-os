@@ -3,6 +3,11 @@ package toast.impl;
 import toast.api.Core;
 import toast.api.Process;
 import toast.api.Processor;
+import toast.event.ToastEvent;
+import toast.event.process.ProcessCompleteEvent;
+import toast.event.process.ProcessDispatchEvent;
+import toast.event.processor.ProcessorDeactivateEvent;
+import toast.event.processor.ProcessorRebootEvent;
 
 import java.util.Optional;
 
@@ -13,12 +18,14 @@ public class ToastProcessor implements Processor {
     private ToastProcess process;
     private double powerConsumed = 0;
     private boolean bootRequired = true;
+    private boolean active;
     private int currentTime = 0;
     private int completionListenerIdx;
 
-    public ToastProcessor(Core core) {
+    public ToastProcessor(Core core, boolean active) {
         this.id = newId++;
         this.core = core;
+        this.active = active;
     }
 
     @Override
@@ -29,11 +36,17 @@ public class ToastProcessor implements Processor {
         if (this.process != null) {
             throw new IllegalStateException("Failed to dispatch: processor is already running");
         }
+        if (!this.active) {
+            throw new IllegalStateException("Failed to dispatch: processor is deactivated");
+        }
 
         this.process = (ToastProcess) process;
-        this.completionListenerIdx = this.process.addCompletionListener(this::halt);
+        this.completionListenerIdx = ToastEvent.registerListener(ProcessCompleteEvent.class, (event) -> halt());
 
         this.process.assign(this);
+
+        var event = new ProcessDispatchEvent(process, this.currentTime, this);
+        ToastEvent.dispatch(event.getClass(), event);
     }
 
     @Override
@@ -43,8 +56,21 @@ public class ToastProcessor implements Processor {
         ToastProcess halted = this.process;
         this.process = null;
         halted.halt();
-        halted.removeCompletionListener(this.completionListenerIdx);
+        ToastEvent.unregisterListener(this.completionListenerIdx);
         return halted;
+    }
+
+    @Override
+    public void deactivate(ProcessorDeactivateEvent.Cause cause) {
+        active = false;
+
+        var event = new ProcessorDeactivateEvent(this, this.currentTime, cause);
+        ToastEvent.dispatch(event.getClass(), event);
+    }
+
+    @Override
+    public boolean isActive() {
+        return active;
     }
 
     @Override
@@ -102,6 +128,9 @@ public class ToastProcessor implements Processor {
 
         if (this.bootRequired) {
             power += core.getWattPerBoot();
+
+            var event = new ProcessorRebootEvent(this, this.currentTime);
+            ToastEvent.dispatch(event.getClass(), event);
         }
 
         this.powerConsumed += power;

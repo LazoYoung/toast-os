@@ -3,6 +3,10 @@ package toast.impl;
 import toast.api.Algorithm;
 import toast.api.Process;
 import toast.api.Processor;
+import toast.event.ToastEvent;
+import toast.event.process.ProcessReadyEvent;
+import toast.event.process.ProcessRunEvent;
+import toast.event.scheduler.SchedulerFinishEvent;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -33,7 +37,7 @@ public class ToastTask implements Runnable {
         if (finish) return;
 
         if (newProcesses.isEmpty() && isIdle()) {
-            scheduler.finish();
+            scheduler.finish(SchedulerFinishEvent.Cause.COMPLETE);
             System.out.print("└ End of simulation\n\n");
             printResult();
         } else {
@@ -70,7 +74,7 @@ public class ToastTask implements Runnable {
     }
 
     private boolean isIdle() {
-        return scheduler.getProcessorList()
+        return scheduler.getActiveProcessorList()
                 .stream()
                 .allMatch(Processor::isIdle);
     }
@@ -82,6 +86,8 @@ public class ToastTask implements Runnable {
             Process process = iter.next();
 
             if (elapsedTime >= process.getArrivalTime()) {
+                var event = new ProcessReadyEvent(process, elapsedTime);
+                ToastEvent.dispatch(event.getClass(), event);
                 algorithm.onProcessReady(process);
                 iter.remove();
             }
@@ -89,9 +95,14 @@ public class ToastTask implements Runnable {
     }
 
     private void runProcessors() {
-        for (Processor p : scheduler.getProcessorList()) {
+        for (Processor p : scheduler.getActiveProcessorList()) {
             ToastProcessor processor = (ToastProcessor) p;
             powerConsumed += processor.run();
+
+            processor.getRunningProcess().ifPresent(process -> {
+                var event = new ProcessRunEvent(process, elapsedTime, processor);
+                ToastEvent.dispatch(event.getClass(), event);
+            });
         }
     }
 

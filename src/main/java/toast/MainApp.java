@@ -6,7 +6,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import toast.api.Core;
-import toast.configuration.AppConfig;
+import toast.config.AppConfig;
 import toast.impl.ToastProcess;
 import toast.impl.ToastProcessor;
 import toast.impl.ToastScheduler;
@@ -97,9 +97,11 @@ public class MainApp extends Application {
         System.out.print("# of P core: ");
         int pCore = scanner.nextInt();
 
-        while (pCount-- > 0) {
-            Core core = (pCore-- > 0) ? Core.PERFORMANCE : Core.EFFICIENCY;
-            list.add(new ToastProcessor(core));
+        for (int i = 0; i < 4; i++) {
+            Core core = (pCore-- < 1) ? Core.EFFICIENCY : Core.PERFORMANCE;
+            boolean active = (pCount-- > 0);
+            ToastProcessor processor = new ToastProcessor(core, active);
+            list.add(processor);
         }
         return list;
     }

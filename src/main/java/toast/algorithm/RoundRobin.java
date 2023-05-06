@@ -4,6 +4,8 @@ import toast.api.Algorithm;
 import toast.api.Process;
 import toast.api.Processor;
 import toast.api.Scheduler;
+import toast.event.ToastEvent;
+import toast.event.process.ProcessPreemptEvent;
 
 import java.util.ArrayDeque;
 import java.util.Iterator;
@@ -30,15 +32,13 @@ public class RoundRobin implements Algorithm {
 
     @Override
     public void run(Scheduler scheduler) {
-        List<Processor> timeOverProcessors = getTimeOverProcessors(scheduler.getProcessorList());
+        List<Processor> timeOverProcessors = getTimeOverProcessors(scheduler.getActiveProcessorList());
 
-        runWith(timeOverProcessors);
+        runWith(timeOverProcessors, scheduler);
 
         if (!this.readyQueue.isEmpty()) {
             runWith(scheduler.getIdleProcessorList().iterator());
         }
-
-        System.out.printf("│[SPN] Elapsed time: %ds%n", scheduler.getElapsedTime());
     }
 
     private void runWith(Iterator<Processor> idleProcessorIterator) {
@@ -50,12 +50,18 @@ public class RoundRobin implements Algorithm {
         }
     }
 
-    private void runWith(List<Processor> timeOverProcessors) {
+    private void runWith(List<Processor> timeOverProcessors, Scheduler scheduler) {
         for (Processor timeOverProcessor : timeOverProcessors) {
 
-            this.readyQueue.add(timeOverProcessor.halt());
+            Process halted = timeOverProcessor.halt();
+            this.readyQueue.add(halted);
             Process nextProcess = this.readyQueue.poll();
             dispatch(timeOverProcessor, nextProcess);
+
+            // dispatch event
+            int time = scheduler.getElapsedTime();
+            var event = new ProcessPreemptEvent(halted, time, nextProcess);
+            ToastEvent.dispatch(event.getClass(), event);
         }
     }
 
@@ -68,18 +74,6 @@ public class RoundRobin implements Algorithm {
 
     private static void dispatch(Processor idleProcessor, Process nextProcess) {
         idleProcessor.dispatch(nextProcess);
-        String coreName = idleProcessor.getCore().getName();
-        int pid = nextProcess.getId();
-
-        if (isFirstRun(nextProcess)) {
-            nextProcess.addCompletionListener(() -> System.out.printf("│[SPN] Process #%d completed%n", pid));
-        }
-
-        System.out.printf("│[SPN] Dispatched process #%d to %s%n", pid, coreName);
-    }
-
-    private static boolean isFirstRun(Process nextProcess) {
-        return nextProcess.getWorkload() == nextProcess.getRemainingWorkload();
     }
 
     private boolean canExecute(Iterator<Processor> idleProcessorIterator) {

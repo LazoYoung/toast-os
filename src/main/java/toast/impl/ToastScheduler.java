@@ -2,6 +2,15 @@ package toast.impl;
 
 import toast.api.Process;
 import toast.api.*;
+import toast.event.ToastEvent;
+import toast.event.process.ProcessCompleteEvent;
+import toast.event.process.ProcessDispatchEvent;
+import toast.event.process.ProcessPreemptEvent;
+import toast.event.process.ProcessReadyEvent;
+import toast.event.processor.ProcessorDeactivateEvent;
+import toast.event.processor.ProcessorRebootEvent;
+import toast.event.scheduler.SchedulerFinishEvent;
+import toast.event.scheduler.SchedulerStartEvent;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,6 +25,7 @@ import java.util.stream.Collectors;
 public class ToastScheduler implements Scheduler {
     // todo deprecated element
     public final LinkedList<Process> readyQueue = new LinkedList<>();
+    private final List<Integer> listenerList = new ArrayList<>();
     private final List<Processor> processorList;
     private final List<Process> processList;
     private final Algorithm algorithm;
@@ -58,10 +68,17 @@ public class ToastScheduler implements Scheduler {
         taskFuture = Executors.newSingleThreadScheduledExecutor()
                 .scheduleAtFixedRate(task, 0L, 1, TimeUnit.SECONDS);
         algorithm.init(this);
+
+        // dispatch event
+        var event = new SchedulerStartEvent();
+        ToastEvent.dispatch(event.getClass(), event);
+
+        // start logging
+        startLoggingEvents();
     }
 
     @Override
-    public void finish() {
+    public void finish(SchedulerFinishEvent.Cause cause) {
         if (!started) {
             throw new IllegalStateException("Scheduler not started yet.");
         }
@@ -69,6 +86,13 @@ public class ToastScheduler implements Scheduler {
         started = false;
         task.finish();
         taskFuture.cancel(false);
+
+        // dispatch event
+        var event = new SchedulerFinishEvent(cause);
+        ToastEvent.dispatch(event.getClass(), event);
+
+        // stop logging
+        stopLoggingEvents();
     }
 
     @Override
@@ -95,15 +119,23 @@ public class ToastScheduler implements Scheduler {
     }
 
     @Override
+    public List<Processor> getProcessorList() {
+        return new ArrayList<>(processorList);
+    }
+
+    @Override
     public List<Processor> getIdleProcessorList() {
-        return getProcessorList().stream()
+        return getActiveProcessorList()
+                .stream()
                 .filter(Processor::isIdle)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<Processor> getProcessorList() {
-        return new ArrayList<>(processorList);
+    public List<Processor> getActiveProcessorList() {
+        return processorList.stream()
+                .filter(Processor::isActive)
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     @Override
@@ -157,5 +189,54 @@ public class ToastScheduler implements Scheduler {
         if (!readyQueue.contains(process)) {
             throw new IllegalStateException("Failed to dispatch: process not in ready queue");
         }
+    }
+
+    private void startLoggingEvents() {
+        int l1 = ToastEvent.registerListener(ProcessDispatchEvent.class, (ProcessDispatchEvent event) -> {
+            Processor processor = event.getProcessor();
+            String coreName = processor.getCore().getName();
+            int coreId = processor.getId();
+            int pid = event.getProcess().getId();
+            System.out.printf("| Dispatch process #%d to %s #%d%n", pid, coreName, coreId);
+        });
+
+        int l2 = ToastEvent.registerListener(ProcessCompleteEvent.class, (ProcessCompleteEvent event) -> {
+            System.out.printf("| Process #%d complete%n", event.getProcess().getId());
+        });
+
+        int l3 = ToastEvent.registerListener(ProcessPreemptEvent.class, (ProcessPreemptEvent event) -> {
+            int from = event.getProcess().getId();
+            int to = event.getNextProcess().getId();
+            System.out.printf("| Preempt process #%d → #%d%n", from, to);
+        });
+
+        int l4 = ToastEvent.registerListener(ProcessReadyEvent.class, (ProcessReadyEvent event) -> {
+            System.out.printf("| Process #%d is ready%n", event.getProcess().getId());
+        });
+
+        int l5 =  ToastEvent.registerListener(ProcessorDeactivateEvent.class, (ProcessorDeactivateEvent event) -> {
+            Processor processor = event.getProcessor();
+            String coreName = processor.getCore().getName();
+            int id = processor.getId();
+            String cause = switch (event.getCause()) {
+                case POWER_LOSS -> "power loss";
+                case POWER_SAVING -> "power saving";
+            };
+            System.out.printf("| %s #%d deactivated due to %s%n", coreName, id, cause);
+        });
+
+        int l6 = ToastEvent.registerListener(ProcessorRebootEvent.class, (ProcessorRebootEvent event) -> {
+            Processor processor = event.getProcessor();
+            String coreName = processor.getCore().getName();
+            int id = processor.getId();
+            System.out.printf("| Reboot %s #%d%n", coreName, id);
+        });
+
+        Collections.addAll(this.listenerList, l1, l2, l3, l4, l5, l6);
+    }
+
+    private void stopLoggingEvents() {
+        this.listenerList.forEach(ToastEvent::unregisterListener);
+        this.listenerList.clear();
     }
 }
