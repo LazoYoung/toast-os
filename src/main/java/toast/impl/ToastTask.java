@@ -30,24 +30,28 @@ public class ToastTask implements Runnable {
 
     @Override
     public void run() {
-        System.out.printf("┌ Before run: %ds\n", elapsedTime);
+        try {
+            System.out.printf("┌ Before run: %ds\n", elapsedTime);
 
-        enqueueProcesses();
-        algorithm.run(scheduler);
-        if (finish) return;
+            enqueueProcesses();
+            algorithm.run(scheduler);
+            if (finish) return;
 
-        if (newProcesses.isEmpty() && isIdle()) {
-            scheduler.finish(SchedulerFinishEvent.Cause.COMPLETE);
-            System.out.print("└ End of simulation\n\n");
-            printResult();
-        } else {
-            runProcessors();
-            elapsedTime++;
-            syncProcessorTime();
-            System.out.printf("└ After run: %ds%n\n", elapsedTime);
+            if (newProcesses.isEmpty() && isIdle()) {
+                scheduler.finish(SchedulerFinishEvent.Cause.COMPLETE);
+                System.out.print("└ End of simulation\n\n");
+                printResult();
+            } else {
+                runProcessors();
+                elapsedTime++;
+                syncProcessorTime();
+                System.out.printf("└ After run: %ds%n\n", elapsedTime);
+            }
+
+            tickListeners.forEach(Runnable::run);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-        tickListeners.forEach(Runnable::run);
     }
 
     private void syncProcessorTime() {
