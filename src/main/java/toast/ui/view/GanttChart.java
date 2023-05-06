@@ -8,6 +8,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
+import toast.event.ToastEvent;
+import toast.event.scheduler.SchedulerStartEvent;
 import toast.impl.ToastScheduler;
 
 public class GanttChart extends Pane {
@@ -20,9 +22,11 @@ public class GanttChart extends Pane {
     private int timelineWidth;
     private Canvas canvas;
 
-    public GanttChart(ToastScheduler scheduler) {
-        this.scheduler = scheduler;
-        scheduler.addTickListener(() -> Platform.runLater(this::updateView));
+    public GanttChart() {
+        scheduler = ToastScheduler.getInstance();
+        ToastEvent.registerListener(SchedulerStartEvent.class, (SchedulerStartEvent event) -> {
+            scheduler.addTickListener(() -> Platform.runLater(this::updateView));
+        });
         createView();
     }
 
