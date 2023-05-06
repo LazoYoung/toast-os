@@ -5,16 +5,18 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
+<?import javafx.scene.text.TextFlow?>
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2-ea"
             xmlns:fx="http://javafx.com/fxml/1" fx:controller="toast.ui.controller.FXMLController">
+   <TextFlow layoutX="112.0" layoutY="52.0" prefHeight="200.0" prefWidth="200.0"/>
    <AnchorPane layoutX="-6.0" prefHeight="48.0" prefWidth="722.0" style="-fx-background-color: #343434;" />
    <AnchorPane layoutY="48.0" prefHeight="432.0" prefWidth="46.0" style="-fx-background-color: #787878;">
       <children>
          <VBox prefHeight="442.0" prefWidth="122.0">
             <children>
-               <MFXButton onAction="#main" prefHeight="34.0" prefWidth="127.0" text="P1" />
-               <MFXButton onAction="#setting" prefHeight="34.0" prefWidth="127.0" text="P2" />
-               <MFXButton onAction="#runAndResult" prefHeight="34.0" prefWidth="127.0" text="P3" />
+               <MFXButton onAction="#main" prefHeight="34.0" prefWidth="127.0" text="Main" />
+               <MFXButton onAction="#setting" prefHeight="34.0" prefWidth="127.0" text="Setting" />
+               <MFXButton onAction="#runAndResult" prefHeight="34.0" prefWidth="127.0" text="Run &amp; Result" />
             </children>
          </VBox>
       </children>

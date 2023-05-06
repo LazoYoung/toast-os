@@ -19,7 +19,6 @@ public class FirstComeFirstService implements Algorithm {
     @Override
     public void onProcessReady(Process process) {
         this.readyQueue.add(process);
-        process.addCompletionListener(() -> System.out.printf("│ Process #%d completed%n", process.getId()));
     }
 
     @Override
@@ -32,10 +31,6 @@ public class FirstComeFirstService implements Algorithm {
             Process process = readyQueue.next();
             processor.dispatch(process);
             readyQueue.remove();
-
-            int pid = process.getId();
-            int processorId = processor.getId();
-            System.out.printf("│[FCFS] Dispatched process #%d to #%d%n", pid, processorId);
         }
     }
 }
