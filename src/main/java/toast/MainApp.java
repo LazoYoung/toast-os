@@ -10,7 +10,7 @@ import toast.configuration.AppConfig;
 import toast.impl.ToastProcess;
 import toast.impl.ToastProcessor;
 import toast.impl.ToastScheduler;
-import toast.ui.view.GanttChartView;
+import toast.ui.view.GanttChart;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +34,7 @@ public class MainApp extends Application {
 
         try {
 //            Scene scene = getMainScene();
-            Scene scene = new Scene(new GanttChartView(scheduler));
+            Scene scene = new Scene(new GanttChart(scheduler));
             primaryStage.setTitle("Process Scheduling Simulator");
             primaryStage.setScene(scene);
             primaryStage.show();

@@ -6,12 +6,12 @@ import toast.api.Processor;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ProcessModel {
+public class ProcessRecord {
 
     private final Process process;
     private final Map<Integer, Processor> record = new HashMap<>();
 
-    public ProcessModel(Process process) {
+    public ProcessRecord(Process process) {
         this.process = process;
     }
 

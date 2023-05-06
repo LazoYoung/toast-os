@@ -10,7 +10,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import toast.impl.ToastScheduler;
 
-public class GanttChartView extends Pane {
+public class GanttChart extends Pane {
 
     private final ToastScheduler scheduler;
     private final int timeSpan = 20;
@@ -20,7 +20,7 @@ public class GanttChartView extends Pane {
     private int timelineWidth;
     private Canvas canvas;
 
-    public GanttChartView(ToastScheduler scheduler) {
+    public GanttChart(ToastScheduler scheduler) {
         this.scheduler = scheduler;
         scheduler.addTickListener(() -> Platform.runLater(this::updateView));
         createView();
@@ -95,7 +95,7 @@ public class GanttChartView extends Pane {
     }
 
     private void drawProcessBar() {
-
+        
     }
 
     private int getTimelineX(int index) {
