@@ -93,6 +93,7 @@ public class ToastTask extends TimerTask {
         System.out.println("--- Scheduling result ---");
         System.out.printf("• Elapsed time: %ds%n", scheduler.getElapsedTime());
         System.out.printf("• Power consumption: %.1fW∙s%n", scheduler.getPowerConsumed());
+        //TODO RT가 아니라 TT를 구해야하지 않은지.
         System.out.printf("• Average response time: %.1fs", scheduler.getAverageResponseTime());
         System.out.println();
         System.out.println("--- Process result ---");
