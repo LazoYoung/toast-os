@@ -110,7 +110,7 @@ public class ToastTask implements Runnable {
         System.out.println("--- Scheduling result ---");
         System.out.printf("• Elapsed time: %ds%n", scheduler.getElapsedTime());
         System.out.printf("• Power consumption: %.1fW∙s%n", scheduler.getPowerConsumed());
-        System.out.printf("• Average response time: %.1fs", scheduler.getAverageResponseTime());
+        System.out.printf("• Average turnaround time: %.1fs", scheduler.getAverageTT());
         System.out.println();
         System.out.println("--- Process result ---");
 

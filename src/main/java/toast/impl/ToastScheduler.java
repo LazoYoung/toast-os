@@ -106,9 +106,9 @@ public class ToastScheduler implements Scheduler {
     }
 
     @Override
-    public double getAverageResponseTime() {
+    public double getAverageTT() {
         int sum = processList.stream()
-                .mapToInt(Process::getWaitingTime)
+                .mapToInt(Process::getTurnaroundTime)
                 .sum();
         return (double) sum / processList.size();
     }

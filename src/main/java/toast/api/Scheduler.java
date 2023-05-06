@@ -45,13 +45,6 @@ public interface Scheduler {
     List<Process> getProcessList();
 
     /**
-     * Returns every processes. <br>
-     * 프로세스 목록을 반환한다
-     * @return a {@link List} of all processes
-     */
-    List<Process> getProcessList();
-
-    /**
      * Tells how many seconds have passed after this Scheduler started. <br>
      * 스케줄러가 시작된 후 몇 초 지났는지 알려준다
      * @return number of seconds
@@ -65,10 +58,10 @@ public interface Scheduler {
     double getPowerConsumed();
 
     /**
-     * 평균 응답시간을 반환한다
-     * @return the average response time in seconds
+     * 모든 프로세스의 평균 턴어라운드 시간을 반환한다
+     * @return the average turnaround time for every process in seconds
      */
-    double getAverageResponseTime();
+    double getAverageTT();
 
     /**
      * Dispatch the process to run. <br>
