@@ -1,6 +1,5 @@
 package toast.impl;
 
-import toast.api.Process;
 import toast.api.Processor;
 import toast.api.Scheduler;
 import toast.event.ToastEvent;
@@ -8,7 +7,7 @@ import toast.event.process.*;
 import toast.event.processor.ProcessorDeactivateEvent;
 import toast.event.processor.ProcessorRebootEvent;
 import toast.persistence.domain.ProcessorRecord;
-import toast.persistence.domain.Record;
+import toast.persistence.domain.SchedulerRecord;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,6 +16,7 @@ import java.util.List;
 public class ToastRecorder {
 
     private final Scheduler scheduler;
+    private final SchedulerRecord schedulerRecord = SchedulerRecord.getInstance();
     private final List<Integer> loggerList = new ArrayList<>();
     private final List<Integer> watcherList = new ArrayList<>();
 
@@ -25,14 +25,26 @@ public class ToastRecorder {
     }
 
     public void startRecording() {
-        int w1 = ToastEvent.registerListener(ProcessRunEvent.class, (ProcessRunEvent event) -> {
-            Processor processor = event.getProcessor();
-            Process process = event.getProcess();
-            ProcessorRecord record = Record.getInstance().getProcessorRecord(processor);
-            record.setProcessAtTime(process, scheduler.getElapsedTime());
-        });
+        for (Processor processor : this.scheduler.getProcessorList()) {
+            this.schedulerRecord.addProcessorRecord(processor);
+        }
 
-        Collections.addAll(watcherList, w1);
+        int runListener = ToastEvent.registerListener(ProcessRunEvent.class, this::recordProcessRun);
+        int completeListener = ToastEvent.registerListener(ProcessCompleteEvent.class, this::recordProcessComplete);
+
+        Collections.addAll(watcherList, runListener, completeListener);
+    }
+
+    private void recordProcessRun(ToastEvent e) {
+        ProcessRunEvent event = (ProcessRunEvent) e;
+        ProcessorRecord record = schedulerRecord.getProcessorRecord(event.getProcessor());
+        record.setProcessAtTime(event.getProcess(), event.getTime());
+    }
+
+    private void recordProcessComplete(ToastEvent e) {
+        ProcessCompleteEvent event = (ProcessCompleteEvent) e;
+        ProcessorRecord record = schedulerRecord.getProcessorRecord(event.getLastProcessor());
+        record.setProcessAtTime(event.getProcess(), event.getTime());
     }
 
     public void startLoggingEvents() {
@@ -65,6 +77,7 @@ public class ToastRecorder {
             String cause = switch (event.getCause()) {
                 case POWER_LOSS -> "power loss";
                 case POWER_SAVING -> "power saving";
+                case FINISH -> "simulation complete";
             };
             System.out.printf("| %s #%d deactivated due to %s%n", coreName, id, cause);
         });
@@ -80,13 +93,14 @@ public class ToastRecorder {
     }
 
     public void eraseRecords() {
-        this.watcherList.forEach(ToastEvent::unregisterListener);
-        this.watcherList.clear();
+        watcherList.forEach(ToastEvent::unregisterListener);
+        watcherList.clear();
+        schedulerRecord.clear();
     }
 
     public void stopLoggingEvents() {
-        this.loggerList.forEach(ToastEvent::unregisterListener);
-        this.loggerList.clear();
+        loggerList.forEach(ToastEvent::unregisterListener);
+        loggerList.clear();
     }
 
 }

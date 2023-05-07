@@ -34,8 +34,6 @@ public class MainApp extends Application {
     }
 
     public static void main(String[] args) {
-        Application.launch(args);
-
         Scanner scanner = new Scanner(System.in);
         List<ToastProcessor> processorList = getCoreList(scanner);
         List<ToastProcess> processList = getProcessList(scanner);
@@ -48,7 +46,9 @@ public class MainApp extends Application {
 
         CustomSatellite algorithm = new CustomSatellite(timeQuantum, initPower, powerThreshold);
         SchedulerConfig config = new SchedulerConfig(Core.PERFORMANCE, algorithm, processList, processorList);
+
         ToastScheduler.getInstance().start(config);
+        Application.launch(args);
     }
 
     private static List<ToastProcess> getProcessList(Scanner scanner) {

@@ -5,6 +5,7 @@ import toast.api.Process;
 import toast.api.Processor;
 import toast.api.Scheduler;
 import toast.event.ToastEvent;
+import toast.event.processor.ProcessorDeactivateEvent;
 import toast.event.scheduler.SchedulerFinishEvent;
 import toast.event.scheduler.SchedulerStartEvent;
 import toast.persistence.domain.SchedulerConfig;
@@ -29,7 +30,7 @@ public class ToastScheduler implements Scheduler {
     private Algorithm algorithm = null;
     private ToastTask task = null;
     private ScheduledFuture<?> taskFuture = null;
-    private boolean started = false;
+    private boolean running = false;
 
     public static ToastScheduler getInstance() {
         return instance;
@@ -60,39 +61,40 @@ public class ToastScheduler implements Scheduler {
     }
 
     public void start(SchedulerConfig config) {
-        if (this.started) {
+        if (this.running) {
             throw new IllegalStateException("Scheduler already started.");
         }
 
         populateProcessor(config);
         populateProcess(config);
         this.algorithm = config.getAlgorithm();
-        this.started = true;
+        this.running = true;
         this.task = new ToastTask(this);
         this.taskFuture = Executors.newSingleThreadScheduledExecutor()
                 .scheduleAtFixedRate(this.task, 0L, 1, TimeUnit.SECONDS);
-        recorder.startLoggingEvents();
+        recorder.eraseRecords();
         recorder.startRecording();
+        recorder.startLoggingEvents();
 
         // dispatch event
-        var event = new SchedulerStartEvent();
+        var event = new SchedulerStartEvent(this);
         ToastEvent.dispatch(event.getClass(), event);
     }
 
     @Override
     public void finish(SchedulerFinishEvent.Cause cause) {
-        if (!started) {
+        if (!running) {
             throw new IllegalStateException("Scheduler not started yet.");
         }
 
-        started = false;
+        deactivateProcessors();
+        running = false;
         task.finish();
         taskFuture.cancel(false);
         recorder.stopLoggingEvents();
-        recorder.eraseRecords();
 
         // dispatch event
-        var event = new SchedulerFinishEvent(cause);
+        var event = new SchedulerFinishEvent(this, cause);
         ToastEvent.dispatch(event.getClass(), event);
     }
 
@@ -173,6 +175,14 @@ public class ToastScheduler implements Scheduler {
         readyQueue.addLast(halted);
     }
 
+    public Algorithm getAlgorithm() {
+        return algorithm;
+    }
+
+    public boolean isRunning() {
+        return running;
+    }
+
     public void addTickListener(Runnable runnable) {
         task.addTickListener(runnable);
     }
@@ -192,7 +202,7 @@ public class ToastScheduler implements Scheduler {
         }
     }
 
-    public Algorithm getAlgorithm() {
-        return algorithm;
+    private void deactivateProcessors() {
+        getActiveProcessorList().forEach(p -> p.deactivate(ProcessorDeactivateEvent.Cause.FINISH));
     }
 }

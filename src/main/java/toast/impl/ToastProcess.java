@@ -121,7 +121,7 @@ public class ToastProcess implements Process {
             List<Runnable> listeners = new ArrayList<>(this.completionListeners);
             listeners.forEach(Runnable::run);
 
-            var event = new ProcessCompleteEvent(this, this.processor.getCurrentTime());
+            var event = new ProcessCompleteEvent(this, this.processor.getCurrentTime(), processor);
             ToastEvent.dispatch(ProcessCompleteEvent.class, event);
         }
     }

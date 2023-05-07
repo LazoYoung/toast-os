@@ -5,21 +5,17 @@ import toast.api.Processor;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Record {
+public class SchedulerRecord {
 
-    private static final Record instance = new Record();
+    private static final SchedulerRecord instance = new SchedulerRecord();
     private final Map<Integer, ProcessorRecord> processorData = new HashMap<>();
 
-    public static Record getInstance() {
+    public static SchedulerRecord getInstance() {
         return instance;
     }
 
     public ProcessorRecord getProcessorRecord(Processor processor) {
-        return getProcessorRecord(processor.getId());
-    }
-
-    public ProcessorRecord getProcessorRecord(int id) {
-        return processorData.get(id);
+        return processorData.get(processor.getId());
     }
 
     public void addProcessorRecord(Processor processor) {
