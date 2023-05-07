@@ -10,19 +10,20 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import toast.api.Algorithm;
 import toast.api.Core;
 import toast.enums.AlgorithmName;
 import toast.impl.ToastProcess;
+import toast.impl.ToastProcessor;
 import toast.persistence.mapper.SetUpMapper;
 import toast.ui.view.CoreProcessorButton;
 
-public class SettingController implements Initializable {
+public class SettingController extends PageController {
     @FXML
     private ChoiceBox<AlgorithmName> algorithmNameChoiceBox;
     @FXML
@@ -80,56 +81,72 @@ public class SettingController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         algorithmNameChoiceBox.getItems().addAll(AlgorithmName.values());
         processSetting();
+    }
 
+    @Override
+    void init() {
+        Algorithm algorithm = SetUpMapper.getAlgorithm();
+        if (algorithm != null) {
+            algorithmNameChoiceBox.setValue(AlgorithmName.mappingFor(algorithm));
+        }
+
+        Integer timeQuantumValue = SetUpMapper.getTimeQuantumValue();
+        if (timeQuantumValue != null) {
+            timeQuantum.setText(String.valueOf(timeQuantumValue));
+        }
+
+        Double initPowerValue = SetUpMapper.getInitPowerValue();
+        if (initPowerValue != null) {
+            timeQuantum.setText(String.valueOf(initPowerValue));
+        }
+
+        Double powerThresholdValue = SetUpMapper.getPowerThresholdValue();
+        if (powerThresholdValue != null) {
+            timeQuantum.setText(String.valueOf(powerThresholdValue));
+        }
+
+        List<ToastProcessor> processors = SetUpMapper.getProcessors();
+        if (processors != null) {
+            core1.setIdx(getIdx(processors.get(0).getCore()));
+            core2.setIdx(getIdx(processors.get(1).getCore()));
+            core3.setIdx(getIdx(processors.get(2).getCore()));
+            core4.setIdx(getIdx(processors.get(3).getCore()));
+        }
+
+        List<ToastProcess> processes = SetUpMapper.getProcesses();
+        if(processes != null) {
+            List<TempProcess> tempProcesses = processes.stream().map(TempProcess::create).collect(Collectors.toList());
+            data = FXCollections.observableArrayList(tempProcesses);
+        }
+
+    }
+
+    private static int getIdx(Core core) {
+        return (core == null) ? 0 : core.getIdx();
     }
 
     public void saveResult() {
-        SetUpMapper.save(makeResult());
-    }
-
-    private SetUpResult makeResult() {
         try {
+            SetUpMapper.setAlgorithmName(algorithmNameChoiceBox.getValue());
 
-            AlgorithmName algorithmName = algorithmNameChoiceBox.getValue();
-            System.out.println("algorithmName = " + algorithmName.name());
+            SetUpMapper.setTimeQuantumValue(timeQuantum.getText());
+            SetUpMapper.setInitPowerValue(initPower.getText());
+            SetUpMapper.setPowerThresholdValue(powerThreshold.getText());
 
-            int timeQuantumValue = Integer.parseInt(timeQuantum.getText());
-            System.out.println("timeQuantumValue = " + timeQuantumValue);
-            double initPowerValue = Double.parseDouble(initPower.getText());
-            System.out.println("initPowerValue = " + initPowerValue);
-            double powerThresholdValue = Double.parseDouble(powerThreshold.getText());
-            System.out.println("powerThresholdValue = " + powerThresholdValue);
+            SetUpMapper.setAlgorithmName(algorithmNameChoiceBox.getValue());
+            SetUpMapper.setAlgorithmName(algorithmNameChoiceBox.getValue());
 
-            Core core1Value = Core.mappingFor(core1.getIdx());
-            System.out.println("core1Value = " + core1Value.getName());
-            Core core2Value = Core.mappingFor(core2.getIdx());
-            System.out.println("core2Value = " + core2Value.getName());
-            Core core3Value = Core.mappingFor(core3.getIdx());
-            System.out.println("core3Value = " + core3Value.getName());
-            Core core4Value = Core.mappingFor(core4.getIdx());
-            System.out.println("core4Value = " + core4Value.getName());
+            SetUpMapper.setProcessors(Core.mappingFor(core1.getIdx()), Core.mappingFor(core2.getIdx()),
+                    Core.mappingFor(core3.getIdx()), Core.mappingFor(core4.getIdx()));
 
             List<ToastProcess> processes = data.stream().map(TempProcess::toToastProcess).collect(Collectors.toList());
-            processes.forEach(toastProcess -> {
-                System.out.println("toastProcess = " + toastProcess.getId());
-            });
-
-
-            return new SetUpResult(
-                    algorithmName,
-                    timeQuantumValue,
-                    initPowerValue,
-                    powerThresholdValue,
-                    core1Value,
-                    core2Value,
-                    core3Value,
-                    core4Value,
-                    processes
-            );
+            SetUpMapper.setProcesses(processes);
+            SetUpMapper.setIsDone(true);
 
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
+
+            SetUpMapper.setIsDone(false);
         }
     }
 
@@ -228,6 +245,14 @@ public class SettingController implements Initializable {
 
         public ToastProcess toToastProcess() {
             return new ToastProcess(getProcessId(), getArrivalTime(), getWorkLoad(), getMission().equals("T"));
+        }
+
+        public static TempProcess create(ToastProcess toastProcess) {
+            return new TempProcess(toastProcess.getId(),
+                    toastProcess.getArrivalTime(),
+                    toastProcess.getWorkload(),
+                    toastProcess.isMission() ? "T" : "F"
+            );
         }
 
     }

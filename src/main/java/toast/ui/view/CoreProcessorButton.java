@@ -17,6 +17,10 @@ public class CoreProcessorButton extends MFXButton {
         return idx;
     }
 
+    public void setIdx(int idx) {
+        this.idx = idx;
+    }
+
     public CoreProcessorButton() {
         this.idx = 0;
 

@@ -33,7 +33,19 @@ public enum Core {
     }
 
     public static Core mappingFor(int idx) {
-        if(idx == 0 ) return null;
+        if (idx == 0) {
+            return null;
+        }
         return idx == 1 ? EFFICIENCY : PERFORMANCE;
+    }
+
+    public int getIdx() {
+        if (EFFICIENCY.equals(this)) {
+            return 1;
+        } else if (PERFORMANCE.equals(this)) {
+            return 2;
+        }
+
+        throw new RuntimeException("해당하는 코어가 없음");
     }
 }
