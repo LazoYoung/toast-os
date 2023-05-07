@@ -15,11 +15,9 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import toast.api.Algorithm;
 import toast.api.Core;
 import toast.enums.AlgorithmName;
 import toast.impl.ToastProcess;
-import toast.impl.ToastProcessor;
 import toast.persistence.mapper.SetUpMapper;
 import toast.ui.view.CoreProcessorButton;
 
@@ -85,63 +83,75 @@ public class SettingController extends PageController {
 
     @Override
     void init() {
-        Algorithm algorithm = SetUpMapper.getAlgorithm();
-        if (algorithm != null) {
-            algorithmNameChoiceBox.setValue(AlgorithmName.mappingFor(algorithm));
+        AlgorithmName algorithmName = SetUpMapper.getAlgorithmName();
+        if (algorithmName != null) {
+            algorithmNameChoiceBox.setValue(algorithmName);
         }
 
-        Integer timeQuantumValue = SetUpMapper.getTimeQuantumValue();
+        String timeQuantumValue = SetUpMapper.getTimeQuantumValue();
         if (timeQuantumValue != null) {
-            timeQuantum.setText(String.valueOf(timeQuantumValue));
+            timeQuantum.setText(timeQuantumValue);
         }
 
-        Double initPowerValue = SetUpMapper.getInitPowerValue();
+        String initPowerValue = SetUpMapper.getInitPowerValue();
         if (initPowerValue != null) {
-            timeQuantum.setText(String.valueOf(initPowerValue));
+            initPower.setText(initPowerValue);
         }
 
-        Double powerThresholdValue = SetUpMapper.getPowerThresholdValue();
+        String powerThresholdValue = SetUpMapper.getPowerThresholdValue();
         if (powerThresholdValue != null) {
-            timeQuantum.setText(String.valueOf(powerThresholdValue));
+            powerThreshold.setText(powerThresholdValue);
         }
 
-        List<ToastProcessor> processors = SetUpMapper.getProcessors();
-        if (processors != null) {
-            core1.setIdx(getIdx(processors.get(0).getCore()));
-            core2.setIdx(getIdx(processors.get(1).getCore()));
-            core3.setIdx(getIdx(processors.get(2).getCore()));
-            core4.setIdx(getIdx(processors.get(3).getCore()));
+        if (SetUpMapper.getCore1Idx() != null) {
+            core1.setIdx(SetUpMapper.getCore1Idx());
+        }
+        if (SetUpMapper.getCore2Idx() != null) {
+            core2.setIdx(SetUpMapper.getCore2Idx());
+        }
+        if (SetUpMapper.getCore3Idx() != null) {
+            core3.setIdx(SetUpMapper.getCore3Idx());
+        }
+        if (SetUpMapper.getCore4Idx() != null) {
+            core4.setIdx(SetUpMapper.getCore4Idx());
         }
 
-        List<ToastProcess> processes = SetUpMapper.getProcesses();
-        if(processes != null) {
-            List<TempProcess> tempProcesses = processes.stream().map(TempProcess::create).collect(Collectors.toList());
-            data = FXCollections.observableArrayList(tempProcesses);
+        var processes = SetUpMapper.getProcesses();
+        if (processes != null) {
+            data = FXCollections.observableArrayList(processes);
+            table.setItems(data);
         }
 
+    }
+
+    @Override
+    void exit() {
+        saveResultDraft();
     }
 
     private static int getIdx(Core core) {
         return (core == null) ? 0 : core.getIdx();
     }
 
+    public void saveResultDraft() {
+        SetUpMapper.setAlgorithmName(algorithmNameChoiceBox.getValue());
+
+        SetUpMapper.setTimeQuantumValue(timeQuantum.getText());
+        SetUpMapper.setInitPowerValue(initPower.getText());
+        SetUpMapper.setPowerThresholdValue(powerThreshold.getText());
+
+        SetUpMapper.setAlgorithmName(algorithmNameChoiceBox.getValue());
+        SetUpMapper.setAlgorithmName(algorithmNameChoiceBox.getValue());
+
+        SetUpMapper.setProcessors(core1.getIdx(), core2.getIdx(), core3.getIdx(), core4.getIdx());
+
+        SetUpMapper.setProcesses(data);
+    }
+
     public void saveResult() {
         try {
-            SetUpMapper.setAlgorithmName(algorithmNameChoiceBox.getValue());
-
-            SetUpMapper.setTimeQuantumValue(timeQuantum.getText());
-            SetUpMapper.setInitPowerValue(initPower.getText());
-            SetUpMapper.setPowerThresholdValue(powerThreshold.getText());
-
-            SetUpMapper.setAlgorithmName(algorithmNameChoiceBox.getValue());
-            SetUpMapper.setAlgorithmName(algorithmNameChoiceBox.getValue());
-
-            SetUpMapper.setProcessors(Core.mappingFor(core1.getIdx()), Core.mappingFor(core2.getIdx()),
-                    Core.mappingFor(core3.getIdx()), Core.mappingFor(core4.getIdx()));
-
-            List<ToastProcess> processes = data.stream().map(TempProcess::toToastProcess).collect(Collectors.toList());
-            SetUpMapper.setProcesses(processes);
             SetUpMapper.setIsDone(true);
+            saveResultDraft();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -248,11 +258,8 @@ public class SettingController extends PageController {
         }
 
         public static TempProcess create(ToastProcess toastProcess) {
-            return new TempProcess(toastProcess.getId(),
-                    toastProcess.getArrivalTime(),
-                    toastProcess.getWorkload(),
-                    toastProcess.isMission() ? "T" : "F"
-            );
+            return new TempProcess(toastProcess.getId(), toastProcess.getArrivalTime(), toastProcess.getWorkload(),
+                    toastProcess.isMission() ? "T" : "F");
         }
 
     }

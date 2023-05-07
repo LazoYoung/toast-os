@@ -2,6 +2,8 @@ package toast.persistence.mapper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import javafx.collections.ObservableList;
 import toast.algorithm.AlgorithmFactory;
 import toast.api.Algorithm;
 import toast.api.Core;
@@ -10,6 +12,7 @@ import toast.impl.ToastProcess;
 import toast.impl.ToastProcessor;
 import toast.impl.ToastScheduler;
 import toast.persistence.domain.AppConfig;
+import toast.ui.controller.SettingController.TempProcess;
 
 public class SetUpMapper {
 
@@ -23,8 +26,22 @@ public class SetUpMapper {
     private static List<ToastProcessor> processors;
     private static List<ToastProcess> processes;
 
+
+    private static AlgorithmName algorithmNameDraft;
+    private static String timeQuantumValueDraft;
+    private static String initPowerDraft;
+    private static String powerThresholdDraft;
+
+    private static Integer core1IdxDraft;
+    private static Integer core2IdxDraft;
+    private static Integer core3IdxDraft;
+    private static Integer core4IdxDraft;
+
+    private static ObservableList<TempProcess> processesDraft;
+
+
     public static Boolean getIsDone() {
-        return isDone;
+        return isDone != null && isDone.equals(true);
     }
 
     public static void setIsDone(boolean isDone) {
@@ -32,10 +49,14 @@ public class SetUpMapper {
     }
 
     public static AlgorithmName getAlgorithmName() {
-        return algorithmName;
+        return algorithmNameDraft;
     }
 
     public static void setAlgorithmName(AlgorithmName algorithmName) {
+        SetUpMapper.algorithmNameDraft = algorithmName;
+        if (getIsDone().equals(false)) {
+            return;
+        }
         if (algorithmName == null) {
             throw new RuntimeException("알고리즘을 종류를 선택해주세요.");
         }
@@ -43,12 +64,19 @@ public class SetUpMapper {
         SetUpMapper.algorithmName = algorithmName;
     }
 
-    public static Integer getTimeQuantumValue() {
-        return timeQuantumValue;
+    public static String getTimeQuantumValue() {
+        return timeQuantumValueDraft;
     }
 
     public static void setTimeQuantumValue(String timeQuantum) {
+        SetUpMapper.timeQuantumValueDraft = timeQuantum;
+        if (getIsDone().equals(false)) {
+            return;
+        }
         try {
+            if (timeQuantum == null) {
+                throw new RuntimeException();
+            }
             int timeQuantumValue = Integer.parseInt(timeQuantum);
             if (timeQuantumValue <= 0) {
                 throw new RuntimeException();
@@ -61,12 +89,19 @@ public class SetUpMapper {
         }
     }
 
-    public static Double getInitPowerValue() {
-        return initPowerValue;
+    public static String getInitPowerValue() {
+        return initPowerDraft;
     }
 
     public static void setInitPowerValue(String initPower) {
+        SetUpMapper.initPowerDraft = initPower;
+        if (getIsDone().equals(false)) {
+            return;
+        }
         try {
+            if (initPower == null) {
+                throw new RuntimeException();
+            }
             Double initPowerValue = Double.parseDouble(initPower);
             if (initPowerValue <= 0) {
                 throw new RuntimeException();
@@ -79,12 +114,20 @@ public class SetUpMapper {
         }
     }
 
-    public static Double getPowerThresholdValue() {
-        return powerThresholdValue;
+    public static String getPowerThresholdValue() {
+        return powerThresholdDraft;
     }
 
     public static void setPowerThresholdValue(String powerThreshold) {
+        powerThresholdDraft = powerThreshold;
+        if (getIsDone().equals(false)) {
+            return;
+        }
+
         try {
+            if (powerThreshold == null) {
+                throw new RuntimeException();
+            }
             Double powerThresholdValue = Double.parseDouble(powerThreshold);
             if (powerThresholdValue < 0 || powerThresholdValue >= 1) {
                 throw new RuntimeException();
@@ -97,21 +140,42 @@ public class SetUpMapper {
         }
     }
 
-    public static List<ToastProcessor> getProcessors() {
-        return processors;
+    public static Integer getCore1Idx() {
+        return core1IdxDraft;
     }
 
-    public static void setProcessors(Core core1, Core core2, Core core3, Core core4) {
+    public static Integer getCore2Idx() {
+        return core2IdxDraft;
+    }
+
+    public static Integer getCore3Idx() {
+        return core3IdxDraft;
+    }
+
+    public static Integer getCore4Idx() {
+        return core4IdxDraft;
+    }
+
+    public static void setProcessors(int core1, int core2, int core3, int core4) {
+        core1IdxDraft = core1;
+        core2IdxDraft = core2;
+        core3IdxDraft = core3;
+        core4IdxDraft = core4;
+
+        if (getIsDone().equals(false)) {
+            return;
+        }
+
         List<ToastProcessor> cores = new ArrayList<>();
 
-        cores.add(new ToastProcessor(core1, core1 != null));
-        System.out.println("core1Value = " + (core1 == null ? "NULL" : core1.getName()));
-        cores.add(new ToastProcessor(core2, core2 != null));
-        System.out.println("core2Value = " + (core2 == null ? "NULL" : core2.getName()));
-        cores.add(new ToastProcessor(core3, core3 != null));
-        System.out.println("core3Value = " + (core3 == null ? "NULL" : core3.getName()));
-        cores.add(new ToastProcessor(core4, core4 != null));
-        System.out.println("core4Value = " + (core4 == null ? "NULL" : core4.getName()));
+        cores.add(new ToastProcessor(Core.mappingFor(core1), core1 != 0));
+        System.out.println("core1Value = " + (core1 == 0 ? "NULL" : core1));
+        cores.add(new ToastProcessor(Core.mappingFor(core2), core2 != 0));
+        System.out.println("core2Value = " + (core2 == 0 ? "NULL" : core2));
+        cores.add(new ToastProcessor(Core.mappingFor(core3), core3 != 0));
+        System.out.println("core3Value = " + (core3 == 0 ? "NULL" : core3));
+        cores.add(new ToastProcessor(Core.mappingFor(core4), core4 != 0));
+        System.out.println("core4Value = " + (core4 == 0 ? "NULL" : core4));
 
         if (cores.stream().filter(ToastProcessor::isActive).findAny().isEmpty()) {
             throw new RuntimeException("프로세서를 적어도 한 개 이상을 켜야 합니다.");
@@ -120,15 +184,20 @@ public class SetUpMapper {
         SetUpMapper.processors = cores;
     }
 
-    public static List<ToastProcess> getProcesses() {
-        return processes;
+    public static ObservableList<TempProcess> getProcesses() {
+        return processesDraft;
     }
 
-    public static void setProcesses(List<ToastProcess> processes) {
-        if (processes == null || processes.isEmpty()) {
+    public static void setProcesses(ObservableList<TempProcess> data) {
+        processesDraft = data;
+
+        if (getIsDone().equals(false)) {
+            return;
+        }
+        List<ToastProcess> processes = data.stream().map(TempProcess::toToastProcess).collect(Collectors.toList());
+        if (processes.isEmpty()) {
             throw new RuntimeException("프로세스를 적어도 하나 이상 입력해주세요.");
         }
-
         SetUpMapper.processes = processes;
     }
 
@@ -136,15 +205,13 @@ public class SetUpMapper {
         if (!getIsDone()) {
             throw new RuntimeException("세팅이 완료되지 않았습니다.");
         }
-        return new AlgorithmFactory(getAlgorithmName()).create(getTimeQuantumValue(), getInitPowerValue(),
-                getPowerThresholdValue());
+        return new AlgorithmFactory(getAlgorithmName()).create(timeQuantumValue, initPowerValue, powerThresholdValue);
     }
 
     public static ToastScheduler getToastScheduler() {
         if (!getIsDone()) {
             throw new RuntimeException("세팅이 완료되지 않았습니다.");
         }
-        return new ToastScheduler(processors, processes, new AppConfig().primaryCore(),
-                getAlgorithm());
+        return new ToastScheduler(processors, processes, new AppConfig().primaryCore(), getAlgorithm());
     }
 }

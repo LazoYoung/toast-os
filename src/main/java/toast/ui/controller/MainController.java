@@ -11,6 +11,11 @@ public class MainController extends PageController {
     }
 
     @Override
+    void exit() {
+
+    }
+
+    @Override
     public void initialize(URL location, ResourceBundle resources) {
 
     }

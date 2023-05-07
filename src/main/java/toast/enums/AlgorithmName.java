@@ -28,10 +28,10 @@ public enum AlgorithmName {
         return algorithmClass;
     }
 
-    public static AlgorithmName  mappingFor(Algorithm algorithm) {
-        return Arrays.stream(values())
-                .filter(algorithmName -> algorithmName.getAlgorithmClass().equals(algorithm.getClass()))
-                .findAny()
-                .orElseThrow(() -> new RuntimeException("일치하는 알고리즘이 없습니다."));
-    }
+//    public static AlgorithmName  mappingFor(Algorithm algorithm) {
+//        return Arrays.stream(values())
+//                .filter(algorithmName -> algorithmName.getAlgorithmClass().equals(algorithm.getClass()))
+//                .findAny()
+//                .orElseThrow(() -> new RuntimeException("일치하는 알고리즘이 없습니다."));
+//    }
 }
