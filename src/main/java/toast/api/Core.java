@@ -31,4 +31,9 @@ public enum Core {
     public double getWattPerBoot() {
         return wattPerBoot;
     }
+
+    public static Core mappingFor(int idx) {
+        if(idx == 0 ) return null;
+        return idx == 1 ? EFFICIENCY : PERFORMANCE;
+    }
 }

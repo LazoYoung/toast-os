@@ -24,9 +24,10 @@ public class FXMLController implements Initializable {
 
     private void changePage(String fileName) {
         try {
-            Parent fxml = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/toast/fxml/" + fileName + ".fxml")));
+            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/toast/fxml/" + fileName + ".fxml")));
+            //            Object Controller = new FXMLLoader(resource).getController();
             contentArea.getChildren().removeAll();
-            contentArea.getChildren().setAll(fxml);
+            contentArea.getChildren().setAll(root);
         } catch (Exception e) {
             System.out.println("ERR WITH PAGE : " + fileName);
             throw new RuntimeException(e.getMessage());
@@ -44,6 +45,4 @@ public class FXMLController implements Initializable {
     public void runAndResult() {
         changePage(RUN_AND_RESULT);
     }
-
-
 }
