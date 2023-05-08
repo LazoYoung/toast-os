@@ -3,7 +3,7 @@ package toast.ui.controller;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class MainController extends PageController {
+public class HomeController extends PageController {
 
     @Override
     void init() {

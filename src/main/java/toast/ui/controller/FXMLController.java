@@ -1,18 +1,16 @@
 package toast.ui.controller;
 
-import java.net.URL;
-import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.layout.StackPane;
+import toast.enums.Page;
+
+import java.net.URL;
+import java.util.ResourceBundle;
 
 public class FXMLController implements Initializable {
-
-    public static final String MAIN = "Main";
-    public static final String SETTING = "Setting";
-    public static final String RUN_AND_RESULT = "RunAndResult";
 
     private static PageController befController;
     @FXML
@@ -20,12 +18,12 @@ public class FXMLController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        changePage(MAIN);
+        changePage(Page.HOME);
     }
 
-    private void changePage(String fileName) {
+    private void changePage(Page page) {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/toast/fxml/" + fileName + ".fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(page.getLocation()));
 
             Parent root = fxmlLoader.load();
 
@@ -40,20 +38,20 @@ public class FXMLController implements Initializable {
             contentArea.getChildren().setAll(root);
 
         } catch (Exception e) {
-            System.out.println("ERR WITH PAGE : " + fileName);
+            System.out.println("ERROR WITH PAGE: " + page.getLocation());
             throw new RuntimeException(e.getMessage());
         }
     }
 
-    public void main() {
-        changePage(MAIN);
+    public void toHomePage() {
+        changePage(Page.HOME);
     }
 
-    public void setting() {
-        changePage(SETTING);
+    public void toSettingsPage() {
+        changePage(Page.SETTINGS);
     }
 
-    public void runAndResult() {
-        changePage(RUN_AND_RESULT);
+    public void toSimulationPage() {
+        changePage(Page.SIMULATION);
     }
 }

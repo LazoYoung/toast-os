@@ -9,9 +9,9 @@
          <VBox alignment="TOP_CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
                <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true" />
-               <MFXButton maxWidth="1.7976931348623157E308" onAction="#main" prefHeight="40.0" text="Home" />
-               <MFXButton maxWidth="1.7976931348623157E308" onAction="#setting" prefHeight="40.0" text="Setting" />
-               <MFXButton maxWidth="1.7976931348623157E308" onAction="#runAndResult" prefHeight="40.0" text="Run &amp; Result" />
+               <MFXButton maxWidth="1.7976931348623157E308" onAction="#toHomePage" prefHeight="40.0" text="Home" />
+               <MFXButton maxWidth="1.7976931348623157E308" onAction="#toSettingsPage" prefHeight="40.0" text="Setting" />
+               <MFXButton maxWidth="1.7976931348623157E308" onAction="#toSimulationPage" prefHeight="40.0" text="Run &amp; Result" />
             </children>
          </VBox>
       </children>

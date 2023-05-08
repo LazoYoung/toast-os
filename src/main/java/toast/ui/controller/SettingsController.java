@@ -1,27 +1,30 @@
 package toast.ui.controller;
 
 import io.github.palexdev.materialfx.controls.MFXButton;
-import java.net.URL;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.stream.Collectors;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import toast.api.Core;
 import toast.enums.AlgorithmName;
 import toast.impl.ToastProcess;
+import toast.impl.ToastScheduler;
+import toast.persistence.domain.SchedulerConfig;
 import toast.persistence.mapper.SetUpMapper;
 import toast.ui.view.CoreProcessorButton;
 
-public class SettingController extends PageController {
+import java.net.URL;
+import java.util.ResourceBundle;
+
+import static javafx.scene.control.Alert.AlertType.ERROR;
+import static javafx.scene.control.Alert.AlertType.INFORMATION;
+
+public class SettingsController extends PageController {
     @FXML
     private ChoiceBox<AlgorithmName> algorithmNameChoiceBox;
     @FXML
@@ -68,17 +71,20 @@ public class SettingController extends PageController {
     private TextField mission;
 
     @FXML
-    private MFXButton add;
+    private MFXButton addButton;
     @FXML
-    private MFXButton remove;
+    private MFXButton removeButton;
     @FXML
-    private MFXButton clear;
+    private MFXButton clearButton;
+    @FXML
+    private MFXButton saveButton;
 
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         algorithmNameChoiceBox.getItems().addAll(AlgorithmName.values());
-        processSetting();
+        initTable();
+        initButtons();
     }
 
     @Override
@@ -126,7 +132,11 @@ public class SettingController extends PageController {
 
     @Override
     void exit() {
-        saveResultDraft();
+        try {
+            saveResultDraft();
+        } catch (Exception ignored) {
+            // Ignoring exception is sign of bad design
+        }
     }
 
     private static int getIdx(Core core) {
@@ -136,36 +146,27 @@ public class SettingController extends PageController {
     public void saveResultDraft() {
         SetUpMapper.setAlgorithmName(algorithmNameChoiceBox.getValue());
 
-        SetUpMapper.setTimeQuantumValue(timeQuantum.getText());
-        SetUpMapper.setInitPowerValue(initPower.getText());
-        SetUpMapper.setPowerThresholdValue(powerThreshold.getText());
-
-        SetUpMapper.setAlgorithmName(algorithmNameChoiceBox.getValue());
-        SetUpMapper.setAlgorithmName(algorithmNameChoiceBox.getValue());
+        switch (SetUpMapper.getAlgorithmName()) {
+            case RR -> SetUpMapper.setTimeQuantumValue(timeQuantum.getText());
+            case CUSTOM -> {
+                SetUpMapper.setTimeQuantumValue(timeQuantum.getText());
+                SetUpMapper.setInitPowerValue(initPower.getText());
+                SetUpMapper.setPowerThresholdValue(powerThreshold.getText());
+            }
+        }
 
         SetUpMapper.setProcessors(core1.getIdx(), core2.getIdx(), core3.getIdx(), core4.getIdx());
-
         SetUpMapper.setProcesses(data);
     }
 
-    public void saveResult() {
-        try {
-            SetUpMapper.setIsDone(true);
-            saveResultDraft();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-
-            SetUpMapper.setIsDone(false);
-        }
+    private void initButtons() {
+        addButton.setOnAction(this::onProcessAdd);
+        removeButton.setOnAction(this::onProcessRemove);
+        clearButton.setOnAction(this::onProcessClear);
+        saveButton.setOnAction(this::onSave);
     }
 
-    private void processSetting() {
-        tableSetting();
-        buttonSetting();
-    }
-
-    private void tableSetting() {
+    private void initTable() {
         table.setEditable(true);
 //        data.add(new TempProcess(33, 4, 5, "T"));
         table.setItems(data);
@@ -177,19 +178,39 @@ public class SettingController extends PageController {
 //        table.getColumns().addAll(processIdColumn, arrivalTimeColumn, workLoadColumn, missionColumn);
     }
 
-    private void buttonSetting() {
-        add.setOnAction(event -> data.add(
-                new TempProcess(Integer.parseInt(processId.getText()), Integer.parseInt(arrivalTime.getText()),
-                        Integer.parseInt(workLoad.getText()), mission.getText())));
+    private void onSave(ActionEvent event) {
+        try {
+            saveResultDraft();
+            SchedulerConfig config = SetUpMapper.mapToSchedulerConfig();
+            ToastScheduler.getInstance().setup(config);
 
-        remove.setOnAction(event -> {
-            var item = table.getSelectionModel().getSelectedItem();
-            table.getItems().remove(item);
-        });
+            String message = "설정이 저장되었습니다.";
+            Alert alert = new Alert(INFORMATION, message, ButtonType.OK);
+            alert.setHeaderText("Success!");
+            Platform.runLater(alert::showAndWait);
+        } catch (Exception e) {
+            Alert alert = new Alert(ERROR, e.getMessage(), ButtonType.OK);
+            alert.setHeaderText("Failed to save...");
+            Platform.runLater(alert::showAndWait);
+        }
+    }
 
-        clear.setOnAction(event -> {
-            table.getItems().clear();
-        });
+    private void onProcessRemove(ActionEvent event) {
+        var item = table.getSelectionModel().getSelectedItem();
+        table.getItems().remove(item);
+    }
+
+    private void onProcessAdd(ActionEvent event) {
+        var process = new TempProcess(
+                Integer.parseInt(processId.getText()),
+                Integer.parseInt(arrivalTime.getText()),
+                Integer.parseInt(workLoad.getText()), mission.getText()
+        );
+        data.add(process);
+    }
+
+    private void onProcessClear(ActionEvent event) {
+        table.getItems().clear();
     }
 
     public static class TempProcess {
