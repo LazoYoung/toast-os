@@ -27,6 +27,7 @@ public class ToastScheduler implements Scheduler {
     private final ToastRecorder recorder = new ToastRecorder(this);
     private final List<Processor> processorList = new ArrayList<>();
     private final List<Process> processList = new ArrayList<>();
+    private SchedulerConfig config = null;
     private Algorithm algorithm = null;
     private ToastTask task = null;
     private ScheduledFuture<?> taskFuture = null;
@@ -36,45 +37,29 @@ public class ToastScheduler implements Scheduler {
         return instance;
     }
 
-    private void populateProcessor(SchedulerConfig config) {
-        var primaryCore = config.getPrimaryCore();
-        var list = config.getProcessorList()
-                .stream()
-                .sorted((p1, p2) -> {
-                    boolean pref1 = p1.getCore().equals(primaryCore);
-                    boolean pref2 = p2.getCore().equals(primaryCore);
-                    return (pref1 == pref2) ? 0 : ((pref1) ? -1 : 1);
-                })
-                .map(e -> (Processor) e)
-                .toList();
-        this.processorList.clear();
-        this.processorList.addAll(list);
+    public ToastScheduler setup(SchedulerConfig config) {
+        this.config = config;
+        return this;
     }
 
-    private void populateProcess(SchedulerConfig config) {
-        var list = config.getProcessList()
-                .stream()
-                .map(e -> (Process) e)
-                .toList();
-        this.processList.clear();
-        this.processList.addAll(list);
-    }
-
-    public void start(SchedulerConfig config) {
+    public void start() {
         if (this.running) {
-            throw new IllegalStateException("Scheduler already started.");
+            throw new RuntimeException("Scheduler already started.");
+        }
+        if (this.config == null) {
+            throw new IllegalStateException("Scheduler is not configured.");
         }
 
-        populateProcessor(config);
-        populateProcess(config);
-        this.algorithm = config.getAlgorithm();
+        populateProcessor(this.config);
+        populateProcess(this.config);
+        this.algorithm = this.config.getAlgorithm();
         this.running = true;
         this.task = new ToastTask(this);
         this.taskFuture = Executors.newSingleThreadScheduledExecutor()
                 .scheduleAtFixedRate(this.task, 0L, 1, TimeUnit.SECONDS);
-        recorder.eraseRecords();
-        recorder.startRecording();
-        recorder.startLoggingEvents();
+        this.recorder.eraseRecords();
+        this.recorder.startRecording();
+        this.recorder.startLoggingEvents();
 
         // dispatch event
         var event = new SchedulerStartEvent(this);
@@ -183,8 +168,36 @@ public class ToastScheduler implements Scheduler {
         return running;
     }
 
+    public boolean isConfigured() {
+        return config != null;
+    }
+
     public void addTickListener(Runnable runnable) {
         task.addTickListener(runnable);
+    }
+
+    private void populateProcessor(SchedulerConfig config) {
+        var primaryCore = config.getPrimaryCore();
+        var list = config.getProcessorList()
+                .stream()
+                .sorted((p1, p2) -> {
+                    boolean pref1 = p1.getCore().equals(primaryCore);
+                    boolean pref2 = p2.getCore().equals(primaryCore);
+                    return (pref1 == pref2) ? 0 : ((pref1) ? -1 : 1);
+                })
+                .map(e -> (Processor) e)
+                .toList();
+        this.processorList.clear();
+        this.processorList.addAll(list);
+    }
+
+    private void populateProcess(SchedulerConfig config) {
+        var list = config.getProcessList()
+                .stream()
+                .map(e -> (Process) e)
+                .toList();
+        this.processList.clear();
+        this.processList.addAll(list);
     }
 
     private void validateProcessor(Processor processor, boolean preempt) {

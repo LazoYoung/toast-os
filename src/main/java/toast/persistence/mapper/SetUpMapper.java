@@ -1,8 +1,5 @@
 package toast.persistence.mapper;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 import javafx.collections.ObservableList;
 import toast.algorithm.AlgorithmFactory;
 import toast.api.Algorithm;
@@ -11,11 +8,13 @@ import toast.enums.AlgorithmName;
 import toast.impl.ToastProcess;
 import toast.impl.ToastProcessor;
 import toast.persistence.domain.SchedulerConfig;
-import toast.ui.controller.SettingController.TempProcess;
+import toast.ui.controller.SettingsController.TempProcess;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class SetUpMapper {
-
-    private static Boolean isDone;
 
     private static AlgorithmName algorithmName;
     private static Integer timeQuantumValue;
@@ -38,24 +37,12 @@ public class SetUpMapper {
 
     private static ObservableList<TempProcess> processesDraft;
 
-
-    public static Boolean getIsDone() {
-        return isDone != null && isDone.equals(true);
-    }
-
-    public static void setIsDone(boolean isDone) {
-        SetUpMapper.isDone = isDone;
-    }
-
     public static AlgorithmName getAlgorithmName() {
         return algorithmNameDraft;
     }
 
     public static void setAlgorithmName(AlgorithmName algorithmName) {
         SetUpMapper.algorithmNameDraft = algorithmName;
-        if (getIsDone().equals(false)) {
-            return;
-        }
         if (algorithmName == null) {
             throw new RuntimeException("알고리즘을 종류를 선택해주세요.");
         }
@@ -69,9 +56,6 @@ public class SetUpMapper {
 
     public static void setTimeQuantumValue(String timeQuantum) {
         SetUpMapper.timeQuantumValueDraft = timeQuantum;
-        if (getIsDone().equals(false)) {
-            return;
-        }
         try {
             if (timeQuantum == null) {
                 throw new RuntimeException();
@@ -94,9 +78,6 @@ public class SetUpMapper {
 
     public static void setInitPowerValue(String initPower) {
         SetUpMapper.initPowerDraft = initPower;
-        if (getIsDone().equals(false)) {
-            return;
-        }
         try {
             if (initPower == null) {
                 throw new RuntimeException();
@@ -119,9 +100,6 @@ public class SetUpMapper {
 
     public static void setPowerThresholdValue(String powerThreshold) {
         powerThresholdDraft = powerThreshold;
-        if (getIsDone().equals(false)) {
-            return;
-        }
 
         try {
             if (powerThreshold == null) {
@@ -161,20 +139,16 @@ public class SetUpMapper {
         core3IdxDraft = core3;
         core4IdxDraft = core4;
 
-        if (getIsDone().equals(false)) {
-            return;
-        }
-
         List<ToastProcessor> cores = new ArrayList<>();
 
         cores.add(new ToastProcessor(Core.mappingFor(core1), core1 != 0));
-        System.out.println("core1Value = " + (core1 == 0 ? "NULL" : core1));
+        System.out.println("core1Value = " + (core1 == 0 ? "OFF" : core1));
         cores.add(new ToastProcessor(Core.mappingFor(core2), core2 != 0));
-        System.out.println("core2Value = " + (core2 == 0 ? "NULL" : core2));
+        System.out.println("core2Value = " + (core2 == 0 ? "OFF" : core2));
         cores.add(new ToastProcessor(Core.mappingFor(core3), core3 != 0));
-        System.out.println("core3Value = " + (core3 == 0 ? "NULL" : core3));
+        System.out.println("core3Value = " + (core3 == 0 ? "OFF" : core3));
         cores.add(new ToastProcessor(Core.mappingFor(core4), core4 != 0));
-        System.out.println("core4Value = " + (core4 == 0 ? "NULL" : core4));
+        System.out.println("core4Value = " + (core4 == 0 ? "OFF" : core4));
 
         if (cores.stream().filter(ToastProcessor::isActive).findAny().isEmpty()) {
             throw new RuntimeException("프로세서를 적어도 한 개 이상을 켜야 합니다.");
@@ -190,9 +164,6 @@ public class SetUpMapper {
     public static void setProcesses(ObservableList<TempProcess> data) {
         processesDraft = data;
 
-        if (getIsDone().equals(false)) {
-            return;
-        }
         List<ToastProcess> processes = data.stream().map(TempProcess::toToastProcess).collect(Collectors.toList());
         if (processes.isEmpty()) {
             throw new RuntimeException("프로세스를 적어도 하나 이상 입력해주세요.");
@@ -200,17 +171,11 @@ public class SetUpMapper {
         SetUpMapper.processes = processes;
     }
 
-    public static Algorithm getAlgorithm() {
-        if (!getIsDone()) {
-            throw new RuntimeException("세팅이 완료되지 않았습니다.");
-        }
+    public static Algorithm getAlgorithm() throws IllegalArgumentException {
         return new AlgorithmFactory(getAlgorithmName()).create(timeQuantumValue, initPowerValue, powerThresholdValue);
     }
 
-    public static SchedulerConfig getSchedulerConfig() {
-        if (!getIsDone()) {
-            throw new RuntimeException("세팅이 완료되지 않았습니다.");
-        }
+    public static SchedulerConfig mapToSchedulerConfig() throws RuntimeException {
         return new SchedulerConfig(Core.PERFORMANCE, getAlgorithm(), processes, processors);
     }
 }

@@ -15,7 +15,6 @@ import toast.persistence.domain.SchedulerConfig;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import toast.persistence.mapper.SetUpMapper;
 
 public class MainApp extends Application {
     @Override
@@ -42,7 +41,7 @@ public class MainApp extends Application {
 
     private static void startSchedulerWithTerminal() {
         SchedulerConfig config = makeInput();
-        ToastScheduler.getInstance().start(config);
+        ToastScheduler.getInstance().setup(config).start();
     }
 
     private static SchedulerConfig makeInput() {
