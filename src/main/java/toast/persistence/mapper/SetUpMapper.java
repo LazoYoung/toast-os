@@ -10,8 +10,7 @@ import toast.api.Core;
 import toast.enums.AlgorithmName;
 import toast.impl.ToastProcess;
 import toast.impl.ToastProcessor;
-import toast.impl.ToastScheduler;
-import toast.persistence.domain.AppConfig;
+import toast.persistence.domain.SchedulerConfig;
 import toast.ui.controller.SettingController.TempProcess;
 
 public class SetUpMapper {
@@ -208,10 +207,10 @@ public class SetUpMapper {
         return new AlgorithmFactory(getAlgorithmName()).create(timeQuantumValue, initPowerValue, powerThresholdValue);
     }
 
-    public static ToastScheduler getToastScheduler() {
+    public static SchedulerConfig getSchedulerConfig() {
         if (!getIsDone()) {
             throw new RuntimeException("세팅이 완료되지 않았습니다.");
         }
-        return new ToastScheduler(processors, processes, new AppConfig().primaryCore(), getAlgorithm());
+        return new SchedulerConfig(Core.PERFORMANCE, getAlgorithm(), processes, processors);
     }
 }
