@@ -97,6 +97,11 @@ public class ToastProcess implements Process {
     }
 
     @Override
+    public boolean isRunning() {
+        return (processor != null);
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (obj instanceof ToastProcess other) {
             return (this.id == other.id);
@@ -119,23 +124,19 @@ public class ToastProcess implements Process {
             List<Runnable> listeners = new ArrayList<>(this.completionListeners);
             listeners.forEach(Runnable::run);
 
-            var event = new ProcessCompleteEvent(this, this.processor.getCurrentTime());
+            var event = new ProcessCompleteEvent(this, this.processor.getCurrentTime(), processor);
             ToastEvent.dispatch(ProcessCompleteEvent.class, event);
         }
     }
 
     public void halt() {
-        if (isIdle()) {
+        if (!isRunning()) {
             throw new IllegalStateException("Failed to halt: process not running!");
         }
 
         this.lastHaltTime = this.processor.getCurrentTime();
         this.processor = null;
         this.continuousBurstTime = 0;
-    }
-
-    private boolean isIdle() {
-        return processor == null;
     }
 
     private boolean isComplete() {

@@ -58,10 +58,10 @@ public interface Scheduler {
     double getPowerConsumed();
 
     /**
-     * 평균 응답시간을 반환한다
-     * @return the average response time in seconds
+     * 모든 프로세스의 평균 턴어라운드 시간을 반환한다
+     * @return the average turnaround time for every process in seconds
      */
-    double getAverageResponseTime();
+    double getAverageTT();
 
     /**
      * Dispatch the process to run. <br>

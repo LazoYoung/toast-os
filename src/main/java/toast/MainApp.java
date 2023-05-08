@@ -5,11 +5,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import toast.algorithm.CustomSatellite;
 import toast.api.Core;
 import toast.impl.ToastProcess;
 import toast.impl.ToastProcessor;
 import toast.impl.ToastScheduler;
-import toast.persistence.domain.AppConfig;
+import toast.persistence.domain.SchedulerConfig;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,12 +33,9 @@ public class MainApp extends Application {
         }
     }
 
-
     public static void main(String[] args) {
-        Application.launch(args);
-
         Scanner scanner = new Scanner(System.in);
-        List<ToastProcessor> coreList = getCoreList(scanner);
+        List<ToastProcessor> processorList = getCoreList(scanner);
         List<ToastProcess> processList = getProcessList(scanner);
 
         int timeQuantum = getTimeQuantum(scanner);
@@ -46,14 +44,11 @@ public class MainApp extends Application {
         System.out.println();
         scanner.close();
 
-        ToastScheduler scheduler = scheduler(timeQuantum, initPower, powerThreshold, coreList, processList);
-        scheduler.start();
-    }
+        CustomSatellite algorithm = new CustomSatellite(timeQuantum, initPower, powerThreshold);
+        SchedulerConfig config = new SchedulerConfig(Core.PERFORMANCE, algorithm, processList, processorList);
 
-    private static ToastScheduler scheduler(int timeQuantum, double initPower, double powerThreshold, List<ToastProcessor> coreList, List<ToastProcess> processList) {
-        AppConfig appConfig = new AppConfig();
-
-        return new ToastScheduler(coreList, processList, appConfig.primaryCore(), appConfig.algorithm(timeQuantum, initPower, powerThreshold));
+        ToastScheduler.getInstance().start(config);
+        Application.launch(args);
     }
 
     private static List<ToastProcess> getProcessList(Scanner scanner) {
