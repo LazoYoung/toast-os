@@ -15,6 +15,7 @@ import toast.persistence.domain.SchedulerConfig;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import toast.persistence.mapper.SetUpMapper;
 
 public class MainApp extends Application {
     @Override
@@ -34,6 +35,17 @@ public class MainApp extends Application {
     }
 
     public static void main(String[] args) {
+        Application.launch(args);
+
+//        startScheduler();
+    }
+
+    private static void startSchedulerWithTerminal() {
+        SchedulerConfig config = makeInput();
+        ToastScheduler.getInstance().start(config);
+    }
+
+    private static SchedulerConfig makeInput() {
         Scanner scanner = new Scanner(System.in);
         List<ToastProcessor> processorList = getCoreList(scanner);
         List<ToastProcess> processList = getProcessList(scanner);
@@ -45,10 +57,7 @@ public class MainApp extends Application {
         scanner.close();
 
         CustomSatellite algorithm = new CustomSatellite(timeQuantum, initPower, powerThreshold);
-        SchedulerConfig config = new SchedulerConfig(Core.PERFORMANCE, algorithm, processList, processorList);
-
-        ToastScheduler.getInstance().start(config);
-        Application.launch(args);
+        return new SchedulerConfig(Core.PERFORMANCE, algorithm, processList, processorList);
     }
 
     private static List<ToastProcess> getProcessList(Scanner scanner) {
