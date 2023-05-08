@@ -10,7 +10,7 @@ public class AlgorithmFactory {
         this.name = name;
     }
 
-    public Algorithm create(int timeQuantum, double initPower, double powerThreshold) {
+    public Algorithm create(Integer timeQuantum, Double initPower, Double powerThreshold) {
         if (this.name.equals(AlgorithmName.FCFS)) {
             return new FirstComeFirstService();
         }
