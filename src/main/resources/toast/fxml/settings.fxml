@@ -72,8 +72,8 @@
                                           </rowConstraints>
                                           <children>
                                               <CoreProcessorButton fx:id="core1" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
-                                              <CoreProcessorButton fx:id="core2" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.rowIndex="1" />
-                                              <CoreProcessorButton fx:id="core3" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" />
+                                              <CoreProcessorButton fx:id="core2" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" />
+                                              <CoreProcessorButton fx:id="core3" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.rowIndex="1" />
                                               <CoreProcessorButton fx:id="core4" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                                           </children>
                                       </GridPane>
@@ -92,7 +92,7 @@
                   </AnchorPane>
                   <FlowPane alignment="TOP_CENTER">
                      <children>
-                        <MFXButton mnemonicParsing="false" prefHeight="30.0" prefWidth="160.0" rippleColor="#eaebef" style="-fx-background-color: #5A81FA; -fx-text-fill: #FFFFFF; -fx-font-weight: bold; -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.7),10,0,5,5);" text="Data Save" textFill="WHITE">
+                        <MFXButton fx:id="saveButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="160.0" rippleColor="#eaebef" style="-fx-background-color: #5A81FA; -fx-text-fill: #FFFFFF; -fx-font-weight: bold; -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.7),10,0,5,5);" text="Data Save" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -194,17 +194,17 @@
                                               </GridPane>
                                               <VBox alignment="CENTER" maxWidth="140.0" HBox.hgrow="ALWAYS">
                                                   <children>
-                                                      <MFXButton fx:id="add" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-background-color: #5A81FA; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.7),10,0,5,5); -fx-text-fill: #FFFFFF; -fx-font-weight: bold;" text="Add" VBox.vgrow="ALWAYS">
+                                                      <MFXButton fx:id="addButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-background-color: #5A81FA; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.7),10,0,5,5); -fx-text-fill: #FFFFFF; -fx-font-weight: bold;" text="Add" VBox.vgrow="ALWAYS">
                                                           <VBox.margin>
                                                               <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                                           </VBox.margin>
                                                       </MFXButton>
-                                                      <MFXButton fx:id="remove" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-background-color: #5A81FA; -fx-background-radius: 10; -fx-text-fill: #FFFFFF; -fx-font-weight: bold; -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.7),10,0,5,5);" text="Remove" VBox.vgrow="ALWAYS">
+                                                      <MFXButton fx:id="removeButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-background-color: #5A81FA; -fx-background-radius: 10; -fx-text-fill: #FFFFFF; -fx-font-weight: bold; -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.7),10,0,5,5);" text="Remove" VBox.vgrow="ALWAYS">
                                                           <VBox.margin>
                                                               <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                                           </VBox.margin>
                                                       </MFXButton>
-                                                      <MFXButton fx:id="clear" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-background-color: #5A81FA; -fx-background-radius: 10; -fx-text-fill: #FFFFFF; -fx-font-weight: bold; -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.7),10,0,5,5);" text="Clear" VBox.vgrow="ALWAYS">
+                                                      <MFXButton fx:id="clearButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-background-color: #5A81FA; -fx-background-radius: 10; -fx-text-fill: #FFFFFF; -fx-font-weight: bold; -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.7),10,0,5,5);" text="Clear" VBox.vgrow="ALWAYS">
                                                           <VBox.margin>
                                                               <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                                           </VBox.margin>
