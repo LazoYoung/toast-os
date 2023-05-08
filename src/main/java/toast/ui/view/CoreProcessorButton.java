@@ -1,16 +1,17 @@
 package toast.ui.view;
 
 import io.github.palexdev.materialfx.controls.MFXButton;
+
 import java.util.List;
 
 public class CoreProcessorButton extends MFXButton {
 
     private int idx;
 
-    private static List<CoreStatus> statuses = List.of(
-            new CoreStatus("OFF", "-fx-background-color: #bbb4b4;"),
-            new CoreStatus("P-Core", "-fx-background-color: #5a81fa;"),
-            new CoreStatus("E-Core", "-fx-background-color: #2c3d8f;")
+    private static final List<CoreStatus> statuses = List.of(
+            new CoreStatus("OFF", getStyle("#000000", "#bbb4b4")),
+            new CoreStatus("P-Core", getStyle("#FFFFFF", "#5a81fa")),
+            new CoreStatus("E-Core", getStyle("#FFFFFF", "#2c3d8f"))
     );
 
     public int getIdx() {
@@ -32,6 +33,16 @@ public class CoreProcessorButton extends MFXButton {
             idx %= statuses.size();
             updateStatus();
         });
+    }
+
+    private static String getStyle(String textColor, String bgColor) {
+        String style = "-fx-text-fill: %s; " +
+                "-fx-font-size: 16px; " +
+                "-fx-font-weight: bold; " +
+                "-fx-background-color: %s; " +
+                "-fx-background-radius: 10; " +
+                "-fx-effect: dropshadow(gaussian,rgba(0,0,0,0.8),10,0,5,5);";
+        return String.format(style, textColor, bgColor);
     }
 
     private void updateStatus() {

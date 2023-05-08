@@ -201,6 +201,5 @@ public class GanttChartController {
         drawBackground();
         drawCoreIndicators();
         drawTimeline();
-        System.out.println("repainting... " + scheduler.getElapsedTime());
     }
 }
