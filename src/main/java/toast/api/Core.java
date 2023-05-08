@@ -34,7 +34,7 @@ public enum Core {
 
     public static Core mappingFor(int idx) {
         if (idx == 0) {
-            return null;
+            return PERFORMANCE;
         }
         return idx == 1 ? EFFICIENCY : PERFORMANCE;
     }
