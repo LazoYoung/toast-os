@@ -168,13 +168,13 @@ public class SettingsController extends PageController {
 
     private void initTable() {
         table.setEditable(true);
-//        data.add(new TempProcess(33, 4, 5, "T"));
         table.setItems(data);
 
         processIdColumn.setCellValueFactory(new PropertyValueFactory<>("processId"));
         arrivalTimeColumn.setCellValueFactory(new PropertyValueFactory<>("arrivalTime"));
         workLoadColumn.setCellValueFactory(new PropertyValueFactory<>("workLoad"));
         missionColumn.setCellValueFactory(new PropertyValueFactory<>("mission"));
+
 //        table.getColumns().addAll(processIdColumn, arrivalTimeColumn, workLoadColumn, missionColumn);
     }
 
@@ -201,12 +201,20 @@ public class SettingsController extends PageController {
     }
 
     private void onProcessAdd(ActionEvent event) {
-        var process = new TempProcess(
-                Integer.parseInt(processId.getText()),
-                Integer.parseInt(arrivalTime.getText()),
-                Integer.parseInt(workLoad.getText()), mission.getText()
-        );
-        data.add(process);
+        try {
+            var process = new TempProcess(
+                    Integer.parseInt(processId.getText()),
+                    Integer.parseInt(arrivalTime.getText()),
+                    Integer.parseInt(workLoad.getText()),
+                    mission.getText()
+            );
+            data.add(process);
+
+        } catch (Exception e) {
+            Alert alert = new Alert(ERROR, e.getMessage(), ButtonType.OK);
+            alert.setHeaderText("Failed to add...");
+            Platform.runLater(alert::showAndWait);
+        }
     }
 
     private void onProcessClear(ActionEvent event) {
@@ -220,10 +228,18 @@ public class SettingsController extends PageController {
         public final SimpleStringProperty mission;
 
         public TempProcess(int processId, int arrivalTime, int workLoad, String mission) {
+            if(!isValidMission(mission)) {
+                throw new IllegalArgumentException("미션은 T 혹은 F 중 하나를 입력해주세요.");
+            }
+
             this.processId = new SimpleIntegerProperty(processId);
             this.arrivalTime = new SimpleIntegerProperty(arrivalTime);
             this.workLoad = new SimpleIntegerProperty(workLoad);
             this.mission = new SimpleStringProperty(mission);
+        }
+
+        private static boolean isValidMission(String mission) {
+            return mission.equals("T") || mission.equals("F");
         }
 
         public int getProcessId() {
