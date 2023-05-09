@@ -7,8 +7,10 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
+import toast.api.Core;
 import toast.api.Process;
 import toast.api.Processor;
+import toast.enums.Palette;
 import toast.event.ToastEvent;
 import toast.event.scheduler.SchedulerStartEvent;
 import toast.impl.ToastScheduler;
@@ -62,9 +64,9 @@ public class GanttChartController {
         double width = this.canvas.getWidth();
         double height = this.canvas.getHeight();
         double xMax = getTimelineX(this.timeSpan);
-        g.setFill(Color.WHITE);
+        g.setFill(Palette.COMPONENT_BACKGROUND.color());
         g.fillRect(0, 0, width, height);
-        g.setStroke(Color.LIGHTGRAY);
+        g.setStroke(Palette.STROKE.color());
         g.setLineWidth(3);
 
         g.strokeLine(2, 2, 2, bottomHeight);
@@ -78,9 +80,9 @@ public class GanttChartController {
         g.setTextAlign(TextAlignment.CENTER);
         g.setTextBaseline(VPos.CENTER);
         g.setFont(Font.font(coreFontSize));
-        g.setFill(Color.DIMGRAY);
+        g.setFill(Palette.TEXT_WIDGET.color());
         g.fillText("Arrival Time", this.coreWidth / 2.0, this.rowHeight / 2.0, this.coreWidth);
-        g.setFill(Color.BLACK);
+        g.setFill(Palette.TEXT_DISABLED.color());
 
         for (int i = 1; i <= 4; i++) {
             g.fillText("OFF", this.coreWidth / 2.0, (2 * i + 1) * this.rowHeight / 2.0, this.coreWidth);
@@ -95,11 +97,12 @@ public class GanttChartController {
 
         for (Processor processor : this.scheduler.getProcessorList()) {
             if (processor.isActive()) {
-                String name = processor.getCore().getName();
+                Core core = processor.getCore();
+                String name = core.getName();
                 double y = getTimelineY(processor);
-                g.setFill(Color.BLUE);
+                g.setFill((core == Core.PERFORMANCE) ? Palette.P_CORE.color() : Palette.E_CORE.color());
                 g.fillRect(2, y, this.coreWidth, this.rowHeight);
-                g.setFill(Color.WHITE);
+                g.setFill(Palette.TEXT_WHITE.color());
                 g.fillText(name, x, y + this.rowHeight / 2.0, this.coreWidth);
             }
         }
@@ -115,10 +118,10 @@ public class GanttChartController {
 
     private void drawTimeline() {
         GraphicsContext g = this.canvas.getGraphicsContext2D();
-        g.setStroke(Color.LIGHTGRAY);
         g.setFont(Font.font(timelineFontSize));
+        g.setStroke(Palette.STROKE_LIGHT.color());
+        g.setFill(Palette.TEXT_WIDGET.color());
 
-        g.setFill(Color.GRAY);
         g.fillText(String.valueOf(getTime(0)), getTimelineX(0), bottomHeight + 10);
         g.fillText(String.valueOf(getTime(this.timeSpan)), getTimelineX(this.timeSpan), bottomHeight + 10);
 
