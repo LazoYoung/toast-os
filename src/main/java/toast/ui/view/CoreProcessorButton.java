@@ -1,6 +1,7 @@
 package toast.ui.view;
 
 import io.github.palexdev.materialfx.controls.MFXButton;
+import toast.enums.Palette;
 
 import java.util.List;
 
@@ -9,9 +10,9 @@ public class CoreProcessorButton extends MFXButton {
     private int idx;
 
     private static final List<CoreStatus> statuses = List.of(
-            new CoreStatus("OFF", getStyle("#000000", "#bbb4b4")),
-            new CoreStatus("P-Core", getStyle("#FFFFFF", "#5a81fa")),
-            new CoreStatus("E-Core", getStyle("#FFFFFF", "#2c3d8f"))
+            new CoreStatus("OFF", getStyle(Palette.TEXT_BLACK.hex(), Palette.CORE_OFF.hex())),
+            new CoreStatus("P-Core", getStyle(Palette.TEXT_WHITE.hex(), Palette.P_CORE.hex())),
+            new CoreStatus("E-Core", getStyle(Palette.TEXT_WHITE.hex(), Palette.E_CORE.hex()))
     );
 
     public int getIdx() {
