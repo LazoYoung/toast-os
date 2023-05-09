@@ -28,8 +28,7 @@
 
 /*.choice-box:hover,*/
 .choice-box:focused,
-.text-field:focused
-{
+.text-field:focused {
     -fx-border-color: #5A81FA;
     -fx-border-width: 1 1 1 1;
 }
@@ -44,11 +43,16 @@
     -fx-border-color: #D3D3D3;
     -fx-border-width: 1 1 1 1
 }
+
+.choice-box .context-menu {
+    -fx-pref-width: inherit; /* Your width for the context menu background shown */
+}
+
 .text-field {
     -fx-focus-color: #5A81FA;
     /*-fx-faint-focus-color: #406eff;*/
 }
+
 .setting-title {
     -fx-text-fill: #333F50;
-    -fx-font: 24px;
 }

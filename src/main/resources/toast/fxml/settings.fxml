@@ -252,8 +252,8 @@
                                                       </VBox>
                                                       <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                                           <children>
-                                                              <Label text="Mission (T, F)" />
-                                                              <TextField fx:id="mission" />
+                                                              <Label text="Mission" />
+                                                              <ChoiceBox fx:id="missionChoiceBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
                                                           </children>
                                                       </VBox>
                                                   </children>
