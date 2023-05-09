@@ -38,6 +38,11 @@ public class HighResponseRatioNext implements Algorithm {
         }
     }
 
+    @Override
+    public Iterator<Process> getStandardQueue() {
+        return readyQueue.iterator();
+    }
+
     private double getResponseRatio(Process process) {
         int WT = process.getWaitingTime();
         int BT = process.getWorkload();
