@@ -88,42 +88,9 @@ public class SettingsController extends PageController {
     @FXML
     private MFXButton saveButton;
 
-//    @FXML
-//    private Group algorithmGroup;
-    @FXML
-    private Group processorGroup;
-//    @FXML
-//    private Group processesGroup;
-    @FXML
-    private Label algorithmLabel;
-    @FXML
-    private Label processorLabel;
-    @FXML
-    private Label processesLabel;
-
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        Label label = new Label("Sample label");
-
-        // Creating a graphic (image)
-        Image img = new Image("toast/images/Setting/Processes.png");
-        ImageView view = new ImageView(img);
-        view.setFitHeight(80);
-        view.setPreserveRatio(true);
-        label.setGraphic(view);
-
-        // Setting font to the label
-//        Font font = Font.font("Brush Script MT", FontWeight.BOLD, FontPosture.REGULAR, 25);
-//        label.setFont(font);
-
-//        // Setting the position
-        label.setTranslateX(150);
-        label.setTranslateY(25);
-        processorGroup = new Group();
-        processorGroup.getChildren().add(label);
-
-
         algorithmNameChoiceBox.getItems().addAll(AlgorithmName.values());
         algorithmNameChoiceBox.setValue(AlgorithmName.FCFS);
         initTable();
