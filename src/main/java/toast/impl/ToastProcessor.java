@@ -12,7 +12,6 @@ import toast.event.processor.ProcessorRebootEvent;
 import java.util.Optional;
 
 public class ToastProcessor implements Processor {
-    private static int newId = 1;
     private final int id;
     private final Core core;
     private ToastProcess process;
@@ -22,8 +21,8 @@ public class ToastProcessor implements Processor {
     private int currentTime = 0;
     private int completionListenerIdx;
 
-    public ToastProcessor(Core core, boolean active) {
-        this.id = newId++;
+    public ToastProcessor(int id, Core core, boolean active) {
+        this.id = id;
         this.core = core;
         this.active = active;
     }
