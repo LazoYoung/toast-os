@@ -22,7 +22,7 @@ public class MainApp extends Application {
         try {
             Parent root = FXMLLoader.load(getClass().getResource("scene.fxml"));
             Scene scene = new Scene(root);
-            scene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
+            scene.getStylesheets().add(getClass().getResource("/toast/styles.css").toExternalForm());
 
             primaryStage.setTitle("Process Scheduling Simulator");
             primaryStage.setScene(scene);
