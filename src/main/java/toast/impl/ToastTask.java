@@ -36,7 +36,12 @@ public class ToastTask implements Runnable {
 
             enqueueProcesses();
             algorithm.run(scheduler);
-            if (finish) return;
+
+            if (finish) {
+                System.out.print("└ End of simulation\n\n");
+                printResult();
+                return;
+            }
 
             if (newProcesses.isEmpty() && isIdle()) {
                 scheduler.finish(SchedulerFinishEvent.Cause.COMPLETE);
