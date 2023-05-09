@@ -172,10 +172,6 @@ public class ToastScheduler implements Scheduler {
         return config != null;
     }
 
-    public void addTickListener(Runnable runnable) {
-        task.addTickListener(runnable);
-    }
-
     private void populateProcessor(SchedulerConfig config) {
         var primaryCore = config.getPrimaryCore();
         var list = config.getProcessorList()
