@@ -48,3 +48,7 @@
     -fx-focus-color: #5A81FA;
     /*-fx-faint-focus-color: #406eff;*/
 }
+.setting-title {
+    -fx-text-fill: #333F50;
+    -fx-font: 24px;
+}

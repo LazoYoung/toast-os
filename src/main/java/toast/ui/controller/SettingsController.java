@@ -5,6 +5,9 @@ import static javafx.scene.control.Alert.AlertType.INFORMATION;
 
 import io.github.palexdev.materialfx.controls.MFXButton;
 import java.net.URL;
+import javafx.scene.Group;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -16,10 +19,12 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.text.Font;
 import toast.api.Core;
 import toast.enums.AlgorithmName;
 import toast.impl.ToastProcess;
@@ -83,10 +88,44 @@ public class SettingsController extends PageController {
     @FXML
     private MFXButton saveButton;
 
+//    @FXML
+//    private Group algorithmGroup;
+    @FXML
+    private Group processorGroup;
+//    @FXML
+//    private Group processesGroup;
+    @FXML
+    private Label algorithmLabel;
+    @FXML
+    private Label processorLabel;
+    @FXML
+    private Label processesLabel;
+
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        Label label = new Label("Sample label");
+
+        // Creating a graphic (image)
+        Image img = new Image("toast/images/Setting/Processes.png");
+        ImageView view = new ImageView(img);
+        view.setFitHeight(80);
+        view.setPreserveRatio(true);
+        label.setGraphic(view);
+
+        // Setting font to the label
+//        Font font = Font.font("Brush Script MT", FontWeight.BOLD, FontPosture.REGULAR, 25);
+//        label.setFont(font);
+
+//        // Setting the position
+        label.setTranslateX(150);
+        label.setTranslateY(25);
+        processorGroup = new Group();
+        processorGroup.getChildren().add(label);
+
+
         algorithmNameChoiceBox.getItems().addAll(AlgorithmName.values());
+        algorithmNameChoiceBox.setValue(AlgorithmName.FCFS);
         initTable();
         initButtons();
     }
