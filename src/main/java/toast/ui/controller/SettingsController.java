@@ -209,12 +209,20 @@ public class SettingsController extends PageController {
                     mission.getText()
             );
             data.add(process);
+            clearProcessInput();
 
         } catch (Exception e) {
             Alert alert = new Alert(ERROR, e.getMessage(), ButtonType.OK);
             alert.setHeaderText("Failed to add...");
             Platform.runLater(alert::showAndWait);
         }
+    }
+
+    private void clearProcessInput() {
+        processId.clear();
+        arrivalTime.clear();
+        workLoad.clear();
+        mission.clear();
     }
 
     private void onProcessClear(ActionEvent event) {
