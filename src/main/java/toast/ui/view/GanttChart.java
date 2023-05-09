@@ -13,18 +13,28 @@ import toast.api.Process;
 import toast.api.Processor;
 import toast.enums.Palette;
 import toast.event.ToastEvent;
+import toast.event.scheduler.SchedulerFinishEvent;
 import toast.event.scheduler.SchedulerStartEvent;
 import toast.impl.ToastScheduler;
 import toast.persistence.domain.ProcessorRecord;
 import toast.persistence.domain.SchedulerRecord;
 
 import java.util.Optional;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
+
+import static toast.enums.Palette.*;
 
 public class GanttChart extends Pane {
 
     private final Canvas canvas;
     private final ToastScheduler scheduler;
+    private ScheduledFuture<?> thread = null;
     private final int timeSpan = 20;
+    private int variation = 0;
+    private int seed = 0;
     private double coreWidth;
     private double rowHeight;
     private double bottomHeight;
@@ -35,10 +45,13 @@ public class GanttChart extends Pane {
     public GanttChart() {
         this.canvas = createCanvas();
         this.scheduler = ToastScheduler.getInstance();
+
         widthProperty().addListener(e -> setWidth(getWidth()));
         heightProperty().addListener(e -> setHeight(getHeight()));
         resize(canvas.getWidth(), canvas.getHeight());
-        addTickListener();
+
+        ToastEvent.registerListener(SchedulerStartEvent.class, (e) -> startPainting());
+        ToastEvent.registerListener(SchedulerFinishEvent.class, (e) -> stopPainting());
     }
 
     @Override
@@ -51,6 +64,25 @@ public class GanttChart extends Pane {
     public void setHeight(double height) {
         super.setHeight(height);
         resizeWidget(getPrefWidth(), height);
+    }
+
+    private void startPainting() {
+        this.variation = this.scheduler.getProcessList().size();
+        this.seed = ThreadLocalRandom.current().nextInt(this.variation);
+        this.thread = Executors.newSingleThreadScheduledExecutor()
+                .scheduleWithFixedDelay(this::repaint, 0L, 100L, TimeUnit.MILLISECONDS);
+    }
+
+    private void stopPainting() {
+        this.thread.cancel(false);
+    }
+
+    private void repaint() {
+        Platform.runLater(() -> {
+            drawBackground();
+            drawTimeline();
+            drawCoreIndicators();
+        });
     }
 
     private void resizeWidget(double width, double height) {
@@ -72,11 +104,11 @@ public class GanttChart extends Pane {
         double height = this.canvas.getHeight();
         double xMax = getTimelineX(this.timeSpan);
 
-        g.setFill(Palette.COMPONENT_BACKGROUND.color());
+        g.setFill(COMPONENT_BACKGROUND.color());
         g.fillRect(0, 0, width, height);
 
         g.setLineWidth(3);
-        g.setStroke(Palette.STROKE.color());
+        g.setStroke(STROKE.color());
         g.strokeLine(2, 2, 2, bottomHeight);
         g.strokeLine(2, 2, xMax, 2);
         g.strokeLine(2, bottomHeight, xMax, bottomHeight);
@@ -88,9 +120,9 @@ public class GanttChart extends Pane {
         g.setTextAlign(TextAlignment.CENTER);
         g.setTextBaseline(VPos.CENTER);
         g.setFont(Font.font(coreFontSize));
-        g.setFill(Palette.TEXT_WIDGET.color());
+        g.setFill(TEXT_WIDGET.color());
         g.fillText("Arrival Time", this.coreWidth / 2.0, this.rowHeight / 2.0, this.coreWidth);
-        g.setFill(Palette.TEXT_DISABLED.color());
+        g.setFill(TEXT_DISABLED.color());
 
         for (int i = 1; i <= 4; i++) {
             g.fillText("OFF", this.coreWidth / 2.0, (2 * i + 1) * this.rowHeight / 2.0, this.coreWidth);
@@ -108,26 +140,18 @@ public class GanttChart extends Pane {
                 Core core = processor.getCore();
                 String name = core.getName();
                 double y = getTimelineY(processor);
-                g.setFill((core == Core.PERFORMANCE) ? Palette.P_CORE.color() : Palette.E_CORE.color());
-                g.fillRect(2, y, this.coreWidth, this.rowHeight);
-                g.setFill(Palette.TEXT_WHITE.color());
+                g.setFill((core == Core.PERFORMANCE) ? P_CORE.color() : E_CORE.color());
+                g.fillRect(3, y, this.coreWidth - 3, this.rowHeight);
+                g.setFill(TEXT_WHITE.color());
                 g.fillText(name, x, y + this.rowHeight / 2.0, this.coreWidth);
             }
         }
     }
 
-    private Color getCoreColor(Process process) {
-        double seed = process.getId() * 4321;
-        int r = (int) Math.floor(seed % 256);
-        int g = (int) Math.floor(seed / 123 % 256);
-        int b = (int) Math.floor(seed / 123 % 123 % 256);
-        return Color.rgb(r, g, b);
-    }
-
     private void drawTimeline() {
         GraphicsContext g = this.canvas.getGraphicsContext2D();
         g.setFont(Font.font(timelineFontSize));
-        g.setFill(Palette.TEXT_WIDGET.color());
+        g.setFill(TEXT_WIDGET.color());
 
         g.fillText(String.valueOf(getTime(0)), getTimelineX(0), bottomHeight + 10);
         g.fillText(String.valueOf(getTime(this.timeSpan)), getTimelineX(this.timeSpan), bottomHeight + 10);
@@ -137,11 +161,11 @@ public class GanttChart extends Pane {
             g.fillText(String.valueOf(getTime(i)), x, bottomHeight + 10);
 
             if (i == 0 || i == this.timeSpan) {
-                g.setStroke(Palette.STROKE.color());
+                g.setStroke(STROKE.color());
                 g.setLineWidth(3);
                 g.setLineDashes();
             } else {
-                g.setStroke(Palette.STROKE_LIGHT.color());
+                g.setStroke(STROKE_LIGHT.color());
                 g.setLineWidth(1);
                 g.setLineDashes(5, 5);
             }
@@ -157,18 +181,40 @@ public class GanttChart extends Pane {
 
         for (Processor processor : ToastScheduler.getInstance().getProcessorList()) {
             ProcessorRecord record = SchedulerRecord.getInstance().getProcessorRecord(processor);
+            Optional<Process> prev = Optional.empty();
             double timelineY = getTimelineY(processor);
+            int length = 0;
 
             for (int i = 0; i < this.timeSpan; i++) {
-                int time = getTime(i);
-                Optional<Process> now = record.getProcessAtTime(time);
+                Optional<Process> now = record.getProcessAtTime(getTime(i));
+
+                if (prev.isPresent() && !prev.equals(now)) {
+                    double timelineX = getTimelineX(i) - delta * length;
+                    double textX = getTimelineX(i) - delta * length / 2;
+                    double textY = timelineY + rowHeight / 2;
+                    Color barColor = getCoreColor(prev.get());
+                    String text = String.valueOf(prev.get().getId());
+                    g.setFill(barColor);
+                    g.fillRect(timelineX, timelineY, delta * length, this.rowHeight);
+                    g.setFill(Palette.getTextColor(barColor));
+                    g.setTextAlign(TextAlignment.CENTER);
+                    g.fillText(text, textX, textY, delta * length);
+                    length = 0;
+                }
 
                 if (now.isPresent()) {
-                    g.setFill(getCoreColor(now.get()));
-                    g.fillRect(getTimelineX(i), timelineY, delta, this.rowHeight);
+                    length++;
                 }
+
+                prev = now;
             }
         }
+    }
+
+    private Color getCoreColor(Process process) {
+        Color color = process.isMission() ? P_CORE.color() : E_CORE.color();
+        double saturation = (double) ((this.seed + process.getId()) % this.variation) / this.variation;
+        return color.deriveColor(1.0, saturation, 1.0, 1.0);
     }
 
     private double getTimelineX(int index) {
@@ -196,23 +242,6 @@ public class GanttChart extends Pane {
         int time = this.scheduler.getElapsedTime();
         int offset = Math.max(time - this.timeSpan, 0);
         return index + offset;
-    }
-
-    // todo Repaint every 100 ms
-    private void addTickListener() {
-        if (this.scheduler.isRunning()) {
-            this.scheduler.addTickListener(() -> Platform.runLater(this::repaint));
-        } else {
-            ToastEvent.registerListener(SchedulerStartEvent.class, (SchedulerStartEvent event) -> {
-                this.scheduler.addTickListener(() -> Platform.runLater(this::repaint));
-            });
-        }
-    }
-
-    private void repaint() {
-        drawBackground();
-        drawCoreIndicators();
-        drawTimeline();
     }
 
     private Canvas createCanvas() {

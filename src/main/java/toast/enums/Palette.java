@@ -69,4 +69,10 @@ public enum Palette {
     public String hex() {
         return hexCode;
     }
+
+    public static Color getTextColor(Color background) {
+        double L1 = TEXT_BLACK.color().getBrightness();
+        double L2 = background.getBrightness();
+        return (Math.abs(L1 - L2) < 0.5) ? TEXT_WHITE.color() : TEXT_BLACK.color();
+    }
 }
