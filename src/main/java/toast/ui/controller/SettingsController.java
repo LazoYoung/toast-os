@@ -1,6 +1,11 @@
 package toast.ui.controller;
 
+import static javafx.scene.control.Alert.AlertType.ERROR;
+import static javafx.scene.control.Alert.AlertType.INFORMATION;
+
 import io.github.palexdev.materialfx.controls.MFXButton;
+import java.net.URL;
+import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -8,7 +13,12 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import toast.api.Core;
 import toast.enums.AlgorithmName;
@@ -17,12 +27,6 @@ import toast.impl.ToastScheduler;
 import toast.persistence.domain.SchedulerConfig;
 import toast.persistence.mapper.SetUpMapper;
 import toast.ui.view.CoreProcessorButton;
-
-import java.net.URL;
-import java.util.ResourceBundle;
-
-import static javafx.scene.control.Alert.AlertType.ERROR;
-import static javafx.scene.control.Alert.AlertType.INFORMATION;
 
 public class SettingsController extends PageController {
     @FXML
@@ -168,13 +172,13 @@ public class SettingsController extends PageController {
 
     private void initTable() {
         table.setEditable(true);
-//        data.add(new TempProcess(33, 4, 5, "T"));
         table.setItems(data);
 
         processIdColumn.setCellValueFactory(new PropertyValueFactory<>("processId"));
         arrivalTimeColumn.setCellValueFactory(new PropertyValueFactory<>("arrivalTime"));
         workLoadColumn.setCellValueFactory(new PropertyValueFactory<>("workLoad"));
         missionColumn.setCellValueFactory(new PropertyValueFactory<>("mission"));
+
 //        table.getColumns().addAll(processIdColumn, arrivalTimeColumn, workLoadColumn, missionColumn);
     }
 
@@ -201,12 +205,64 @@ public class SettingsController extends PageController {
     }
 
     private void onProcessAdd(ActionEvent event) {
-        var process = new TempProcess(
-                Integer.parseInt(processId.getText()),
-                Integer.parseInt(arrivalTime.getText()),
-                Integer.parseInt(workLoad.getText()), mission.getText()
-        );
-        data.add(process);
+        try {
+            var process = new TempProcess(
+                    getProcessId(),
+                    getArrivalTime(),
+                    getWorkLoad(),
+                    mission.getText()
+            );
+            data.add(process);
+            clearProcessInput();
+        } catch (Exception e) {
+            Alert alert = new Alert(ERROR, e.getMessage(), ButtonType.OK);
+            alert.setHeaderText("Failed to add...");
+            Platform.runLater(alert::showAndWait);
+        }
+    }
+
+    private int getWorkLoad() {
+        try {
+            int ret = Integer.parseInt(workLoad.getText());
+            if (ret < 0) {
+                throw new IllegalArgumentException("workLoad는 음수일 수 없습니다.");
+            }
+            return ret;
+        } catch (NumberFormatException | NullPointerException e) {
+            throw new IllegalArgumentException("workLoad는 정수형태로 입력해주세요.");
+        }
+    }
+
+    private int getArrivalTime() {
+        try {
+            int ret = Integer.parseInt(arrivalTime.getText());
+            if (ret < 0) {
+                throw new IllegalArgumentException("arrivalTime는 음수일 수 없습니다.");
+            }
+            return ret;
+        } catch (NumberFormatException | NullPointerException e) {
+            throw new IllegalArgumentException("arrivalTime는 정수형태로 입력해주세요.");
+        }
+    }
+
+    private int getProcessId() {
+        try {
+            int ret = Integer.parseInt(processId.getText());
+            if (ret < 0) {
+                throw new IllegalArgumentException("processId는 음수일 수 없습니다.");
+            }
+            return ret;
+        } catch (NumberFormatException | NullPointerException e) {
+            throw new IllegalArgumentException("processId는 정수형태로 입력해주세요.");
+        }
+
+    }
+
+    private void clearProcessInput() {
+        processId.clear();
+        arrivalTime.clear();
+        workLoad.clear();
+        mission.clear();
     }
 
     private void onProcessClear(ActionEvent event) {
@@ -214,6 +270,8 @@ public class SettingsController extends PageController {
     }
 
     public static class TempProcess {
+        public static final String TRUE = "T";
+        public static final String FALSE = "F";
         public final SimpleIntegerProperty processId;
         public final SimpleIntegerProperty arrivalTime;
         public final SimpleIntegerProperty workLoad;
@@ -223,7 +281,11 @@ public class SettingsController extends PageController {
             this.processId = new SimpleIntegerProperty(processId);
             this.arrivalTime = new SimpleIntegerProperty(arrivalTime);
             this.workLoad = new SimpleIntegerProperty(workLoad);
-            this.mission = new SimpleStringProperty(mission);
+            this.mission = new SimpleStringProperty(isMission(mission) ? TRUE : FALSE);
+        }
+
+        private static boolean isValidMission(String mission) {
+            return mission.equals(TRUE) || mission.equals(FALSE);
         }
 
         public int getProcessId() {
@@ -275,12 +337,11 @@ public class SettingsController extends PageController {
         }
 
         public ToastProcess toToastProcess() {
-            return new ToastProcess(getProcessId(), getArrivalTime(), getWorkLoad(), getMission().equals("T"));
+            return new ToastProcess(getProcessId(), getArrivalTime(), getWorkLoad(), isMission(getMission()));
         }
 
-        public static TempProcess create(ToastProcess toastProcess) {
-            return new TempProcess(toastProcess.getId(), toastProcess.getArrivalTime(), toastProcess.getWorkload(),
-                    toastProcess.isMission() ? "T" : "F");
+        private static boolean isMission(String mission1) {
+            return TRUE.equals(mission1);
         }
 
     }

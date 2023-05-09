@@ -36,7 +36,7 @@ public enum Core {
         if (idx == 0) {
             return PERFORMANCE;
         }
-        return idx == 1 ? EFFICIENCY : PERFORMANCE;
+        return idx == 1 ? PERFORMANCE : EFFICIENCY;
     }
 
     public int getIdx() {
