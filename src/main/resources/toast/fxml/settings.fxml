@@ -17,7 +17,7 @@
                      <children>
                         <VBox alignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
-                                      <Label alignment="TOP_LEFT" text="Type Of Algorthim">
+                                      <Label alignment="TOP_LEFT" text="Type Of Algorithm">
                                  <font>
                                     <Font name="System Bold" size="18.0" />
                                  </font>
