@@ -51,12 +51,13 @@ public class ToastScheduler implements Scheduler {
         populateProcess(this.config);
         this.algorithm = this.config.getAlgorithm();
         this.running = true;
-        this.task = new ToastTask(this);
-        this.taskFuture = Executors.newSingleThreadScheduledExecutor()
-                .scheduleAtFixedRate(this.task, 0L, 1, TimeUnit.SECONDS);
         this.recorder.eraseRecords();
         this.recorder.startRecording();
         this.recorder.startLoggingEvents();
+
+        this.task = new ToastTask(this);
+        this.taskFuture = Executors.newSingleThreadScheduledExecutor()
+                .scheduleAtFixedRate(this.task, 0L, 1, TimeUnit.SECONDS);
 
         // dispatch event
         var event = new SchedulerStartEvent(this);

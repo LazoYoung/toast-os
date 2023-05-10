@@ -6,6 +6,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import toast.algorithm.CustomSatellite;
+import toast.algorithm.FirstComeFirstService;
+import toast.api.Algorithm;
 import toast.api.Core;
 import toast.impl.ToastProcess;
 import toast.impl.ToastProcessor;
@@ -55,7 +57,7 @@ public class MainApp extends Application {
         System.out.println();
         scanner.close();
 
-        CustomSatellite algorithm = new CustomSatellite(timeQuantum, initPower, powerThreshold);
+        Algorithm algorithm = new FirstComeFirstService();
         return new SchedulerConfig(Core.PERFORMANCE, algorithm, processList, processorList);
     }
 
