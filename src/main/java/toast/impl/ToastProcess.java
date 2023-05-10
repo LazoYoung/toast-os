@@ -94,6 +94,11 @@ public class ToastProcess implements Process {
     }
 
     @Override
+    public boolean isComplete() {
+        return progress >= workload;
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (obj instanceof ToastProcess other) {
             return (this.id == other.id);
@@ -125,9 +130,5 @@ public class ToastProcess implements Process {
         this.lastHaltTime = this.processor.getCurrentTime();
         this.processor = null;
         this.continuousBurstTime = 0;
-    }
-
-    private boolean isComplete() {
-        return progress >= workload;
     }
 }

@@ -2,11 +2,12 @@
 
 <?import io.github.palexdev.materialfx.controls.MFXButton?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 <?import toast.ui.view.GanttChart?>
 <?import toast.ui.view.ReadyQueue?>
-<Pane prefHeight="400.0" prefWidth="815.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="toast.ui.controller.SimulationController">
+<Pane prefHeight="720.0" prefWidth="1130.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="toast.ui.controller.SimulationController">
 
     <children>
         <Label text="Simulation">
@@ -14,10 +15,11 @@
                 <Font name="System Bold" size="36.0" />
             </font>
         </Label>
-        <GanttChart height="200" layoutY="72.0" width="900" />
-        <ReadyQueue height="50" layoutX="144.0" layoutY="299.0" width="300" mission="false" />
-        <ReadyQueue height="50" layoutX="500.0" layoutY="299.0" width="300" mission="true" />
+        <GanttChart height="200" layoutX="69.0" layoutY="464.0" width="900" />
+        <ReadyQueue height="50" layoutX="154.0" layoutY="364.0" mission="false" width="300" />
+        <ReadyQueue height="50" layoutX="498.0" layoutY="364.0" mission="true" width="300" />
         <MFXButton fx:id="startButton" layoutX="48.0" layoutY="305.0" mnemonicParsing="false" text="Start" />
+        <TableView fx:id="table" layoutX="498.0" layoutY="30.0" maxHeight="300.0" maxWidth="600.0" prefWidth="600.0" />
     </children>
 
 </Pane>
