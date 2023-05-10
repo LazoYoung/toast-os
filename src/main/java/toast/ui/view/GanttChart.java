@@ -7,6 +7,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
 import toast.api.Core;
 import toast.api.Process;
@@ -33,14 +34,14 @@ public class GanttChart extends Pane {
     private final ToastScheduler scheduler;
     private ScheduledFuture<?> thread = null;
     private final int timeSpan = 20;
-    private int variation = 0;
     private int seed = 0;
     private double coreWidth;
     private double rowHeight;
     private double bottomHeight;
     private double timelineWidth;
-    private double coreFontSize;
-    private double timelineFontSize;
+    private Font coreFont;
+    private Font processFont;
+    private Font timelineFont;
 
     public GanttChart() {
         this.canvas = createCanvas();
@@ -67,8 +68,7 @@ public class GanttChart extends Pane {
     }
 
     private void startPainting() {
-        this.variation = this.scheduler.getProcessList().size();
-        this.seed = ThreadLocalRandom.current().nextInt(this.variation);
+        this.seed = ThreadLocalRandom.current().nextInt(this.scheduler.getProcessList().size());
         this.thread = Executors.newSingleThreadScheduledExecutor()
                 .scheduleWithFixedDelay(this::repaint, 0L, 100L, TimeUnit.MILLISECONDS);
     }
@@ -81,6 +81,7 @@ public class GanttChart extends Pane {
         Platform.runLater(() -> {
             drawBackground();
             drawTimeline();
+            drawProcessBars();
             drawCoreIndicators();
         });
     }
@@ -91,8 +92,9 @@ public class GanttChart extends Pane {
         this.rowHeight = height * 0.18;
         this.bottomHeight = rowHeight * 5;
         this.timelineWidth = width - this.coreWidth - 10;
-        this.coreFontSize = height * 0.08;
-        this.timelineFontSize = height * 0.07;
+        this.coreFont = Font.font(null, FontWeight.BOLD, height * 0.08);
+        this.processFont = Font.font(null, FontWeight.BOLD, height * 0.07);
+        this.timelineFont = Font.font(null, FontWeight.NORMAL, height * 0.07);
         this.canvas.setWidth(width);
         this.canvas.setHeight(height);
         repaint();
@@ -109,9 +111,9 @@ public class GanttChart extends Pane {
 
         g.setLineWidth(3);
         g.setStroke(STROKE.color());
-        g.strokeLine(2, 2, 2, bottomHeight);
+        g.strokeLine(2, 2, 2, this.bottomHeight);
         g.strokeLine(2, 2, xMax, 2);
-        g.strokeLine(2, bottomHeight, xMax, bottomHeight);
+        g.strokeLine(2, this.bottomHeight, xMax, this.bottomHeight);
 
         for (int i = 1; i <= 4; i++) {
             g.strokeLine(2, this.rowHeight * i, xMax, this.rowHeight * i);
@@ -119,7 +121,7 @@ public class GanttChart extends Pane {
 
         g.setTextAlign(TextAlignment.CENTER);
         g.setTextBaseline(VPos.CENTER);
-        g.setFont(Font.font(coreFontSize));
+        g.setFont(this.coreFont);
         g.setFill(TEXT_WIDGET.color());
         g.fillText("Arrival Time", this.coreWidth / 2.0, this.rowHeight / 2.0, this.coreWidth);
         g.setFill(TEXT_DISABLED.color());
@@ -132,7 +134,7 @@ public class GanttChart extends Pane {
     private void drawCoreIndicators() {
         GraphicsContext g = this.canvas.getGraphicsContext2D();
         double x = this.coreWidth / 2.0;
-        g.setFont(Font.font(coreFontSize));
+        g.setFont(this.coreFont);
         g.setTextAlign(TextAlignment.CENTER);
 
         for (Processor processor : this.scheduler.getProcessorList()) {
@@ -150,15 +152,15 @@ public class GanttChart extends Pane {
 
     private void drawTimeline() {
         GraphicsContext g = this.canvas.getGraphicsContext2D();
-        g.setFont(Font.font(timelineFontSize));
+        g.setFont(this.timelineFont);
         g.setFill(TEXT_WIDGET.color());
 
-        g.fillText(String.valueOf(getTime(0)), getTimelineX(0), bottomHeight + 10);
-        g.fillText(String.valueOf(getTime(this.timeSpan)), getTimelineX(this.timeSpan), bottomHeight + 10);
+        g.fillText(String.valueOf(getTime(0)), getTimelineX(0), this.bottomHeight + 10);
+        g.fillText(String.valueOf(getTime(this.timeSpan)), getTimelineX(this.timeSpan), this.bottomHeight + 10);
 
         for (int i = 0; i <= this.timeSpan; i++) {
             double x = getTimelineX(i);
-            g.fillText(String.valueOf(getTime(i)), x, bottomHeight + 10);
+            g.fillText(String.valueOf(getTime(i)), x, this.bottomHeight + 10);
 
             if (i == 0 || i == this.timeSpan) {
                 g.setStroke(STROKE.color());
@@ -170,16 +172,16 @@ public class GanttChart extends Pane {
                 g.setLineDashes(5, 5);
             }
 
-            g.strokeLine(x, 0, x, bottomHeight);
+            g.strokeLine(x, 0, x, this.bottomHeight);
         }
-        drawProcessBars();
     }
 
     private void drawProcessBars() {
         double delta = getTimelineDelta();
         GraphicsContext g = this.canvas.getGraphicsContext2D();
+        g.setFont(this.processFont);
 
-        for (Processor processor : ToastScheduler.getInstance().getProcessorList()) {
+        for (Processor processor : this.scheduler.getProcessorList()) {
             ProcessorRecord record = SchedulerRecord.getInstance().getProcessorRecord(processor);
             Optional<Process> prev = Optional.empty();
             double timelineY = getTimelineY(processor);
@@ -191,7 +193,7 @@ public class GanttChart extends Pane {
                 if (prev.isPresent() && !prev.equals(now)) {
                     double timelineX = getTimelineX(i) - delta * length;
                     double textX = getTimelineX(i) - delta * length / 2;
-                    double textY = timelineY + rowHeight / 2;
+                    double textY = timelineY + this.rowHeight / 2;
                     Color barColor = getCoreColor(prev.get());
                     String text = String.valueOf(prev.get().getId());
                     g.setFill(barColor);
@@ -213,7 +215,8 @@ public class GanttChart extends Pane {
 
     private Color getCoreColor(Process process) {
         Color color = process.isMission() ? P_CORE.color() : E_CORE.color();
-        double saturation = (double) ((this.seed + process.getId()) % this.variation) / this.variation;
+        int variation = this.scheduler.getProcessList().size();
+        double saturation = (double) ((this.seed + process.getId()) % variation) / variation;
         return color.deriveColor(1.0, saturation, 1.0, 1.0);
     }
 
