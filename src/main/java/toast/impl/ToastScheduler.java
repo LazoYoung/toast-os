@@ -12,7 +12,6 @@ import toast.persistence.domain.SchedulerConfig;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledFuture;
@@ -22,8 +21,6 @@ import java.util.stream.Collectors;
 @SuppressWarnings("removal")
 public class ToastScheduler implements Scheduler {
     private static final ToastScheduler instance = new ToastScheduler();
-    // todo deprecated element
-    public final LinkedList<Process> readyQueue = new LinkedList<>();
     private final ToastRecorder recorder = new ToastRecorder(this);
     private final List<Processor> processorList = new ArrayList<>();
     private final List<Process> processList = new ArrayList<>();
@@ -103,7 +100,7 @@ public class ToastScheduler implements Scheduler {
 
     @Override
     public List<Process> getReadyQueue() {
-        return Collections.unmodifiableList(readyQueue);
+        return Collections.emptyList();
     }
 
     @Override
@@ -134,10 +131,8 @@ public class ToastScheduler implements Scheduler {
     @Override
     public void dispatch(Processor processor, Process process) {
         validateProcessor(processor, false);
-        validateProcess(process);
 
         processor.dispatch(process);
-        readyQueue.remove(process);
 
         int pid = process.getId();
         String coreName = processor.getCore().getName();
@@ -147,7 +142,6 @@ public class ToastScheduler implements Scheduler {
     @Override
     public void preempt(Processor processor, Process process) {
         validateProcessor(processor, true);
-        validateProcess(process);
 
         halt(processor);
         dispatch(processor, process);
@@ -155,9 +149,7 @@ public class ToastScheduler implements Scheduler {
 
     @Override
     public void halt(Processor processor) {
-        Process halted = processor.halt();
-
-        readyQueue.addLast(halted);
+        processor.halt();
     }
 
     public Algorithm getAlgorithm() {
@@ -170,10 +162,6 @@ public class ToastScheduler implements Scheduler {
 
     public boolean isConfigured() {
         return config != null;
-    }
-
-    public void addTickListener(Runnable runnable) {
-        task.addTickListener(runnable);
     }
 
     private void populateProcessor(SchedulerConfig config) {
@@ -206,12 +194,6 @@ public class ToastScheduler implements Scheduler {
         }
         if (!preempt && !processor.isIdle()) {
             throw new IllegalArgumentException("Failed to dispatch: processor already running");
-        }
-    }
-
-    private void validateProcess(Process process) {
-        if (!readyQueue.contains(process)) {
-            throw new IllegalStateException("Failed to dispatch: process not in ready queue");
         }
     }
 

@@ -39,7 +39,7 @@ public class FXMLController implements Initializable {
 
         } catch (Exception e) {
             System.out.println("ERROR WITH PAGE: " + page.getLocation());
-            throw new RuntimeException(e.getMessage());
+            e.printStackTrace();
         }
     }
 

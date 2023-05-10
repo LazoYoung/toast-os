@@ -16,7 +16,6 @@ public class ToastTask implements Runnable {
     private final ToastScheduler scheduler;
     private final Algorithm algorithm;
     private final List<Process> newProcesses;
-    private final List<Runnable> tickListeners;
     private int elapsedTime = 0;
     private double powerConsumed = 0;
     private boolean finish = false;
@@ -25,7 +24,6 @@ public class ToastTask implements Runnable {
         this.scheduler = scheduler;
         this.algorithm = scheduler.getAlgorithm();
         this.newProcesses = new ArrayList<>(scheduler.getProcessList());
-        this.tickListeners = new ArrayList<>();
         algorithm.init(scheduler);
     }
 
@@ -36,7 +34,12 @@ public class ToastTask implements Runnable {
 
             enqueueProcesses();
             algorithm.run(scheduler);
-            if (finish) return;
+
+            if (finish) {
+                System.out.print("└ End of simulation\n\n");
+                printResult();
+                return;
+            }
 
             if (newProcesses.isEmpty() && isIdle()) {
                 scheduler.finish(SchedulerFinishEvent.Cause.COMPLETE);
@@ -48,8 +51,6 @@ public class ToastTask implements Runnable {
                 syncProcessorTime();
                 System.out.printf("└ After run: %ds%n\n", elapsedTime);
             }
-
-            tickListeners.forEach(Runnable::run);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -72,10 +73,6 @@ public class ToastTask implements Runnable {
 
     public void finish() {
         this.finish = true;
-    }
-
-    public void addTickListener(Runnable runnable) {
-        this.tickListeners.add(runnable);
     }
 
     private boolean isIdle() {

@@ -68,6 +68,12 @@ public interface Process {
     boolean isRunning();
 
     /**
+     * 프로세스 수행이 완료되었는지 여부를 반환한다
+     * @return true if this process has finished all of its workload
+     */
+    boolean isComplete();
+
+    /**
      * 선점시 제거해야 하는 리스너를 ID를 통해 제거한다
      *
      * @param listenerId 종료할 리스너 이벤트의 아이디

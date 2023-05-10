@@ -36,6 +36,11 @@ public class ShortestRemainingTimeNext implements Algorithm {
         runWith(this.readyQueue, processors, scheduler);
     }
 
+    @Override
+    public Iterator<Process> getStandardQueue() {
+        return readyQueue.iterator();
+    }
+
     private static void runWith(PriorityQueue<Process> processPQ, Iterator<Processor> processors, Scheduler scheduler) {
         while(processors.hasNext() && !processPQ.isEmpty()) {
             Processor currentProcessor = processors.next();

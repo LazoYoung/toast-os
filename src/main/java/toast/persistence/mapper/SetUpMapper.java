@@ -141,13 +141,13 @@ public class SetUpMapper {
 
         List<ToastProcessor> cores = new ArrayList<>();
 
-        cores.add(new ToastProcessor(Core.mappingFor(core1), core1 != 0));
+        cores.add(new ToastProcessor(1, Core.mappingFor(core1), core1 != 0));
         System.out.println("core1Value = " + (core1 == 0 ? "OFF" : core1));
-        cores.add(new ToastProcessor(Core.mappingFor(core2), core2 != 0));
+        cores.add(new ToastProcessor(2, Core.mappingFor(core2), core2 != 0));
         System.out.println("core2Value = " + (core2 == 0 ? "OFF" : core2));
-        cores.add(new ToastProcessor(Core.mappingFor(core3), core3 != 0));
+        cores.add(new ToastProcessor(3, Core.mappingFor(core3), core3 != 0));
         System.out.println("core3Value = " + (core3 == 0 ? "OFF" : core3));
-        cores.add(new ToastProcessor(Core.mappingFor(core4), core4 != 0));
+        cores.add(new ToastProcessor(4, Core.mappingFor(core4), core4 != 0));
         System.out.println("core4Value = " + (core4 == 0 ? "OFF" : core4));
 
         if (cores.stream().filter(ToastProcessor::isActive).findAny().isEmpty()) {
