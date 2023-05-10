@@ -5,9 +5,6 @@ import static javafx.scene.control.Alert.AlertType.INFORMATION;
 
 import io.github.palexdev.materialfx.controls.MFXButton;
 import java.net.URL;
-import javafx.scene.Group;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -19,12 +16,10 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.text.Font;
 import toast.api.Core;
 import toast.enums.AlgorithmName;
 import toast.enums.Mission;
@@ -77,7 +72,7 @@ public class SettingsController extends PageController {
     private TextField arrivalTime;
     @FXML
     private TextField workLoad;
-//    @FXML
+    //    @FXML
 //    private TextField mission;
     @FXML
     private ChoiceBox<Mission> missionChoiceBox;
@@ -97,7 +92,12 @@ public class SettingsController extends PageController {
         initAlgorithmChoiceBox();
         initTable();
         initButtons();
+        initMission();
+    }
+
+    private void initMission() {
         missionChoiceBox.getItems().addAll(Mission.values());
+        missionChoiceBox.setValue(Mission.F);
     }
 
     private void initAlgorithmChoiceBox() {
@@ -345,7 +345,8 @@ public class SettingsController extends PageController {
         }
 
         public ToastProcess toToastProcess() {
-            return new ToastProcess(getProcessId(), getArrivalTime(), getWorkLoad(), Mission.mappingFor(getMission()).getValue());
+            return new ToastProcess(getProcessId(), getArrivalTime(), getWorkLoad(),
+                    Mission.mappingFor(getMission()).getValue());
         }
 
     }
