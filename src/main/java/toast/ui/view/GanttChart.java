@@ -34,7 +34,8 @@ public class GanttChart extends Pane {
     private final ToastScheduler scheduler;
     private ScheduledFuture<?> thread = null;
     private final int timeSpan = 20;
-    private int seed = 0;
+    private int seed;
+    private int variation;
     private double coreWidth;
     private double rowHeight;
     private double bottomHeight;
@@ -47,6 +48,7 @@ public class GanttChart extends Pane {
         this.canvas = createCanvas();
         this.scheduler = ToastScheduler.getInstance();
 
+        reloadSchedulerBoundProperties();
         widthProperty().addListener(e -> setWidth(getWidth()));
         heightProperty().addListener(e -> setHeight(getHeight()));
         resize(canvas.getWidth(), canvas.getHeight());
@@ -68,7 +70,7 @@ public class GanttChart extends Pane {
     }
 
     private void startPainting() {
-        this.seed = ThreadLocalRandom.current().nextInt(this.scheduler.getProcessList().size());
+        reloadSchedulerBoundProperties();
         this.thread = Executors.newSingleThreadScheduledExecutor()
                 .scheduleWithFixedDelay(this::repaint, 0L, 100L, TimeUnit.MILLISECONDS);
     }
@@ -194,7 +196,7 @@ public class GanttChart extends Pane {
                     double timelineX = getTimelineX(i) - delta * length;
                     double textX = getTimelineX(i) - delta * length / 2;
                     double textY = timelineY + this.rowHeight / 2;
-                    Color barColor = getCoreColor(prev.get());
+                    Color barColor = getProcessColor(prev.get());
                     String text = String.valueOf(prev.get().getId());
                     g.setFill(barColor);
                     g.fillRect(timelineX, timelineY, delta * length, this.rowHeight);
@@ -213,10 +215,9 @@ public class GanttChart extends Pane {
         }
     }
 
-    private Color getCoreColor(Process process) {
+    private Color getProcessColor(Process process) {
         Color color = process.isMission() ? P_CORE.color() : E_CORE.color();
-        int variation = this.scheduler.getProcessList().size();
-        double saturation = (double) ((this.seed + process.getId()) % variation) / variation;
+        double saturation = (double) ((this.seed * process.getId()) % this.variation) / this.variation;
         return color.deriveColor(1.0, saturation, 1.0, 1.0);
     }
 
@@ -254,5 +255,10 @@ public class GanttChart extends Pane {
         setPrefSize(width, height);
         getChildren().add(canvas);
         return canvas;
+    }
+
+    private void reloadSchedulerBoundProperties() {
+        this.variation = Math.max(5, this.scheduler.getProcessList().size());
+        this.seed = ThreadLocalRandom.current().nextInt(this.variation);
     }
 }
