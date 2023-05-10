@@ -1,7 +1,5 @@
 package toast.impl;
 
-import java.util.ArrayList;
-import java.util.List;
 import toast.api.Process;
 import toast.event.ToastEvent;
 import toast.event.process.ProcessCompleteEvent;
@@ -10,8 +8,6 @@ import toast.event.process.ProcessCompleteEvent;
 public class ToastProcess implements Process {
     private static int nextId = 1;
 
-    @Deprecated
-    private final List<Runnable> completionListeners = new ArrayList<>();
     private final int id;
     private final int arrival;
     private final int workload;
@@ -86,15 +82,11 @@ public class ToastProcess implements Process {
 
     @Override
     public int addCompletionListener(Runnable listener) {
-        completionListeners.add(listener);
-
-        return completionListeners.size() - 1;
+        return 0;
     }
 
     @Override
-    public void removeCompletionListener(int listenerId) {
-        completionListeners.remove(listenerId);
-    }
+    public void removeCompletionListener(int listenerId) {}
 
     @Override
     public boolean isRunning() {
@@ -120,10 +112,6 @@ public class ToastProcess implements Process {
         this.continuousBurstTime++;
 
         if (isComplete()) {
-            // Legacy dispatch (for removal)
-            List<Runnable> listeners = new ArrayList<>(this.completionListeners);
-            listeners.forEach(Runnable::run);
-
             var event = new ProcessCompleteEvent(this, this.processor.getCurrentTime(), processor);
             ToastEvent.dispatch(ProcessCompleteEvent.class, event);
         }
