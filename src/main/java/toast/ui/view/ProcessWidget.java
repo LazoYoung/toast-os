@@ -2,6 +2,7 @@ package toast.ui.view;
 
 import javafx.application.Platform;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import toast.api.Process;
@@ -30,6 +31,7 @@ public abstract class ProcessWidget extends Pane {
         this.scheduler = ToastScheduler.getInstance();
         this.canvas = createCanvas();
 
+        onInit();
         reloadProperties();
         resizeWidget(this.canvas.getWidth(), this.canvas.getHeight());
         widthProperty().addListener(e -> setWidth(getWidth()));
@@ -53,6 +55,11 @@ public abstract class ProcessWidget extends Pane {
         super.setHeight(height);
         resizeWidget(getPrefWidth(), height);
     }
+
+    /**
+     * This method is called at instantiation phase
+     */
+    protected abstract void onInit();
 
     /**
      * This method is called when this widget is resized
@@ -90,11 +97,19 @@ public abstract class ProcessWidget extends Pane {
         long period = 100L;
         TimeUnit unit = TimeUnit.MILLISECONDS;
         this.thread = Executors.newSingleThreadScheduledExecutor()
-                .scheduleAtFixedRate(() -> Platform.runLater(this::repaint), 0L, period, unit);
+                .scheduleAtFixedRate(this::repaintLater, 0L, period, unit);
     }
 
     private void stopPainting() {
         this.thread.cancel(false);
+    }
+
+    private void repaintLater() {
+        Platform.runLater(() -> {
+            GraphicsContext g = this.canvas.getGraphicsContext2D();
+            g.clearRect(0, 0, this.canvas.getWidth(), this.canvas.getHeight());
+            repaint();
+        });
     }
 
     private Canvas createCanvas() {

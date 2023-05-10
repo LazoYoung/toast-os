@@ -19,7 +19,7 @@ import static toast.enums.Palette.*;
 
 public class GanttChart extends ProcessWidget {
 
-    private final int timeSpan = 20;
+    private int timeSpan;
     private double coreWidth;
     private double rowHeight;
     private double bottomHeight;
@@ -30,6 +30,11 @@ public class GanttChart extends ProcessWidget {
 
     public GanttChart() {
         super();
+    }
+
+    @Override
+    protected void onInit() {
+        this.timeSpan = 20;
     }
 
     @Override
