@@ -13,7 +13,7 @@ import toast.api.Process;
 import toast.event.ToastEvent;
 import toast.event.process.ProcessCompleteEvent;
 import toast.impl.ToastScheduler;
-import toast.ui.model.ProcessResult;
+import toast.ui.model.ProcessTableModel;
 
 import java.net.URL;
 import java.util.Iterator;
@@ -22,7 +22,7 @@ import java.util.ResourceBundle;
 public class SimulationController extends PageController {
 
     @FXML
-    private TableView<ProcessResult> table;
+    private TableView<ProcessTableModel> table;
     @FXML
     private MFXButton startButton;
 
@@ -45,12 +45,12 @@ public class SimulationController extends PageController {
 
     @SuppressWarnings("unchecked")
     private void initTable() {
-        var columnPID = new TableColumn<ProcessResult, Integer>("PID");
-        var columnAT = new TableColumn<ProcessResult, Integer>("AT");
-        var columnWL = new TableColumn<ProcessResult, Integer>("BT");
-        var columnWT = new TableColumn<ProcessResult, Integer>("WT");
-        var columnTT = new TableColumn<ProcessResult, Integer>("TT");
-        var columnNTT = new TableColumn<ProcessResult, Double>("NTT");
+        var columnPID = new TableColumn<ProcessTableModel, Integer>("PID");
+        var columnAT = new TableColumn<ProcessTableModel, Integer>("AT");
+        var columnWL = new TableColumn<ProcessTableModel, Integer>("BT");
+        var columnWT = new TableColumn<ProcessTableModel, Integer>("WT");
+        var columnTT = new TableColumn<ProcessTableModel, Integer>("TT");
+        var columnNTT = new TableColumn<ProcessTableModel, Double>("NTT");
         columnPID.setCellValueFactory(e -> e.getValue().getPid());
         columnAT.setCellValueFactory(e -> e.getValue().getArrivalTime());
         columnWL.setCellValueFactory(e -> e.getValue().getWorkload());
@@ -62,7 +62,7 @@ public class SimulationController extends PageController {
     }
 
     private void updateTable() {
-        ObservableList<ProcessResult> items = this.table.getItems();
+        ObservableList<ProcessTableModel> items = this.table.getItems();
         Iterator<Process> iter = ToastScheduler.getInstance().getProcessList()
                 .stream()
                 .filter(Process::isComplete)
@@ -71,7 +71,7 @@ public class SimulationController extends PageController {
         items.clear();
 
         while (iter.hasNext()) {
-            items.add(new ProcessResult(iter.next()));
+            items.add(new ProcessTableModel(iter.next()));
         }
     }
 

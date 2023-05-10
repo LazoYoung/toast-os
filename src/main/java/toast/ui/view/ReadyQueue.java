@@ -8,6 +8,7 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
 import toast.api.Algorithm;
 import toast.api.Process;
+import toast.enums.Mission;
 import toast.enums.Palette;
 
 import java.util.Collections;
@@ -15,7 +16,7 @@ import java.util.Iterator;
 
 public class ReadyQueue extends ProcessWidget {
 
-    private boolean mission = false;
+    private Mission mission = Mission.F;
     private double barWidth;
     private double barHeight;
     private Font processFont;
@@ -25,11 +26,11 @@ public class ReadyQueue extends ProcessWidget {
     }
 
     public boolean getMission() {
-        return mission;
+        return mission.getValue();
     }
 
     public void setMission(boolean mission) {
-        this.mission = mission;
+        this.mission = Mission.mappingFor(mission);
     }
 
     @Override
@@ -92,7 +93,7 @@ public class ReadyQueue extends ProcessWidget {
             return Collections.emptyIterator();
         }
 
-        return this.mission ? algorithm.getMissionQueue() : algorithm.getStandardQueue();
+        return this.mission.getValue() ? algorithm.getMissionQueue() : algorithm.getStandardQueue();
     }
 
 }

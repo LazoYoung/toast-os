@@ -6,7 +6,7 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ObservableValue;
 import toast.api.Process;
 
-public class ProcessResult {
+public class ProcessTableModel {
     private final SimpleIntegerProperty pid;
     private final SimpleIntegerProperty arrivalTime;
     private final SimpleIntegerProperty workload;
@@ -14,7 +14,7 @@ public class ProcessResult {
     private final SimpleIntegerProperty turnaroundTime;
     private final SimpleDoubleProperty normalizedTT;
 
-    public ProcessResult(Process process) {
+    public ProcessTableModel(Process process) {
         this.pid = new SimpleIntegerProperty(process.getId());
         this.arrivalTime = new SimpleIntegerProperty(process.getArrivalTime());
         this.workload = new SimpleIntegerProperty(process.getWorkload());

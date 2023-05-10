@@ -21,4 +21,8 @@ public enum Mission {
                 .findAny()
                 .orElseThrow(() -> new RuntimeException("올바르지 않은 미션입니다."));
     }
+
+    public static Mission mappingFor(boolean value) {
+        return value ? T : F;
+    }
 }
