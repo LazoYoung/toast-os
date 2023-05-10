@@ -1,10 +1,7 @@
 package toast.ui.view;
 
-import javafx.application.Platform;
 import javafx.geometry.VPos;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -13,26 +10,16 @@ import toast.api.Core;
 import toast.api.Process;
 import toast.api.Processor;
 import toast.enums.Palette;
-import toast.event.ToastEvent;
-import toast.event.scheduler.SchedulerFinishEvent;
-import toast.event.scheduler.SchedulerStartEvent;
-import toast.impl.ToastScheduler;
 import toast.persistence.domain.ProcessorRecord;
 import toast.persistence.domain.SchedulerRecord;
 
 import java.util.Optional;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.TimeUnit;
 
 import static toast.enums.Palette.*;
 
-public class GanttChart extends Pane {
+public class GanttChart extends CanvasWidget {
 
-    private final Canvas canvas;
-    private final ToastScheduler scheduler;
-    private ScheduledFuture<?> thread = null;
     private final int timeSpan = 20;
     private int seed;
     private int variation;
@@ -45,51 +32,17 @@ public class GanttChart extends Pane {
     private Font timelineFont;
 
     public GanttChart() {
-        this.canvas = createCanvas();
-        this.scheduler = ToastScheduler.getInstance();
-
-        reloadSchedulerBoundProperties();
-        widthProperty().addListener(e -> setWidth(getWidth()));
-        heightProperty().addListener(e -> setHeight(getHeight()));
-        resize(canvas.getWidth(), canvas.getHeight());
-
-        ToastEvent.registerListener(SchedulerStartEvent.class, (e) -> startPainting());
-        ToastEvent.registerListener(SchedulerFinishEvent.class, (e) -> stopPainting());
+        super();
     }
 
     @Override
-    public void setWidth(double width) {
-        super.setWidth(width);
-        resizeWidget(width, getPrefHeight());
+    protected void init() {
+        this.variation = Math.max(5, super.scheduler.getProcessList().size());
+        this.seed = ThreadLocalRandom.current().nextInt(this.variation);
     }
 
     @Override
-    public void setHeight(double height) {
-        super.setHeight(height);
-        resizeWidget(getPrefWidth(), height);
-    }
-
-    private void startPainting() {
-        reloadSchedulerBoundProperties();
-        this.thread = Executors.newSingleThreadScheduledExecutor()
-                .scheduleWithFixedDelay(this::repaint, 0L, 100L, TimeUnit.MILLISECONDS);
-    }
-
-    private void stopPainting() {
-        this.thread.cancel(false);
-    }
-
-    private void repaint() {
-        Platform.runLater(() -> {
-            drawBackground();
-            drawTimeline();
-            drawProcessBars();
-            drawCoreIndicators();
-        });
-    }
-
-    private void resizeWidget(double width, double height) {
-        setPrefSize(width, height);
+    protected void onResize(double width, double height) {
         this.coreWidth = width * 0.15;
         this.rowHeight = height * 0.18;
         this.bottomHeight = rowHeight * 5;
@@ -97,15 +50,20 @@ public class GanttChart extends Pane {
         this.coreFont = Font.font(null, FontWeight.BOLD, height * 0.08);
         this.processFont = Font.font(null, FontWeight.BOLD, height * 0.07);
         this.timelineFont = Font.font(null, FontWeight.NORMAL, height * 0.07);
-        this.canvas.setWidth(width);
-        this.canvas.setHeight(height);
-        repaint();
+    }
+
+    @Override
+    protected void repaint() {
+        drawBackground();
+        drawTimeline();
+        drawProcessBars();
+        drawCoreIndicators();
     }
 
     private void drawBackground() {
-        GraphicsContext g = this.canvas.getGraphicsContext2D();
-        double width = this.canvas.getWidth();
-        double height = this.canvas.getHeight();
+        GraphicsContext g = super.canvas.getGraphicsContext2D();
+        double width = super.canvas.getWidth();
+        double height = super.canvas.getHeight();
         double xMax = getTimelineX(this.timeSpan);
 
         g.setFill(COMPONENT_BACKGROUND.color());
@@ -134,12 +92,12 @@ public class GanttChart extends Pane {
     }
 
     private void drawCoreIndicators() {
-        GraphicsContext g = this.canvas.getGraphicsContext2D();
+        GraphicsContext g = super.canvas.getGraphicsContext2D();
         double x = this.coreWidth / 2.0;
         g.setFont(this.coreFont);
         g.setTextAlign(TextAlignment.CENTER);
 
-        for (Processor processor : this.scheduler.getProcessorList()) {
+        for (Processor processor : super.scheduler.getProcessorList()) {
             if (processor.isActive()) {
                 Core core = processor.getCore();
                 String name = core.getName();
@@ -153,7 +111,7 @@ public class GanttChart extends Pane {
     }
 
     private void drawTimeline() {
-        GraphicsContext g = this.canvas.getGraphicsContext2D();
+        GraphicsContext g = super.canvas.getGraphicsContext2D();
         g.setFont(this.timelineFont);
         g.setFill(TEXT_WIDGET.color());
 
@@ -180,10 +138,10 @@ public class GanttChart extends Pane {
 
     private void drawProcessBars() {
         double delta = getTimelineDelta();
-        GraphicsContext g = this.canvas.getGraphicsContext2D();
+        GraphicsContext g = super.canvas.getGraphicsContext2D();
         g.setFont(this.processFont);
 
-        for (Processor processor : this.scheduler.getProcessorList()) {
+        for (Processor processor : super.scheduler.getProcessorList()) {
             ProcessorRecord record = SchedulerRecord.getInstance().getProcessorRecord(processor);
             Optional<Process> prev = Optional.empty();
             double timelineY = getTimelineY(processor);
@@ -243,22 +201,8 @@ public class GanttChart extends Pane {
             throw new IllegalArgumentException("Timeline index out of range: " + index);
         }
 
-        int time = this.scheduler.getElapsedTime();
+        int time = super.scheduler.getElapsedTime();
         int offset = Math.max(time - this.timeSpan, 0);
         return index + offset;
-    }
-
-    private Canvas createCanvas() {
-        double width = 800;
-        double height = 230;
-        Canvas canvas = new Canvas(width, height);
-        setPrefSize(width, height);
-        getChildren().add(canvas);
-        return canvas;
-    }
-
-    private void reloadSchedulerBoundProperties() {
-        this.variation = Math.max(5, this.scheduler.getProcessList().size());
-        this.seed = ThreadLocalRandom.current().nextInt(this.variation);
     }
 }
