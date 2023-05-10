@@ -69,6 +69,11 @@ public class ToastScheduler implements Scheduler {
             throw new IllegalStateException("Scheduler not started yet.");
         }
 
+        for (Process process : getProcessList()) {
+            if (!process.isComplete())
+                throw new IllegalStateException("Incomplete process found! PID #" + process.getId());
+        }
+
         deactivateProcessors();
         running = false;
         task.finish();
@@ -93,6 +98,7 @@ public class ToastScheduler implements Scheduler {
     @Override
     public double getAverageTT() {
         int sum = processList.stream()
+                .filter(Process::isComplete)
                 .mapToInt(Process::getTurnaroundTime)
                 .sum();
         return (double) sum / processList.size();
@@ -154,6 +160,10 @@ public class ToastScheduler implements Scheduler {
 
     public Algorithm getAlgorithm() {
         return algorithm;
+    }
+
+    public SchedulerConfig getConfig() {
+        return config;
     }
 
     public boolean isRunning() {
