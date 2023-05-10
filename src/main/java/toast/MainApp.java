@@ -5,8 +5,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import toast.algorithm.CustomSatellite;
 import toast.api.Core;
+import toast.enums.AlgorithmName;
 import toast.impl.ToastProcess;
 import toast.impl.ToastProcessor;
 import toast.impl.ToastScheduler;
@@ -55,8 +55,11 @@ public class MainApp extends Application {
         System.out.println();
         scanner.close();
 
-        CustomSatellite algorithm = new CustomSatellite(timeQuantum, initPower, powerThreshold);
-        return new SchedulerConfig(Core.PERFORMANCE, algorithm, processList, processorList);
+        var config = new SchedulerConfig(Core.PERFORMANCE, timeQuantum, initPower, powerThreshold);
+        config.setAlgorithm(AlgorithmName.CUSTOM);
+        config.setProcessorList(processorList);
+        config.setProcessList(processList);
+        return config;
     }
 
     private static List<ToastProcess> getProcessList(Scanner scanner) {

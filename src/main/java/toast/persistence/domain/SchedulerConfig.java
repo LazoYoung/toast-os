@@ -1,23 +1,28 @@
 package toast.persistence.domain;
 
+import toast.algorithm.*;
 import toast.api.Algorithm;
 import toast.api.Core;
+import toast.enums.AlgorithmName;
 import toast.impl.ToastProcess;
 import toast.impl.ToastProcessor;
 
 import java.util.List;
 
 public class SchedulerConfig {
-    private Core primaryCore;
+    private final Integer timeQuantum;
+    private final Double initPower;
+    private final Double powerThreshold;
+    private final Core primaryCore;
     private Algorithm algorithm;
     private List<ToastProcess> processList;
     private List<ToastProcessor> processorList;
 
-    public SchedulerConfig(Core primaryCore, Algorithm algorithm, List<ToastProcess> processList, List<ToastProcessor> processorList) {
+    public SchedulerConfig(Core primaryCore, Integer timeQuantum, Double initPower, Double powerThreshold) {
         this.primaryCore = primaryCore;
-        this.algorithm = algorithm;
-        this.processList = processList;
-        this.processorList = processorList;
+        this.timeQuantum = timeQuantum;
+        this.initPower = initPower;
+        this.powerThreshold = powerThreshold;
     }
 
     public Core getPrimaryCore() {
@@ -34,5 +39,36 @@ public class SchedulerConfig {
 
     public List<ToastProcessor> getProcessorList() {
         return processorList;
+    }
+
+    public Integer getTimeQuantum() {
+        return timeQuantum;
+    }
+
+    public Double getInitPower() {
+        return initPower;
+    }
+
+    public Double getPowerThreshold() {
+        return powerThreshold;
+    }
+
+    public void setAlgorithm(AlgorithmName algorithmName) {
+        this.algorithm = switch (algorithmName) {
+            case FCFS -> new FirstComeFirstService();
+            case RR -> new RoundRobin(timeQuantum);
+            case HRRN -> new HighResponseRatioNext();
+            case SPN -> new ShortestProcessNext();
+            case SRTN -> new ShortestRemainingTimeNext();
+            case CUSTOM -> new CustomSatellite(timeQuantum, initPower, powerThreshold);
+        };
+    }
+
+    public void setProcessList(List<ToastProcess> processList) {
+        this.processList = processList;
+    }
+
+    public void setProcessorList(List<ToastProcessor> processorList) {
+        this.processorList = processorList;
     }
 }

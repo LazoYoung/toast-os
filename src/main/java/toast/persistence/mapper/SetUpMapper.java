@@ -1,8 +1,6 @@
 package toast.persistence.mapper;
 
 import javafx.collections.ObservableList;
-import toast.algorithm.AlgorithmFactory;
-import toast.api.Algorithm;
 import toast.api.Core;
 import toast.enums.AlgorithmName;
 import toast.impl.ToastProcess;
@@ -171,11 +169,11 @@ public class SetUpMapper {
         SetUpMapper.processes = processes;
     }
 
-    public static Algorithm getAlgorithm() throws IllegalArgumentException {
-        return new AlgorithmFactory(getAlgorithmName()).create(timeQuantumValue, initPowerValue, powerThresholdValue);
-    }
-
     public static SchedulerConfig mapToSchedulerConfig() throws RuntimeException {
-        return new SchedulerConfig(Core.PERFORMANCE, getAlgorithm(), processes, processors);
+        var config = new SchedulerConfig(Core.PERFORMANCE, timeQuantumValue, initPowerValue, powerThresholdValue);
+        config.setAlgorithm(algorithmName);
+        config.setProcessList(processes);
+        config.setProcessorList(processors);
+        return config;
     }
 }
