@@ -14,15 +14,12 @@ import toast.persistence.domain.ProcessorRecord;
 import toast.persistence.domain.SchedulerRecord;
 
 import java.util.Optional;
-import java.util.concurrent.ThreadLocalRandom;
 
 import static toast.enums.Palette.*;
 
-public class GanttChart extends CanvasWidget {
+public class GanttChart extends ProcessWidget {
 
     private final int timeSpan = 20;
-    private int seed;
-    private int variation;
     private double coreWidth;
     private double rowHeight;
     private double bottomHeight;
@@ -33,12 +30,6 @@ public class GanttChart extends CanvasWidget {
 
     public GanttChart() {
         super();
-    }
-
-    @Override
-    protected void init() {
-        this.variation = Math.max(5, super.scheduler.getProcessList().size());
-        this.seed = ThreadLocalRandom.current().nextInt(this.variation);
     }
 
     @Override
@@ -96,6 +87,7 @@ public class GanttChart extends CanvasWidget {
         double x = this.coreWidth / 2.0;
         g.setFont(this.coreFont);
         g.setTextAlign(TextAlignment.CENTER);
+        g.setTextBaseline(VPos.CENTER);
 
         for (Processor processor : super.scheduler.getProcessorList()) {
             if (processor.isActive()) {
@@ -140,6 +132,7 @@ public class GanttChart extends CanvasWidget {
         double delta = getTimelineDelta();
         GraphicsContext g = super.canvas.getGraphicsContext2D();
         g.setFont(this.processFont);
+        g.setStroke(Palette.STROKE.color());
 
         for (Processor processor : super.scheduler.getProcessorList()) {
             ProcessorRecord record = SchedulerRecord.getInstance().getProcessorRecord(processor);
@@ -152,12 +145,14 @@ public class GanttChart extends CanvasWidget {
 
                 if (prev.isPresent() && !prev.equals(now)) {
                     double timelineX = getTimelineX(i) - delta * length;
+                    double barWidth = delta * length;
                     double textX = getTimelineX(i) - delta * length / 2;
                     double textY = timelineY + this.rowHeight / 2;
-                    Color barColor = getProcessColor(prev.get());
+                    Color barColor = super.getProcessColor(prev.get());
                     String text = String.valueOf(prev.get().getId());
                     g.setFill(barColor);
-                    g.fillRect(timelineX, timelineY, delta * length, this.rowHeight);
+                    g.fillRect(timelineX, timelineY, barWidth, this.rowHeight);
+                    g.strokeRect(timelineX, timelineY, barWidth, this.rowHeight);
                     g.setFill(Palette.getTextColor(barColor));
                     g.setTextAlign(TextAlignment.CENTER);
                     g.fillText(text, textX, textY, delta * length);
@@ -171,12 +166,6 @@ public class GanttChart extends CanvasWidget {
                 prev = now;
             }
         }
-    }
-
-    private Color getProcessColor(Process process) {
-        Color color = process.isMission() ? P_CORE.color() : E_CORE.color();
-        double saturation = (double) ((this.seed * process.getId()) % this.variation) / this.variation;
-        return color.deriveColor(1.0, saturation, 1.0, 1.0);
     }
 
     private double getTimelineX(int index) {

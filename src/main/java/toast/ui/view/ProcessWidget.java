@@ -3,6 +3,8 @@ package toast.ui.view;
 import javafx.application.Platform;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import toast.api.Process;
 import toast.event.ToastEvent;
 import toast.event.scheduler.SchedulerFinishEvent;
 import toast.event.scheduler.SchedulerStartEvent;
@@ -10,19 +12,25 @@ import toast.impl.ToastScheduler;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
-public abstract class CanvasWidget extends Pane {
+import static toast.enums.Palette.E_CORE;
+import static toast.enums.Palette.P_CORE;
+
+public abstract class ProcessWidget extends Pane {
 
     protected final ToastScheduler scheduler;
     protected final Canvas canvas;
     private ScheduledFuture<?> thread = null;
+    private int variation;
+    private int seed;
 
-    public CanvasWidget() {
+    public ProcessWidget() {
         this.scheduler = ToastScheduler.getInstance();
         this.canvas = createCanvas();
 
-        init();
+        reloadProperties();
         resizeWidget(this.canvas.getWidth(), this.canvas.getHeight());
         widthProperty().addListener(e -> setWidth(getWidth()));
         heightProperty().addListener(e -> setHeight(getHeight()));
@@ -47,11 +55,6 @@ public abstract class CanvasWidget extends Pane {
     }
 
     /**
-     * This method is called when this widget or the scheduler is reloaded
-     */
-    protected abstract void init();
-
-    /**
      * This method is called when this widget is resized
      * @param width New width
      * @param height New height
@@ -63,6 +66,17 @@ public abstract class CanvasWidget extends Pane {
      */
     protected abstract void repaint();
 
+    protected Color getProcessColor(Process process) {
+        Color color = process.isMission() ? P_CORE.color() : E_CORE.color();
+        double saturation = (double) ((this.seed * process.getId()) % this.variation) / this.variation;
+        return color.deriveColor(1.0, saturation, 1.0, 1.0);
+    }
+
+    private void reloadProperties() {
+        this.variation = Math.max(5, this.scheduler.getProcessList().size());
+        this.seed = ThreadLocalRandom.current().nextInt(this.variation);
+    }
+
     private void resizeWidget(double width, double height) {
         this.canvas.setWidth(width);
         this.canvas.setHeight(height);
@@ -72,6 +86,7 @@ public abstract class CanvasWidget extends Pane {
     }
 
     private void startPainting() {
+        reloadProperties();
         long period = 100L;
         TimeUnit unit = TimeUnit.MILLISECONDS;
         this.thread = Executors.newSingleThreadScheduledExecutor()
