@@ -1,29 +1,61 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import io.github.palexdev.materialfx.controls.MFXButton?>
-<?import javafx.geometry.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.cell.PropertyValueFactory?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import toast.ui.view.CoreProcessorButton?>
-<AnchorPane prefHeight="720.0" prefWidth="1130.0" style="-fx-background-color: #FFFFFF;" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="toast.ui.controller.SettingsController">
+
+<AnchorPane prefHeight="720.0" prefWidth="1130.0" style="-fx-background-color: #F3F5F7;" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="toast.ui.controller.SettingsController">
     <children>
         <HBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
-                <VBox maxWidth="400.0" HBox.hgrow="ALWAYS">
+                <VBox maxWidth="400.0" style="-fx-background-color: #F3F5F7;" HBox.hgrow="ALWAYS">
                     <children>
-                  <AnchorPane style="-fx-background-color: #F3F5F7; -fx-background-radius: 10;">
+                  <AnchorPane style="-fx-background-color: #FFFFFF; -fx-background-radius: 10;">
                      <children>
-                        <VBox alignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <VBox alignment="CENTER" style="-fx-background-color: #FFFFFF;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
-                                      <Label alignment="TOP_LEFT" text="Type Of Algorthim">
-                                 <font>
-                                    <Font name="System Bold" size="18.0" />
-                                 </font>
+                              <HBox alignment="CENTER" style="-fx-background-color: #FFFFF;">
+                                 <children>
+                                    <ImageView fitHeight="72.0" fitWidth="38.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../images/Setting/Type_of_Algorithm.png" />
+                                       </image>
+                                    </ImageView>
+                                    <Label styleClass="setting-title" text="Type Of Algorithm">
+                                       <font>
+                                          <Font name="System Bold" size="18.0" />
+                                       </font>
+                                       <opaqueInsets>
+                                          <Insets />
+                                       </opaqueInsets>
+                                       <HBox.margin>
+                                          <Insets left="6.0" right="24.0" />
+                                       </HBox.margin>
+                                    </Label>
+                                 </children>
+                                 <padding>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </padding>
                                  <VBox.margin>
-                                    <Insets bottom="30.0" />
-                                 </VBox.margin></Label>
+                                    <Insets bottom="32.0" />
+                                 </VBox.margin>
+                              </HBox>
                                       <GridPane alignment="CENTER" hgap="20.0" vgap="20.0">
                                           <columnConstraints>
                                               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -50,17 +82,36 @@
                         <Insets bottom="30.0" left="30.0" right="30.0" top="10.0" />
                      </padding>
                   </AnchorPane>
-                  <AnchorPane style="-fx-background-color: #F3F5F7; -fx-background-radius: 10;">
+                  <AnchorPane style="-fx-background-color: #FFFFFF; -fx-background-radius: 10;">
                      <children>
                               <VBox alignment="TOP_CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                   <children>
-                                      <Label text="Processor">
-                                 <font>
-                                    <Font name="System Bold" size="18.0" />
-                                 </font>
+                              <HBox alignment="CENTER">
+                                 <children>
+                                    <ImageView fitHeight="72.0" fitWidth="38.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../images/Setting/Processor.png" />
+                                       </image>
+                                    </ImageView>
+                                            <Label styleClass="setting-title" text="Processor">
+                                       <font>
+                                          <Font name="System Bold" size="18.0" />
+                                       </font>
+                                       <opaqueInsets>
+                                          <Insets />
+                                       </opaqueInsets>
+                                       <HBox.margin>
+                                          <Insets left="6.0" right="24.0" />
+                                       </HBox.margin>
+                                            </Label>
+                                 </children>
+                                 <padding>
+                                    <Insets bottom="5.0" left="16.0" right="5.0" top="5.0" />
+                                 </padding>
                                  <VBox.margin>
-                                    <Insets bottom="30.0" />
-                                 </VBox.margin></Label>
+                                    <Insets bottom="24.0" />
+                                 </VBox.margin>
+                              </HBox>
                                       <GridPane hgap="20.0" prefHeight="150.0" vgap="20.0">
                                           <columnConstraints>
                                               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -71,7 +122,7 @@
                                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                           </rowConstraints>
                                           <children>
-                                              <CoreProcessorButton fx:id="core1" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
+                                              <CoreProcessorButton fx:id="core1" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="OFF" />
                                               <CoreProcessorButton fx:id="core2" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" />
                                               <CoreProcessorButton fx:id="core3" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.rowIndex="1" />
                                               <CoreProcessorButton fx:id="core4" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="1" />
@@ -92,9 +143,9 @@
                   </AnchorPane>
                   <FlowPane alignment="TOP_CENTER">
                      <children>
-                        <MFXButton fx:id="saveButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="160.0" rippleColor="#eaebef" style="-fx-background-color: #5A81FA; -fx-text-fill: #FFFFFF; -fx-font-weight: bold; -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.7),10,0,5,5);" text="Data Save" textFill="WHITE">
+                        <MFXButton fx:id="saveButton" mnemonicParsing="false" prefHeight="35.0" prefWidth="156.0" rippleColor="#eaebef" rippleRadius="16.0" style="-fx-background-color: #5A81FA; -fx-text-fill: #FFFFFF; -fx-font-weight: bold; -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.7),10,0,5,5); -fx-background-radius: 12;" text="Data Save" textFill="WHITE">
                            <font>
-                              <Font size="14.0" />
+                              <Font size="18.0" />
                            </font>
                         </MFXButton>
                      </children>
@@ -107,18 +158,36 @@
                   </FlowPane>
                     </children>
                 </VBox>
-            <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #F3F5F7; -fx-background-radius: 10;" HBox.hgrow="ALWAYS">
+            <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #FFFFFF; -fx-background-radius: 10;" HBox.hgrow="ALWAYS">
                <children>
-                        <VBox alignment="TOP_CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <VBox alignment="TOP_CENTER" style="-fx-background-color: #FFFFFF;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
-                                <Label text="Processes">
-                           <font>
-                              <Font name="System Bold" size="18.0" />
-                           </font>
+                        <HBox alignment="CENTER">
+                           <children>
+                              <ImageView fitHeight="72.0" fitWidth="38.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/Setting/Processes.png" />
+                                 </image>
+                              </ImageView>
+                              <Label styleClass="setting-title" text="Processes">
+                                 <font>
+                                    <Font name="System Bold" size="18.0" />
+                                 </font>
+                                 <opaqueInsets>
+                                    <Insets />
+                                 </opaqueInsets>
+                                 <HBox.margin>
+                                    <Insets left="6.0" right="24.0" />
+                                 </HBox.margin>
+                              </Label>
+                           </children>
                            <padding>
-                              <Insets bottom="30.0" />
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                            </padding>
-                        </Label>
+                           <VBox.margin>
+                              <Insets bottom="16.0" />
+                           </VBox.margin>
+                        </HBox>
                                 <TableView fx:id="table" maxHeight="300.0" VBox.vgrow="ALWAYS">
                                     <columns>
                                         <TableColumn fx:id="processIdColumn" prefWidth="75.0" text="Process ID">
@@ -148,7 +217,7 @@
                                 </TableView>
                         <AnchorPane maxHeight="200.0" VBox.vgrow="ALWAYS">
                            <children>
-                                      <HBox alignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                      <HBox alignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="3.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                           <children>
                                               <GridPane hgap="30.0" vgap="20.0" HBox.hgrow="ALWAYS">
                                                   <columnConstraints>
@@ -183,8 +252,8 @@
                                                       </VBox>
                                                       <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                                           <children>
-                                                              <Label text="Mission (T, F)" />
-                                                              <TextField fx:id="mission" />
+                                                              <Label text="Mission" />
+                                                              <ChoiceBox fx:id="missionChoiceBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
                                                           </children>
                                                       </VBox>
                                                   </children>

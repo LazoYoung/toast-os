@@ -5,6 +5,9 @@ import static javafx.scene.control.Alert.AlertType.INFORMATION;
 
 import io.github.palexdev.materialfx.controls.MFXButton;
 import java.net.URL;
+import javafx.scene.Group;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -16,12 +19,15 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.text.Font;
 import toast.api.Core;
 import toast.enums.AlgorithmName;
+import toast.enums.Mission;
 import toast.impl.ToastProcess;
 import toast.impl.ToastScheduler;
 import toast.persistence.domain.SchedulerConfig;
@@ -71,8 +77,10 @@ public class SettingsController extends PageController {
     private TextField arrivalTime;
     @FXML
     private TextField workLoad;
+//    @FXML
+//    private TextField mission;
     @FXML
-    private TextField mission;
+    private ChoiceBox<Mission> missionChoiceBox;
 
     @FXML
     private MFXButton addButton;
@@ -86,9 +94,15 @@ public class SettingsController extends PageController {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        algorithmNameChoiceBox.getItems().addAll(AlgorithmName.values());
+        initAlgorithmChoiceBox();
         initTable();
         initButtons();
+        missionChoiceBox.getItems().addAll(Mission.values());
+    }
+
+    private void initAlgorithmChoiceBox() {
+        algorithmNameChoiceBox.getItems().addAll(AlgorithmName.values());
+        algorithmNameChoiceBox.setValue(AlgorithmName.FCFS);
     }
 
     @Override
@@ -210,7 +224,7 @@ public class SettingsController extends PageController {
                     getProcessId(),
                     getArrivalTime(),
                     getWorkLoad(),
-                    mission.getText()
+                    missionChoiceBox.getValue()
             );
             data.add(process);
             clearProcessInput();
@@ -262,7 +276,7 @@ public class SettingsController extends PageController {
         processId.clear();
         arrivalTime.clear();
         workLoad.clear();
-        mission.clear();
+        missionChoiceBox.setValue(Mission.F);
     }
 
     private void onProcessClear(ActionEvent event) {
@@ -270,22 +284,16 @@ public class SettingsController extends PageController {
     }
 
     public static class TempProcess {
-        public static final String TRUE = "T";
-        public static final String FALSE = "F";
         public final SimpleIntegerProperty processId;
         public final SimpleIntegerProperty arrivalTime;
         public final SimpleIntegerProperty workLoad;
         public final SimpleStringProperty mission;
 
-        public TempProcess(int processId, int arrivalTime, int workLoad, String mission) {
+        public TempProcess(int processId, int arrivalTime, int workLoad, Mission mission) {
             this.processId = new SimpleIntegerProperty(processId);
             this.arrivalTime = new SimpleIntegerProperty(arrivalTime);
             this.workLoad = new SimpleIntegerProperty(workLoad);
-            this.mission = new SimpleStringProperty(isMission(mission) ? TRUE : FALSE);
-        }
-
-        private static boolean isValidMission(String mission) {
-            return mission.equals(TRUE) || mission.equals(FALSE);
+            this.mission = new SimpleStringProperty(mission.name());
         }
 
         public int getProcessId() {
@@ -337,11 +345,7 @@ public class SettingsController extends PageController {
         }
 
         public ToastProcess toToastProcess() {
-            return new ToastProcess(getProcessId(), getArrivalTime(), getWorkLoad(), isMission(getMission()));
-        }
-
-        private static boolean isMission(String mission1) {
-            return TRUE.equals(mission1);
+            return new ToastProcess(getProcessId(), getArrivalTime(), getWorkLoad(), Mission.mappingFor(getMission()).getValue());
         }
 
     }
