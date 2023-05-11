@@ -53,7 +53,7 @@ test {
     useJUnitPlatform()
 }
 
-//shadowJar {
+//shadowJar { 해당 주석과 아래 `jar = ` 주석을 통해 shadow jar 결과를 launch4j에 매핑하라는 게시글이 있었으나, line 63, archiveBaseName 에서 에러가 발생.
 //    archiveBaseName.set('shadow')
 //    archiveClassifier.set('')
 //    archiveVersion.set('')
@@ -68,11 +68,11 @@ launch4j {
     bundledJre64Bit = true
     jreMinVersion = '17'
 
-//    mainClassName = 'toast.MainApp'
+//    mainClassName = 'toast.MainApp' MainApp을 이용할 경우 정상적으로 동작하지 않아 Main을 선언하여 이용함. (기능 변경은 X)
 //    icon = "${projectDir}/icons/myApp.ico"
 }
 
-task addJreToDistributable(type: Copy) {
+task addJreToDistributable(type: Copy) { // JRE를 launch4j 결과 파일에 넣는다. (JRE zip 도 푸시했음.)
     from zipTree("src/main/resources/toast/OpenJDK17U-jre_x86-32_windows_hotspot_17.0.7_7.zip")
     destinationDir = file("$buildDir/launch4j")
 }
@@ -81,7 +81,7 @@ createExe.dependsOn addJreToDistributable
 
 //task packageExecutableDistribution(type: Zip) {
 //    archiveFileName = "toast-os.zip"
-//    destinationDir = file("$buildDir/distExecutable")
+//    destinationDir = file("$buildDir/distExecutable") // addJreToDist~()와 같이 사용해야한다고 StackOverFlow에서 보았으나, `destinationDir`를 못찾는 에러 발생함.
 //
 //    from "$buildDir/launch4j"
 //}
