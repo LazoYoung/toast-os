@@ -72,8 +72,9 @@
     -fx-text-fill: #333F50;
 }
 
-
-#sidebar-button:hover {
+.button:hover {
+    -fx-padding: 0.5em;
+    -fx-background-insets: 0 0 -1 0, 0, 1, 2;
 
 }
 

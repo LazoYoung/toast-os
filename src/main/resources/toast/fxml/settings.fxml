@@ -149,7 +149,7 @@
                   </AnchorPane>
                   <FlowPane alignment="TOP_CENTER">
                      <children>
-                        <MFXButton fx:id="saveButton" mnemonicParsing="false" prefHeight="35.0" prefWidth="156.0" rippleColor="#eaebef" rippleRadius="16.0" style="-fx-background-color: #5A81FA; -fx-text-fill: #FFFFFF; -fx-font-weight: bold; -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.7),10,0,5,5); -fx-background-radius: 12;" text="Data Save" textFill="WHITE">
+                        <MFXButton fx:id="saveButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="39.0" prefWidth="156.0" rippleColor="#eaebef" rippleRadius="16.0" style="-fx-background-color: #5A81FA; -fx-text-fill: #FFFFFF; -fx-font-weight: bold; -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.7),10,0,5,5); -fx-background-radius: 12;" text="Data Save" textFill="WHITE">
                            <font>
                               <Font size="18.0" />
                            </font>
@@ -234,8 +234,8 @@
                                                   <children>
                                                       <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
                                                           <children>
-                                                              <Label text="Process ID" />
-                                                              <TextField fx:id="processId" style="-fx-background-color: #F2F2F2; -fx-border-color: #868c94; -fx-border-radius: 5; -fx-background-radius: 5;" />
+                                                              <Label alignment="CENTER" text="Process ID" />
+                                                              <TextField fx:id="processId" alignment="CENTER" style="-fx-background-color: #F2F2F2; -fx-border-color: #868c94; -fx-border-radius: 5; -fx-background-radius: 5;" />
                                                           </children>
                                                           <GridPane.margin>
                                                               <Insets />
@@ -244,19 +244,25 @@
                                                       <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.rowIndex="1">
                                                           <children>
                                                               <Label text="Arrival Time" />
-                                                              <TextField fx:id="arrivalTime" />
+                                                              <TextField fx:id="arrivalTime" alignment="CENTER" />
                                                           </children>
                                                       </VBox>
                                                       <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1">
                                                           <children>
                                                               <Label text="Workload" />
-                                                              <TextField fx:id="workLoad" />
+                                                              <TextField fx:id="workLoad" alignment="CENTER" />
                                                           </children>
                                                       </VBox>
                                                       <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                                           <children>
-                                                              <Label text="Mission" />
-                                                              <ChoiceBox fx:id="missionChoiceBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
+                                                              <Label alignment="CENTER" text="Mission" />
+                                                              <ChoiceBox id="choice-box" fx:id="missionChoiceBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                                   <VBox.margin>
+                                                      <Insets />
+                                                   </VBox.margin>
+                                                   <padding>
+                                                      <Insets left="80.0" />
+                                                   </padding></ChoiceBox>
                                                           </children>
                                                       </VBox>
                                                   </children>
@@ -266,38 +272,29 @@
                                               </GridPane>
                                               <VBox alignment="CENTER" maxWidth="140.0" HBox.hgrow="ALWAYS">
                                                   <children>
-                                                      <MFXButton fx:id="addButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-background-color: #5A81FA; -fx-background-radius: 25; -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.7),10,0,5,5); -fx-text-fill: #FFFFFF; -fx-font-weight: bold;" text="Add" VBox.vgrow="ALWAYS">
+                                                      <MFXButton fx:id="addButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-background-color: #5A81FA; -fx-background-radius: 25; -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.7),10,0,5,5); -fx-text-fill: #FFFFFF;" text="Add" VBox.vgrow="ALWAYS">
                                                           <VBox.margin>
                                                               <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                                           </VBox.margin>
                                              <font>
                                                 <Font size="16.0" />
                                              </font>
-                                             <padding>
-                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                             </padding>
                                                       </MFXButton>
-                                                      <MFXButton fx:id="removeButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-background-color: #5A81FA; -fx-background-radius: 25; -fx-text-fill: #FFFFFF; -fx-font-weight: bold; -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.7),10,0,5,5);" text="Remove" VBox.vgrow="ALWAYS">
+                                                      <MFXButton fx:id="removeButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-background-color: #5A81FA; -fx-background-radius: 25; -fx-text-fill: #FFFFFF; -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.7),10,0,5,5);" text="Remove" VBox.vgrow="ALWAYS">
                                                           <VBox.margin>
                                                               <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                                           </VBox.margin>
                                              <font>
                                                 <Font size="16.0" />
                                              </font>
-                                             <padding>
-                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                             </padding>
                                                       </MFXButton>
-                                                      <MFXButton fx:id="clearButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-background-color: #5A81FA; -fx-background-radius: 25; -fx-text-fill: #FFFFFF; -fx-font-weight: bold; -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.7),10,0,5,5);" text="Clear" VBox.vgrow="ALWAYS">
+                                                      <MFXButton fx:id="clearButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-background-color: #5A81FA; -fx-background-radius: 25; -fx-text-fill: #FFFFFF; -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.7),10,0,5,5);" text="Clear" VBox.vgrow="ALWAYS">
                                                           <VBox.margin>
                                                               <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                                           </VBox.margin>
                                              <font>
                                                 <Font size="16.0" />
                                              </font>
-                                             <padding>
-                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                             </padding>
                                                       </MFXButton>
                                                   </children>
                                                   <padding>
