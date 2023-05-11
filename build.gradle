@@ -1,7 +1,20 @@
+
+buildscript {
+    repositories {
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath 'com.github.johnrengelman:shadow:8.1.1'
+    }
+}
+
+
 plugins {
     id 'java'
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.0.13'
+    id 'edu.sc.seis.launch4j' version '2.5.4'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
 application {
@@ -10,7 +23,7 @@ application {
 
 javafx {
     version = "17.0.7"
-    modules = [ "javafx.controls", "javafx.fxml" ]
+    modules = ["javafx.controls", "javafx.fxml"]
 }
 
 tasks.jar {
@@ -39,3 +52,42 @@ dependencies {
 test {
     useJUnitPlatform()
 }
+
+//shadowJar {
+//    archiveBaseName.set('shadow')
+//    archiveClassifier.set('')
+//    archiveVersion.set('')
+//}
+
+launch4j {
+//    jar = "lib/${project.tasks.shadowJar.archiveBaseName}"
+    mainClassName = 'toast.Main'
+    headerType = "gui"
+    bundledJrePath = "$build/launch4j/jdk-17.0.7+7-jre"
+//    bundledJrePath = "build/launch4j/jre"
+    bundledJre64Bit = true
+    jreMinVersion = '17'
+
+//    mainClassName = 'toast.MainApp'
+//    icon = "${projectDir}/icons/myApp.ico"
+}
+
+task addJreToDistributable(type: Copy) {
+    from zipTree("src/main/resources/toast/OpenJDK17U-jre_x86-32_windows_hotspot_17.0.7_7.zip")
+    destinationDir = file("$buildDir/launch4j")
+}
+
+createExe.dependsOn addJreToDistributable
+
+//task packageExecutableDistribution(type: Zip) {
+//    archiveFileName = "toast-os.zip"
+//    destinationDir = file("$buildDir/distExecutable")
+//
+//    from "$buildDir/launch4j"
+//}
+
+//packageExecutableDistribution.dependsOn createExe
+//packageExecutableDistribution.dependsOn addJreToDistributable
+
+apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'java'
