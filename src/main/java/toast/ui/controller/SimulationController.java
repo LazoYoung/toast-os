@@ -1,12 +1,8 @@
 package toast.ui.controller;
 
-import io.github.palexdev.materialfx.controls.MFXButton;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import toast.api.Process;
@@ -20,17 +16,13 @@ import java.util.Iterator;
 import java.util.ResourceBundle;
 
 public class SimulationController extends PageController {
-
     @FXML
     private TableView<ProcessTableModel> table;
-    @FXML
-    private MFXButton startButton;
 
     @Override
     void init() {
         initTable();
         updateTable();
-        this.startButton.setOnAction(this::onStart);
         ToastEvent.registerListener(ProcessCompleteEvent.class, (e) -> Platform.runLater(this::updateTable));
     }
 
@@ -74,19 +66,5 @@ public class SimulationController extends PageController {
         while (iter.hasNext()) {
             items.add(new ProcessTableModel(iter.next()));
         }
-    }
-
-    private void onStart(ActionEvent event) {
-        ToastScheduler scheduler = ToastScheduler.getInstance();
-
-        if (!scheduler.isConfigured()) {
-            String message = "Please go back to Settings page and fill out the forms.";
-            Alert alert = new Alert(Alert.AlertType.WARNING, message, ButtonType.OK);
-            alert.setHeaderText("Scheduler is not configured!");
-            Platform.runLater(alert::showAndWait);
-            return;
-        }
-
-        scheduler.start();
     }
 }
