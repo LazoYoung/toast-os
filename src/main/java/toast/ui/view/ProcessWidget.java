@@ -89,7 +89,7 @@ public abstract class ProcessWidget extends Pane {
         this.canvas.setHeight(height);
         setPrefSize(width, height);
         onResize(width, height);
-        repaint();
+        clearAndPaint();
     }
 
     private void startPainting() {
@@ -102,14 +102,17 @@ public abstract class ProcessWidget extends Pane {
 
     private void stopPainting() {
         this.thread.cancel(false);
+        clearAndPaint();
     }
 
     private void repaintLater() {
-        Platform.runLater(() -> {
-            GraphicsContext g = this.canvas.getGraphicsContext2D();
-            g.clearRect(0, 0, this.canvas.getWidth(), this.canvas.getHeight());
-            repaint();
-        });
+        Platform.runLater(this::clearAndPaint);
+    }
+
+    private void clearAndPaint() {
+        GraphicsContext g = this.canvas.getGraphicsContext2D();
+        g.clearRect(0, 0, this.canvas.getWidth(), this.canvas.getHeight());
+        repaint();
     }
 
     private Canvas createCanvas() {
