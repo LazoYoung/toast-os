@@ -40,7 +40,11 @@ public class ToastProcessor implements Processor {
         }
 
         this.process = (ToastProcess) process;
-        this.completionListenerIdx = ToastEvent.registerListener(ProcessCompleteEvent.class, (event) -> halt());
+        this.completionListenerIdx = ToastEvent.registerListener(ProcessCompleteEvent.class, (ProcessCompleteEvent event) -> {
+            if (this.process.equals(event.getProcess())) {
+                halt();
+            }
+        });
 
         this.process.assign(this);
 

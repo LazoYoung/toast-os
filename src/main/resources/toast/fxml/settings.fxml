@@ -30,7 +30,7 @@
                      <children>
                         <VBox alignment="CENTER" style="-fx-background-color: #FFFFFF;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
-                              <HBox alignment="CENTER" style="-fx-background-color: #FFFFF;">
+                              <HBox alignment="CENTER" style="-fx-background-color: #FFFFFF;">
                                  <children>
                                     <ImageView fitHeight="72.0" fitWidth="38.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
@@ -232,7 +232,7 @@
                                                       <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
                                                           <children>
                                                               <Label text="Process ID" />
-                                                              <TextField fx:id="processId" />
+                                                              <TextField fx:id="processId" style="-fx-background-color: #BFBFBF; -fx-border-color: #868c94; -fx-border-radius: 5; -fx-background-radius: 5;" />
                                                           </children>
                                                           <GridPane.margin>
                                                               <Insets />

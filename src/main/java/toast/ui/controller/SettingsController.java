@@ -1,6 +1,8 @@
 package toast.ui.controller;
 
 import io.github.palexdev.materialfx.controls.MFXButton;
+import java.net.URL;
+import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -26,6 +28,9 @@ import static javafx.scene.control.Alert.AlertType.ERROR;
 import static javafx.scene.control.Alert.AlertType.INFORMATION;
 
 public class SettingsController extends PageController {
+
+    private static int processIdSequence = 1;
+
     @FXML
     private ChoiceBox<AlgorithmName> algorithmNameChoiceBox;
     @FXML
@@ -88,7 +93,12 @@ public class SettingsController extends PageController {
         initAlgorithmChoiceBox();
         initTable();
         initButtons();
+        initMission();
+    }
+
+    private void initMission() {
         missionChoiceBox.getItems().addAll(Mission.values());
+        missionChoiceBox.setValue(Mission.F);
     }
 
     private void initAlgorithmChoiceBox() {
@@ -191,6 +201,9 @@ public class SettingsController extends PageController {
         workLoadColumn.setCellValueFactory(new PropertyValueFactory<>("workLoad"));
         missionColumn.setCellValueFactory(new PropertyValueFactory<>("mission"));
 
+
+        processId.setEditable(false);
+        processId.setText(String.valueOf(processIdSequence));
 //        table.getColumns().addAll(processIdColumn, arrivalTimeColumn, workLoadColumn, missionColumn);
     }
 
@@ -225,6 +238,7 @@ public class SettingsController extends PageController {
                     missionChoiceBox.getValue()
             );
             data.add(process);
+            ++processIdSequence;
             clearProcessInput();
         } catch (Exception e) {
             Alert alert = new Alert(ERROR, e.getMessage(), ButtonType.OK);
@@ -271,7 +285,7 @@ public class SettingsController extends PageController {
     }
 
     private void clearProcessInput() {
-        processId.clear();
+        processId.setText(String.valueOf(processIdSequence));
         arrivalTime.clear();
         workLoad.clear();
         missionChoiceBox.setValue(Mission.F);
@@ -343,7 +357,8 @@ public class SettingsController extends PageController {
         }
 
         public ToastProcess toToastProcess() {
-            return new ToastProcess(getProcessId(), getArrivalTime(), getWorkLoad(), Mission.mappingFor(getMission()).getValue());
+            return new ToastProcess(getProcessId(), getArrivalTime(), getWorkLoad(),
+                    Mission.mappingFor(getMission()).getValue());
         }
 
     }
