@@ -30,6 +30,9 @@ import toast.persistence.mapper.SetUpMapper;
 import toast.ui.view.CoreProcessorButton;
 
 public class SettingsController extends PageController {
+
+    private static int processIdSequence = 1;
+
     @FXML
     private ChoiceBox<AlgorithmName> algorithmNameChoiceBox;
     @FXML
@@ -193,6 +196,9 @@ public class SettingsController extends PageController {
         workLoadColumn.setCellValueFactory(new PropertyValueFactory<>("workLoad"));
         missionColumn.setCellValueFactory(new PropertyValueFactory<>("mission"));
 
+
+        processId.setEditable(false);
+        processId.setText(String.valueOf(processIdSequence));
 //        table.getColumns().addAll(processIdColumn, arrivalTimeColumn, workLoadColumn, missionColumn);
     }
 
@@ -227,6 +233,7 @@ public class SettingsController extends PageController {
                     missionChoiceBox.getValue()
             );
             data.add(process);
+            ++processIdSequence;
             clearProcessInput();
         } catch (Exception e) {
             Alert alert = new Alert(ERROR, e.getMessage(), ButtonType.OK);
@@ -273,7 +280,7 @@ public class SettingsController extends PageController {
     }
 
     private void clearProcessInput() {
-        processId.clear();
+        processId.setText(String.valueOf(processIdSequence));
         arrivalTime.clear();
         workLoad.clear();
         missionChoiceBox.setValue(Mission.F);
