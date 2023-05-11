@@ -8,6 +8,7 @@ import toast.impl.ToastProcess;
 import toast.impl.ToastProcessor;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class SchedulerConfig {
     private final Integer timeQuantum;
@@ -34,11 +35,15 @@ public class SchedulerConfig {
     }
 
     public List<ToastProcess> getProcessList() {
-        return processList;
+        return processList.stream()
+                .map(ToastProcess::clone)
+                .collect(Collectors.toList());
     }
 
     public List<ToastProcessor> getProcessorList() {
-        return processorList;
+        return processorList.stream()
+                .map(ToastProcessor::clone)
+                .collect(Collectors.toList());
     }
 
     public Integer getTimeQuantum() {
@@ -65,10 +70,18 @@ public class SchedulerConfig {
     }
 
     public void setProcessList(List<ToastProcess> processList) {
+        if (processList.stream().anyMatch(ToastProcess::isRunning)) {
+            throw new IllegalArgumentException("Running process is not accepted!");
+        }
+
         this.processList = processList;
     }
 
     public void setProcessorList(List<ToastProcessor> processorList) {
+        if (processorList.stream().anyMatch(ToastProcessor::isRunning)) {
+            throw new IllegalArgumentException("Running processor is not accepted!");
+        }
+
         this.processorList = processorList;
     }
 }

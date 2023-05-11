@@ -5,7 +5,7 @@ import toast.event.ToastEvent;
 import toast.event.process.ProcessCompleteEvent;
 
 @SuppressWarnings("removal")
-public class ToastProcess implements Process {
+public class ToastProcess implements Process, Cloneable {
     private static int nextId = 1;
 
     private final int id;
@@ -130,5 +130,23 @@ public class ToastProcess implements Process {
         this.lastHaltTime = this.processor.getCurrentTime();
         this.processor = null;
         this.continuousBurstTime = 0;
+    }
+
+    /**
+     * Clone this instance
+     * @return a deep copied clone of this object
+     * @throws IllegalStateException thrown if this process is running
+     */
+    @Override
+    public ToastProcess clone() {
+        if (this.processor != null) {
+            throw new IllegalStateException("Unable to clone a running process!");
+        }
+
+        try {
+            return (ToastProcess) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 }

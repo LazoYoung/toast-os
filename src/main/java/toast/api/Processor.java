@@ -7,11 +7,16 @@ import java.util.Optional;
 public interface Processor {
 
     /**
-     * Tells if this processor remains idle at this moment. <br>
      * 현재 프로세서에 할당된 프로세스가 없으면 idle 상태이다
-     * @return false if a process is running
+     * @return false if this processor is not running
      */
     boolean isIdle();
+
+    /**
+     * 현재 프로세서에 할당된 프로세서가 있는지 여부를 반환한다
+     * @return false if this processor is running
+     */
+    boolean isRunning();
 
     /**
      * Tells if this processor is currently available. <br>
