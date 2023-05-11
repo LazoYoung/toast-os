@@ -110,9 +110,13 @@ public abstract class ProcessWidget extends Pane {
     }
 
     private void clearAndPaint() {
-        GraphicsContext g = this.canvas.getGraphicsContext2D();
-        g.clearRect(0, 0, this.canvas.getWidth(), this.canvas.getHeight());
-        repaint();
+        try {
+            GraphicsContext g = this.canvas.getGraphicsContext2D();
+            g.clearRect(0, 0, this.canvas.getWidth(), this.canvas.getHeight());
+            repaint();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private Canvas createCanvas() {

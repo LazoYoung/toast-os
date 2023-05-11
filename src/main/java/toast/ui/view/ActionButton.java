@@ -48,10 +48,14 @@ public class ActionButton extends MFXButton {
     }
 
     private void changeState(State state) {
-        this.state = state;
-        URL url = getClass().getResource(imageMap.get(state));
-        Image image = new Image(url.toString());
-        imageView.setImage(image);
+        try {
+            this.state = state;
+            URL url = getClass().getResource(imageMap.get(state));
+            Image image = new Image(url.toString());
+            imageView.setImage(image);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void onClick(MouseEvent event) {
