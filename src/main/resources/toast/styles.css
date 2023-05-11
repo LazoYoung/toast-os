@@ -71,3 +71,14 @@
 .setting-title {
     -fx-text-fill: #333F50;
 }
+
+
+#sidebar-button:hover {
+
+}
+
+* {
+    font-size: 100%;
+    font-family: Malgun Gothic;
+    -fx-font-weight: bold;
+}
