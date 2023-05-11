@@ -1,8 +1,6 @@
 package toast.ui.controller;
 
 import io.github.palexdev.materialfx.controls.MFXButton;
-import java.net.URL;
-import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -163,11 +161,10 @@ public class SettingsController extends PageController {
     }
 
     public void saveResultDraft() {
+        SetUpMapper.setAlgorithmName(algorithmNameChoiceBox.getValue());
         AlgorithmName algorithm = SetUpMapper.getAlgorithmName();
         String initPowerText = initPower.getText();
         String powerThresholdText = powerThreshold.getText();
-
-        SetUpMapper.setAlgorithmName(algorithmNameChoiceBox.getValue());
 
         if (algorithm == AlgorithmName.RR || algorithm == AlgorithmName.CUSTOM) {
             SetUpMapper.setTimeQuantumValue(timeQuantum.getText());
