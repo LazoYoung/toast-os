@@ -29,6 +29,7 @@ public class SimulationController extends PageController {
     @Override
     void init() {
         initTable();
+        updateTable();
         this.startButton.setOnAction(this::onStart);
         ToastEvent.registerListener(ProcessCompleteEvent.class, (e) -> Platform.runLater(this::updateTable));
     }
