@@ -16,6 +16,21 @@
 .table-row-cell:even {
     -fx-background-color: #fafaff;
 }
+.table-column {
+    -fx-alignment: center-right;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333F50;
+}
+.table-cell {
+    -fx-alignment: BASELINE_CENTER;
+}
+
+.table-row-cell:focused,
+.table-row-cell:hover,
+.table-row-cell:selected {
+    -fx-background-color: #BFBFBF;
+}
 
 .choice-box .context-menu {
     -fx-background-color: #ffffff;
