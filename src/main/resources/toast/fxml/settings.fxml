@@ -22,11 +22,11 @@
 
 <AnchorPane prefHeight="720.0" prefWidth="1130.0" style="-fx-background-color: #F3F5F7;" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="toast.ui.controller.SettingsController">
     <children>
-        <HBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <HBox alignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
                 <VBox maxWidth="400.0" style="-fx-background-color: #F3F5F7;" HBox.hgrow="ALWAYS">
                     <children>
-                  <AnchorPane style="-fx-background-color: #FFFFFF; -fx-background-radius: 10;">
+                  <AnchorPane style="-fx-background-color: #FFFFFF; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.7),5,0,1,1);">
                      <children>
                         <VBox alignment="CENTER" style="-fx-background-color: #FFFFFF;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
@@ -82,7 +82,7 @@
                         <Insets bottom="30.0" left="30.0" right="30.0" top="10.0" />
                      </padding>
                   </AnchorPane>
-                  <AnchorPane style="-fx-background-color: #FFFFFF; -fx-background-radius: 10;">
+                  <AnchorPane style="-fx-background-color: #FFFFFF; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.7),5,0,1,1);">
                      <children>
                               <VBox alignment="TOP_CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                   <children>
@@ -158,7 +158,7 @@
                   </FlowPane>
                     </children>
                 </VBox>
-            <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #FFFFFF; -fx-background-radius: 10;" HBox.hgrow="ALWAYS">
+            <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #FFFFFF; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.7),5,0,1,1);" HBox.hgrow="ALWAYS">
                <children>
                         <VBox alignment="TOP_CENTER" style="-fx-background-color: #FFFFFF;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
@@ -215,7 +215,7 @@
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                            </columnResizePolicy>
                                 </TableView>
-                        <AnchorPane maxHeight="200.0" VBox.vgrow="ALWAYS">
+                        <AnchorPane style="-fx-border-color: #D9D9D9; -fx-background-radius: 10; -fx-border-radius: 10;" VBox.vgrow="ALWAYS">
                            <children>
                                       <HBox alignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="3.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                           <children>
@@ -232,7 +232,7 @@
                                                       <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
                                                           <children>
                                                               <Label text="Process ID" />
-                                                              <TextField fx:id="processId" style="-fx-background-color: #BFBFBF; -fx-border-color: #868c94; -fx-border-radius: 5; -fx-background-radius: 5;" />
+                                                              <TextField fx:id="processId" style="-fx-background-color: #F2F2F2; -fx-border-color: #868c94; -fx-border-radius: 5; -fx-background-radius: 5;" />
                                                           </children>
                                                           <GridPane.margin>
                                                               <Insets />
@@ -263,17 +263,17 @@
                                               </GridPane>
                                               <VBox alignment="CENTER" maxWidth="140.0" HBox.hgrow="ALWAYS">
                                                   <children>
-                                                      <MFXButton fx:id="addButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-background-color: #5A81FA; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.7),10,0,5,5); -fx-text-fill: #FFFFFF; -fx-font-weight: bold;" text="Add" VBox.vgrow="ALWAYS">
+                                                      <MFXButton fx:id="addButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-background-color: #5A81FA; -fx-background-radius: 25; -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.7),10,0,5,5); -fx-text-fill: #FFFFFF; -fx-font-weight: bold;" text="Add" VBox.vgrow="ALWAYS">
                                                           <VBox.margin>
                                                               <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                                           </VBox.margin>
                                                       </MFXButton>
-                                                      <MFXButton fx:id="removeButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-background-color: #5A81FA; -fx-background-radius: 10; -fx-text-fill: #FFFFFF; -fx-font-weight: bold; -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.7),10,0,5,5);" text="Remove" VBox.vgrow="ALWAYS">
+                                                      <MFXButton fx:id="removeButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-background-color: #5A81FA; -fx-background-radius: 25; -fx-text-fill: #FFFFFF; -fx-font-weight: bold; -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.7),10,0,5,5);" text="Remove" VBox.vgrow="ALWAYS">
                                                           <VBox.margin>
                                                               <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                                           </VBox.margin>
                                                       </MFXButton>
-                                                      <MFXButton fx:id="clearButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-background-color: #5A81FA; -fx-background-radius: 10; -fx-text-fill: #FFFFFF; -fx-font-weight: bold; -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.7),10,0,5,5);" text="Clear" VBox.vgrow="ALWAYS">
+                                                      <MFXButton fx:id="clearButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-background-color: #5A81FA; -fx-background-radius: 25; -fx-text-fill: #FFFFFF; -fx-font-weight: bold; -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.7),10,0,5,5);" text="Clear" VBox.vgrow="ALWAYS">
                                                           <VBox.margin>
                                                               <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                                           </VBox.margin>
@@ -293,7 +293,7 @@
                                       </HBox>
                            </children>
                            <VBox.margin>
-                              <Insets top="20.0" />
+                              <Insets bottom="20.0" top="20.0" />
                            </VBox.margin>
                            <padding>
                               <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
@@ -303,10 +303,10 @@
                         </VBox>
                </children>
                <padding>
-                  <Insets bottom="30.0" left="30.0" right="30.0" top="10.0" />
+                  <Insets bottom="10.0" left="30.0" right="30.0" top="10.0" />
                </padding>
                <HBox.margin>
-                  <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                  <Insets bottom="20.0" right="20.0" top="20.0" />
                </HBox.margin>
             </AnchorPane>
             </children>
