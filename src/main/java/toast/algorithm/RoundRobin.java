@@ -41,6 +41,11 @@ public class RoundRobin implements Algorithm {
         }
     }
 
+    @Override
+    public Iterator<Process> getStandardQueue() {
+        return readyQueue.iterator();
+    }
+
     private void runWith(Iterator<Processor> idleProcessorIterator) {
         while (canExecute(idleProcessorIterator)) {
             Processor idleProcessor = idleProcessorIterator.next();

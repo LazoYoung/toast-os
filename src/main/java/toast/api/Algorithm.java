@@ -1,5 +1,8 @@
 package toast.api;
 
+import java.util.Collections;
+import java.util.Iterator;
+
 public interface Algorithm {
 
     /**
@@ -15,6 +18,24 @@ public interface Algorithm {
      * @param process The process that is entering the ready state.
      */
     void onProcessReady(Process process);
+
+    /**
+     * Get access to the ready queue for standard processes. <br>
+     * 표준 프로세스 대기열 Iterator 를 반환하는 함수
+     * @return The {@link Iterator} backing the standard ready queue
+     */
+    default Iterator<Process> getStandardQueue() {
+        return Collections.emptyIterator();
+    }
+
+    /**
+     * Get access to the ready queue for mission processes. <br>
+     * 미션 프로세스 대기열 Iterator 를 반환하는 함수
+     * @return The {@link Iterator} backing the mission ready queue
+     */
+    default Iterator<Process> getMissionQueue() {
+        return Collections.emptyIterator();
+    }
 
     /**
      * Write your scheduling algorithm here! <br>

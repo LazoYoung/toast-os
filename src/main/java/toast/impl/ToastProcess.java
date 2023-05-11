@@ -4,16 +4,11 @@ import toast.api.Process;
 import toast.event.ToastEvent;
 import toast.event.process.ProcessCompleteEvent;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @SuppressWarnings("removal")
 public class ToastProcess implements Process {
     private static int nextId = 1;
 
-    @Deprecated
-    private final List<Runnable> completionListeners = new ArrayList<>();
-    private final int pid;
+    private final int id;
     private final int arrival;
     private final int workload;
     private final boolean isMission;
@@ -24,17 +19,21 @@ public class ToastProcess implements Process {
     private int waitingTime = 0;
     private int lastHaltTime;
 
-    public ToastProcess(int arrival, int workload, boolean isMission) {
-        this.pid = nextId++;
+    public ToastProcess(int pId, int arrival, int workload, boolean isMission) {
+        this.id = pId;
         this.arrival = arrival;
         this.workload = workload;
         this.isMission = isMission;
         this.lastHaltTime = arrival;
     }
 
+    public ToastProcess(int arrival, int workload, boolean isMission) {
+        this(nextId++, arrival, workload, isMission);
+    }
+
     @Override
     public int getId() {
-        return pid;
+        return id;
     }
 
     @Override
@@ -83,20 +82,26 @@ public class ToastProcess implements Process {
 
     @Override
     public int addCompletionListener(Runnable listener) {
-        completionListeners.add(listener);
-
-        return completionListeners.size() - 1;
+        return 0;
     }
 
     @Override
-    public void removeCompletionListener(int listenerId) {
-        completionListeners.remove(listenerId);
+    public void removeCompletionListener(int listenerId) {}
+
+    @Override
+    public boolean isRunning() {
+        return (processor != null);
+    }
+
+    @Override
+    public boolean isComplete() {
+        return progress >= workload;
     }
 
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof ToastProcess other) {
-            return (this.pid == other.pid);
+            return (this.id == other.id);
         }
         return false;
     }
@@ -112,30 +117,18 @@ public class ToastProcess implements Process {
         this.continuousBurstTime++;
 
         if (isComplete()) {
-            // Legacy dispatch (for removal)
-            List<Runnable> listeners = new ArrayList<>(this.completionListeners);
-            listeners.forEach(Runnable::run);
-
-            var event = new ProcessCompleteEvent(this, this.processor.getCurrentTime());
+            var event = new ProcessCompleteEvent(this, this.processor.getCurrentTime(), processor);
             ToastEvent.dispatch(ProcessCompleteEvent.class, event);
         }
     }
 
     public void halt() {
-        if (isIdle()) {
+        if (!isRunning()) {
             throw new IllegalStateException("Failed to halt: process not running!");
         }
 
         this.lastHaltTime = this.processor.getCurrentTime();
         this.processor = null;
         this.continuousBurstTime = 0;
-    }
-
-    private boolean isIdle() {
-        return processor == null;
-    }
-
-    private boolean isComplete() {
-        return progress >= workload;
     }
 }

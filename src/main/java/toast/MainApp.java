@@ -5,11 +5,14 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import toast.algorithm.CustomSatellite;
+import toast.algorithm.FirstComeFirstService;
+import toast.api.Algorithm;
 import toast.api.Core;
 import toast.impl.ToastProcess;
 import toast.impl.ToastProcessor;
 import toast.impl.ToastScheduler;
-import toast.persistence.domain.AppConfig;
+import toast.persistence.domain.SchedulerConfig;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +24,7 @@ public class MainApp extends Application {
         try {
             Parent root = FXMLLoader.load(getClass().getResource("scene.fxml"));
             Scene scene = new Scene(root);
-            scene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
+            scene.getStylesheets().add(getClass().getResource("/toast/styles.css").toExternalForm());
 
             primaryStage.setTitle("Process Scheduling Simulator");
             primaryStage.setScene(scene);
@@ -32,12 +35,20 @@ public class MainApp extends Application {
         }
     }
 
-
     public static void main(String[] args) {
         Application.launch(args);
 
+//        startSchedulerWithTerminal();
+    }
+
+    private static void startSchedulerWithTerminal() {
+        SchedulerConfig config = makeInput();
+        ToastScheduler.getInstance().setup(config).start();
+    }
+
+    private static SchedulerConfig makeInput() {
         Scanner scanner = new Scanner(System.in);
-        List<ToastProcessor> coreList = getCoreList(scanner);
+        List<ToastProcessor> processorList = getCoreList(scanner);
         List<ToastProcess> processList = getProcessList(scanner);
 
         int timeQuantum = getTimeQuantum(scanner);
@@ -46,14 +57,8 @@ public class MainApp extends Application {
         System.out.println();
         scanner.close();
 
-        ToastScheduler scheduler = scheduler(timeQuantum, initPower, powerThreshold, coreList, processList);
-        scheduler.start();
-    }
-
-    private static ToastScheduler scheduler(int timeQuantum, double initPower, double powerThreshold, List<ToastProcessor> coreList, List<ToastProcess> processList) {
-        AppConfig appConfig = new AppConfig();
-
-        return new ToastScheduler(coreList, processList, appConfig.primaryCore(), appConfig.algorithm(timeQuantum, initPower, powerThreshold));
+        Algorithm algorithm = new FirstComeFirstService();
+        return new SchedulerConfig(Core.PERFORMANCE, algorithm, processList, processorList);
     }
 
     private static List<ToastProcess> getProcessList(Scanner scanner) {
@@ -93,10 +98,10 @@ public class MainApp extends Application {
         System.out.print("# of P core: ");
         int pCore = scanner.nextInt();
 
-        for (int i = 0; i < 4; i++) {
+        for (int id = 1; id <= 4; id++) {
             Core core = (pCore-- < 1) ? Core.EFFICIENCY : Core.PERFORMANCE;
             boolean active = (pCount-- > 0);
-            ToastProcessor processor = new ToastProcessor(core, active);
+            ToastProcessor processor = new ToastProcessor(id, core, active);
             list.add(processor);
         }
         return list;

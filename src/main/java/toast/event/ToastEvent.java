@@ -9,16 +9,11 @@ public class ToastEvent {
     private static final Map<ListenerKey, Consumer<ToastEvent>> map = new ConcurrentHashMap<>();
     private static int nextId = 0;
 
-    private record ListenerKey(int id, String type) {
-        @Override
-        public boolean equals(Object obj) {
-            return false;
-        }
-    }
+    private record ListenerKey(int id, Class<? extends ToastEvent> eventClass) {}
 
     @SuppressWarnings("unchecked")
     public static int registerListener(Class<? extends ToastEvent> type, Consumer<? extends ToastEvent> listener) {
-        map.put(new ListenerKey(nextId, type.getName()), (Consumer<ToastEvent>) listener);
+        map.put(new ListenerKey(nextId, type), (Consumer<ToastEvent>) listener);
         return nextId++;
     }
 
@@ -28,7 +23,7 @@ public class ToastEvent {
 
     public static void dispatch(Class<? extends ToastEvent> type, ToastEvent event) {
         for (var entry : map.entrySet()) {
-            if (entry.getKey().type.equals(type.getName())) {
+            if (entry.getKey().eventClass.isAssignableFrom(type)) {
                 entry.getValue().accept(event);
             }
         }

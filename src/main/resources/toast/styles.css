@@ -1,0 +1,58 @@
+.table-view .column-header,
+.table-view .column-header .filler,
+.table-view .column-header-background .filler {
+    -fx-background-color: #5A81FA;
+    -fx-text-fill: white;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: white;
+}
+
+.table-row-cell:odd {
+    -fx-background-color: #ecf0fe;
+}
+
+.table-row-cell:even {
+    -fx-background-color: #fafaff;
+}
+
+.choice-box .context-menu {
+    -fx-background-color: #ffffff;
+}
+
+.choice-box .menu-item:focused {
+    -fx-background-color: #5A81FA;
+}
+
+
+/*.choice-box:hover,*/
+.choice-box:focused,
+.text-field:focused {
+    -fx-border-color: #5A81FA;
+    -fx-border-width: 1 1 1 1;
+}
+
+.choice-box {
+    -fx-background-color: rgba(255, 255, 255, 1);
+    -fx-focus-color: #5A81FA;
+    -fx-mark-color: #5A81FA;
+    /*-fx-background-radius: 10;*/
+    -fx-border-radius: 3;
+    /*-fx-border: 1px solid #ded6d6;*/
+    -fx-border-color: #D3D3D3;
+    -fx-border-width: 1 1 1 1
+}
+
+.choice-box .context-menu {
+    -fx-pref-width: inherit; /* Your width for the context menu background shown */
+}
+
+.text-field {
+    -fx-focus-color: #5A81FA;
+    /*-fx-faint-focus-color: #406eff;*/
+}
+
+.setting-title {
+    -fx-text-fill: #333F50;
+}

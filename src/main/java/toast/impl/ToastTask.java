@@ -16,38 +16,44 @@ public class ToastTask implements Runnable {
     private final ToastScheduler scheduler;
     private final Algorithm algorithm;
     private final List<Process> newProcesses;
-    private final List<Runnable> tickListeners;
     private int elapsedTime = 0;
     private double powerConsumed = 0;
     private boolean finish = false;
 
-    public ToastTask(ToastScheduler scheduler, Algorithm algorithm) {
+    public ToastTask(ToastScheduler scheduler) {
         this.scheduler = scheduler;
-        this.algorithm = algorithm;
+        this.algorithm = scheduler.getAlgorithm();
         this.newProcesses = new ArrayList<>(scheduler.getProcessList());
-        this.tickListeners = new ArrayList<>();
+        algorithm.init(scheduler);
     }
 
     @Override
     public void run() {
-        System.out.printf("┌ Before run: %ds\n", elapsedTime);
+        try {
+            System.out.printf("┌ Before run: %ds\n", elapsedTime);
 
-        enqueueProcesses();
-        algorithm.run(scheduler);
-        if (finish) return;
+            enqueueProcesses();
+            algorithm.run(scheduler);
 
-        if (newProcesses.isEmpty() && isIdle()) {
-            scheduler.finish(SchedulerFinishEvent.Cause.COMPLETE);
-            System.out.print("└ End of simulation\n\n");
-            printResult();
-        } else {
-            runProcessors();
-            elapsedTime++;
-            syncProcessorTime();
-            System.out.printf("└ After run: %ds%n\n", elapsedTime);
+            if (finish) {
+                System.out.print("└ End of simulation\n\n");
+                printResult();
+                return;
+            }
+
+            if (newProcesses.isEmpty() && isIdle()) {
+                scheduler.finish(SchedulerFinishEvent.Cause.COMPLETE);
+                System.out.print("└ End of simulation\n\n");
+                printResult();
+            } else {
+                runProcessors();
+                elapsedTime++;
+                syncProcessorTime();
+                System.out.printf("└ After run: %ds%n\n", elapsedTime);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-        tickListeners.forEach(Runnable::run);
     }
 
     private void syncProcessorTime() {
@@ -67,10 +73,6 @@ public class ToastTask implements Runnable {
 
     public void finish() {
         this.finish = true;
-    }
-
-    public void addTickListener(Runnable runnable) {
-        this.tickListeners.add(runnable);
     }
 
     private boolean isIdle() {
@@ -110,8 +112,7 @@ public class ToastTask implements Runnable {
         System.out.println("--- Scheduling result ---");
         System.out.printf("• Elapsed time: %ds%n", scheduler.getElapsedTime());
         System.out.printf("• Power consumption: %.1fW∙s%n", scheduler.getPowerConsumed());
-        //TODO RT가 아니라 TT를 구해야하지 않은지.
-        System.out.printf("• Average response time: %.1fs", scheduler.getAverageResponseTime());
+        System.out.printf("• Average turnaround time: %.1fs", scheduler.getAverageTT());
         System.out.println();
         System.out.println("--- Process result ---");
 

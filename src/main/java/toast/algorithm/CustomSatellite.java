@@ -73,6 +73,16 @@ public class CustomSatellite implements Algorithm {
     }
 
     @Override
+    public Iterator<Process> getStandardQueue() {
+        return standardQueue.iterator();
+    }
+
+    @Override
+    public Iterator<Process> getMissionQueue() {
+        return missionQueue.iterator();
+    }
+
+    @Override
     public void onProcessReady(Process process) {
         enqueueProcess(process);
         ToastEvent.registerListener(ProcessCompleteEvent.class, (ProcessCompleteEvent event) -> onProcessComplete(event));

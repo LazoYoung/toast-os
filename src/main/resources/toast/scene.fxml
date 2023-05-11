@@ -1,29 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import io.github.palexdev.materialfx.controls.MFXButton?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.layout.VBox?>
-
-<?import javafx.scene.text.TextFlow?>
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2-ea"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="toast.ui.controller.FXMLController">
-   <TextFlow layoutX="112.0" layoutY="52.0" prefHeight="200.0" prefWidth="200.0"/>
-   <AnchorPane layoutX="-6.0" prefHeight="48.0" prefWidth="722.0" style="-fx-background-color: #343434;" />
-   <AnchorPane layoutY="48.0" prefHeight="432.0" prefWidth="46.0" style="-fx-background-color: #787878;">
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<AnchorPane prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="toast.ui.controller.FXMLController">
+   <AnchorPane layoutY="48.0" prefWidth="150.0" style="-fx-background-color: #787878;" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
       <children>
-         <VBox prefHeight="442.0" prefWidth="122.0">
+         <VBox alignment="TOP_CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
-               <MFXButton onAction="#main" prefHeight="34.0" prefWidth="127.0" text="Main" />
-               <MFXButton onAction="#setting" prefHeight="34.0" prefWidth="127.0" text="Setting" />
-               <MFXButton onAction="#runAndResult" prefHeight="34.0" prefWidth="127.0" text="Run &amp; Result" />
+               <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true" />
+               <MFXButton maxWidth="1.7976931348623157E308" onAction="#toHomePage" prefHeight="40.0" text="Home" />
+               <MFXButton maxWidth="1.7976931348623157E308" onAction="#toSettingsPage" prefHeight="40.0" text="Setting" />
+               <MFXButton maxWidth="1.7976931348623157E308" onAction="#toSimulationPage" prefHeight="40.0" text="Run &amp; Result" />
             </children>
          </VBox>
       </children>
    </AnchorPane>
-   <AnchorPane layoutX="122.0" layoutY="48.0" prefHeight="442.0" prefWidth="585.0">
+   <AnchorPane layoutX="150.0" prefHeight="768.0" prefWidth="1130.0">
       <children>
-         <StackPane fx:id="contentArea" prefHeight="0.0" prefWidth="0.0" />
+         <StackPane fx:id="contentArea" prefHeight="0.0" prefWidth="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
       </children>
    </AnchorPane>
 </AnchorPane>
