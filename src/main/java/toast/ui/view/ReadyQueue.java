@@ -93,6 +93,7 @@ public class ReadyQueue extends ProcessWidget {
             g.strokeRect(x, y, this.barWidth, this.barHeight);
             g.setFill(Palette.getTextColor(background));
             g.fillText(text, textX, textY, this.barWidth);
+            i++;
         }
     }
 
