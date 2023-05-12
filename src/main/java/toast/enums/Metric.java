@@ -1,8 +1,8 @@
 package toast.enums;
 
 public enum Metric {
-    ELAPSED_TIME("elapsed-time"),
-    AVERAGE_TURNAROUND_TIME("average-tt"),
+    RUN_TIME("elapsed-time"),
+    AVERAGE_TT("average-tt"),
     POWER("power"),
     INVALID("invalid");
 
