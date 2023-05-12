@@ -134,6 +134,7 @@ public class PerformanceWidget extends ProcessWidget {
         GraphicsContext g = super.canvas.getGraphicsContext2D();
         double margin = super.scheduler.getConfig().getPowerThreshold();
         double power = 1 - (used / total);
+        double barWidth = this.width * power;
         double barHeight = this.width / 4;
         double y = this.metricY - barHeight / 2;
         String text = String.format("%.0f%%", power * 100);
@@ -151,11 +152,11 @@ public class PerformanceWidget extends ProcessWidget {
 //        g.fillRoundRect(0, this.metricY, this.width, this.height, this.strokeArc, this.strokeArc);
 
         g.setFill(barColor);
-        g.fillRoundRect(0, y, this.width, barHeight, this.strokeArc, this.strokeArc);
+        g.fillRoundRect(0, y, barWidth, barHeight, this.strokeArc, this.strokeArc);
         
         g.setFill(Palette.STROKE_LIGHT.color());
         g.setLineWidth(2);
-        g.strokeRoundRect(1, y + 1, this.width - 2, barHeight - 2, this.strokeArc, this.strokeArc);
+        g.strokeRoundRect(1, y + 1, this.width - 2, barHeight - 4, this.strokeArc, this.strokeArc);
 
         g.setFont(this.metricFont);
         g.setFill(Palette.TEXT_BLACK.color());
