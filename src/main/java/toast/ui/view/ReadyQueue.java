@@ -16,13 +16,23 @@ import java.util.Iterator;
 
 public class ReadyQueue extends ProcessWidget {
 
-    private Mission mission = Mission.F;
+    private Mission mission;
     private double barWidth;
     private double barHeight;
+    private double strokeArc;
     private Font processFont;
 
     public ReadyQueue() {
         super();
+    }
+
+    @Override
+    protected void onInit() {
+        this.mission = Mission.F;
+        this.barWidth = 300;
+        this.barHeight = 50;
+        this.strokeArc = 10;
+        this.processFont = Font.font(null, FontWeight.BOLD, 14);
     }
 
     public boolean getMission() {
@@ -52,11 +62,11 @@ public class ReadyQueue extends ProcessWidget {
         double height = super.canvas.getHeight();
 
         g.setFill(Palette.COMPONENT_BACKGROUND.color());
-        g.fillRect(0, 0, width, height);
+        g.fillRoundRect(0, 0, width, height, this.strokeArc, this.strokeArc);
 
         g.setLineWidth(3);
         g.setStroke(Palette.STROKE.color());
-        g.strokeRect(2, 2, width - 4, height - 4);
+        g.strokeRoundRect(2, 2, width - 4, height - 4, this.strokeArc, this.strokeArc);
     }
 
     private void drawProcessBars() {
@@ -83,6 +93,7 @@ public class ReadyQueue extends ProcessWidget {
             g.strokeRect(x, y, this.barWidth, this.barHeight);
             g.setFill(Palette.getTextColor(background));
             g.fillText(text, textX, textY, this.barWidth);
+            i++;
         }
     }
 

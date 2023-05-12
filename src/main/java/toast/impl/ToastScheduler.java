@@ -93,7 +93,10 @@ public class ToastScheduler implements Scheduler {
 
     @Override
     public double getAverageTT() {
+        if (processList.size() == 0) return 0;
+
         int sum = processList.stream()
+                .filter(Process::isComplete)
                 .mapToInt(Process::getTurnaroundTime)
                 .sum();
         return (double) sum / processList.size();
@@ -155,6 +158,10 @@ public class ToastScheduler implements Scheduler {
 
     public Algorithm getAlgorithm() {
         return algorithm;
+    }
+
+    public SchedulerConfig getConfig() {
+        return config;
     }
 
     public boolean isRunning() {

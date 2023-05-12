@@ -11,7 +11,7 @@ import toast.event.processor.ProcessorRebootEvent;
 
 import java.util.Optional;
 
-public class ToastProcessor implements Processor {
+public class ToastProcessor implements Processor, Cloneable {
     private final int id;
     private final Core core;
     private ToastProcess process;
@@ -82,6 +82,11 @@ public class ToastProcessor implements Processor {
     }
 
     @Override
+    public boolean isRunning() {
+        return process != null;
+    }
+
+    @Override
     public int getId() {
         return id;
     }
@@ -141,5 +146,23 @@ public class ToastProcessor implements Processor {
 
         process.work(workload);
         return power;
+    }
+
+    /**
+     * Clone this instance
+     * @return a deep copied clone of this object
+     * @throws IllegalStateException thrown if this processor is running
+     */
+    @Override
+    public ToastProcessor clone() {
+        if (this.process != null) {
+            throw new IllegalStateException("Unable to clone a running processor!");
+        }
+
+        try {
+            return (ToastProcessor) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

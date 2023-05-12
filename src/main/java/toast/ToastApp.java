@@ -5,9 +5,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import toast.algorithm.FirstComeFirstService;
-import toast.api.Algorithm;
 import toast.api.Core;
+import toast.enums.AlgorithmName;
 import toast.impl.ToastProcess;
 import toast.impl.ToastProcessor;
 import toast.impl.ToastScheduler;
@@ -56,8 +55,11 @@ public class ToastApp extends Application {
         System.out.println();
         scanner.close();
 
-        Algorithm algorithm = new FirstComeFirstService();
-        return new SchedulerConfig(Core.PERFORMANCE, algorithm, processList, processorList);
+        var config = new SchedulerConfig(Core.PERFORMANCE, timeQuantum, initPower, powerThreshold);
+        config.setAlgorithm(AlgorithmName.CUSTOM);
+        config.setProcessorList(processorList);
+        config.setProcessList(processList);
+        return config;
     }
 
     private static List<ToastProcess> getProcessList(Scanner scanner) {

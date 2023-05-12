@@ -1,11 +1,6 @@
 package toast.ui.controller;
 
-import static javafx.scene.control.Alert.AlertType.ERROR;
-import static javafx.scene.control.Alert.AlertType.INFORMATION;
-
 import io.github.palexdev.materialfx.controls.MFXButton;
-import java.net.URL;
-import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -13,12 +8,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import toast.api.Core;
 import toast.enums.AlgorithmName;
@@ -28,6 +18,12 @@ import toast.impl.ToastScheduler;
 import toast.persistence.domain.SchedulerConfig;
 import toast.persistence.mapper.SetUpMapper;
 import toast.ui.view.CoreProcessorButton;
+
+import java.net.URL;
+import java.util.ResourceBundle;
+
+import static javafx.scene.control.Alert.AlertType.ERROR;
+import static javafx.scene.control.Alert.AlertType.INFORMATION;
 
 public class SettingsController extends PageController {
 
@@ -75,7 +71,7 @@ public class SettingsController extends PageController {
     private TextField arrivalTime;
     @FXML
     private TextField workLoad;
-    //    @FXML
+//    @FXML
 //    private TextField mission;
     @FXML
     private ChoiceBox<Mission> missionChoiceBox;
@@ -166,14 +162,20 @@ public class SettingsController extends PageController {
 
     public void saveResultDraft() {
         SetUpMapper.setAlgorithmName(algorithmNameChoiceBox.getValue());
+        AlgorithmName algorithm = SetUpMapper.getAlgorithmName();
+        String initPowerText = initPower.getText();
+        String powerThresholdText = powerThreshold.getText();
 
-        switch (SetUpMapper.getAlgorithmName()) {
-            case RR -> SetUpMapper.setTimeQuantumValue(timeQuantum.getText());
-            case CUSTOM -> {
-                SetUpMapper.setTimeQuantumValue(timeQuantum.getText());
-                SetUpMapper.setInitPowerValue(initPower.getText());
-                SetUpMapper.setPowerThresholdValue(powerThreshold.getText());
-            }
+        if (algorithm == AlgorithmName.RR || algorithm == AlgorithmName.CUSTOM) {
+            SetUpMapper.setTimeQuantumValue(timeQuantum.getText());
+        }
+
+        if (initPowerText != null && !initPowerText.isBlank()) {
+            SetUpMapper.setInitPowerValue(initPower.getText());
+        }
+
+        if (powerThresholdText != null && !powerThresholdText.isBlank()) {
+            SetUpMapper.setPowerThresholdValue(powerThreshold.getText());
         }
 
         SetUpMapper.setProcessors(core1.getIdx(), core2.getIdx(), core3.getIdx(), core4.getIdx());
