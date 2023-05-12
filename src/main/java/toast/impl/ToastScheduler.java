@@ -180,6 +180,14 @@ public class ToastScheduler implements Scheduler {
         return started && task.isPaused();
     }
 
+    public void clear() {
+        algorithm = null;
+        recorder.eraseRecords();
+        processList.clear();
+        processorList.clear();
+        task.clear();
+    }
+
     public Algorithm getAlgorithm() {
         return algorithm;
     }

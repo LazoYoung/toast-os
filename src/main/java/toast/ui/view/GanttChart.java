@@ -181,15 +181,16 @@ public class GanttChart extends ProcessWidget {
         for (int i = 0; i < this.timeSpan; i++) {
             final int time = getTime(i);
 
+            int index = i;
             record.getFlagAtTime(time).ifPresent((process) -> {
-                drawFlag(process, time);
+                drawFlag(process, index, time);
             });
         }
     }
 
-    private void drawFlag(Process process, int time) {
+    private void drawFlag(Process process, int index, int time) {
         GraphicsContext g = super.canvas.getGraphicsContext2D();
-        double timelineX = getTimelineX(getIndex(time));
+        double timelineX = getTimelineX(index);
         double x0 = timelineX;
         double y0 = 3;
         double x1 = x0;
@@ -238,9 +239,5 @@ public class GanttChart extends ProcessWidget {
         int time = super.scheduler.getElapsedTime();
         int offset = Math.max(time - this.timeSpan, 0);
         return index + offset;
-    }
-
-    private int getIndex(int time) {
-        return Math.min(time, this.timeSpan);
     }
 }

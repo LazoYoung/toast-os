@@ -91,6 +91,12 @@ public class ToastTask implements Runnable {
         finish = true;
     }
 
+    public void clear() {
+        newProcesses.clear();
+        powerConsumed = 0;
+        elapsedTime = 0;
+    }
+
     private void syncProcessorTime() {
         for (Processor p : scheduler.getProcessorList()) {
             ToastProcessor processor = (ToastProcessor) p;

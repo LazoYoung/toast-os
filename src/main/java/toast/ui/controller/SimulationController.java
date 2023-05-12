@@ -8,6 +8,7 @@ import javafx.scene.control.TableView;
 import toast.api.Process;
 import toast.event.ToastEvent;
 import toast.event.process.ProcessCompleteEvent;
+import toast.event.scheduler.SchedulerFinishEvent;
 import toast.impl.ToastScheduler;
 import toast.ui.model.ProcessTableModel;
 
@@ -28,7 +29,12 @@ public class SimulationController extends PageController {
 
     @Override
     void exit() {
+        final ToastScheduler scheduler = ToastScheduler.getInstance();
 
+        if (scheduler.isStarted()) {
+            scheduler.finish(SchedulerFinishEvent.Cause.COMMAND);
+            scheduler.clear();
+        }
     }
 
     @Override
