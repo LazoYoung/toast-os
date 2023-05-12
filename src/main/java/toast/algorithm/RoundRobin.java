@@ -32,13 +32,12 @@ public class RoundRobin implements Algorithm {
 
     @Override
     public void run(Scheduler scheduler) {
-        List<Processor> timeOverProcessors = getTimeOverProcessors(scheduler.getActiveProcessorList());
-
-        runWith(timeOverProcessors, scheduler);
-
         if (!this.readyQueue.isEmpty()) {
             runWith(scheduler.getIdleProcessorList().iterator());
         }
+        List<Processor> timeOverProcessors = getTimeOverProcessors(scheduler.getActiveProcessorList());
+
+        runWith(timeOverProcessors, scheduler);
     }
 
     @Override
