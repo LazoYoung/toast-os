@@ -1,17 +1,94 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import io.github.palexdev.materialfx.controls.MFXButton?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.*?>
-<AnchorPane prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="toast.ui.controller.FXMLController">
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/17.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="toast.ui.controller.FXMLController">
    <AnchorPane layoutY="48.0" prefWidth="150.0" style="-fx-background-color: #787878;" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
       <children>
-         <VBox alignment="TOP_CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <VBox alignment="TOP_CENTER" style="-fx-background-color: #333F50;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
-               <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true" />
-               <MFXButton maxWidth="1.7976931348623157E308" onAction="#toHomePage" prefHeight="40.0" text="Home" />
-               <MFXButton maxWidth="1.7976931348623157E308" onAction="#toSettingsPage" prefHeight="40.0" text="Setting" />
-               <MFXButton maxWidth="1.7976931348623157E308" onAction="#toSimulationPage" prefHeight="40.0" text="Run &amp; Result" />
+               <ImageView fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
+                  <image>
+                     <Image url="@images/Side_bar/Logo.png" />
+                  </image>
+                  <VBox.margin>
+                     <Insets bottom="80.0" top="30.0" />
+                  </VBox.margin></ImageView>
+               <MFXButton id="sidebar-button" fx:id="homeButton" maxWidth="1.7976931348623157E308" onAction="#toHomePage" prefHeight="40.0" style="-fx-background-color: #333F50;" text="  Home               " textFill="WHITE">
+<!--                  <cursor>-->
+<!--                     <Cursor fx:constant="E_RESIZE" />-->
+<!--                  </cursor>-->
+<!--                  <font>-->
+<!--                     <Font size="14.0" />-->
+<!--                  </font>-->
+                  <graphic>
+                     <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                        <image>
+                           <Image url="@images/Side_bar/Home.png" />
+                        </image>
+                     </ImageView>
+                  </graphic>
+                  <VBox.margin>
+                     <Insets />
+                  </VBox.margin></MFXButton>
+               <MFXButton id="sidebar-button" fx:id="settingButton" maxWidth="1.7976931348623157E308" onAction="#toSettingsPage" prefHeight="40.0" style="-fx-background-color: #333F50;" text=" Setting              " textFill="WHITE">
+<!--                  <font>-->
+<!--                     <Font size="14.0" />-->
+<!--                  </font>  -->
+                  <graphic>
+                     <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                        <image>
+                           <Image url="@images/Side_bar/Setting.png" />
+                        </image>
+                     </ImageView>
+                  </graphic>
+                  <VBox.margin>
+                     <Insets bottom="5.0" top="5.0" />
+                  </VBox.margin></MFXButton>
+               <MFXButton id="sidebar-button" fx:id="simulationButton" maxWidth="1.7976931348623157E308" onAction="#toSimulationPage" prefHeight="40.0" style="-fx-background-color: #333F50;" text="  Simulation        " textFill="WHITE">
+                  <graphic>
+                     <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                        <image>
+                           <Image url="@images/Side_bar/Simulation.png" />
+                        </image>
+                     </ImageView>
+                  </graphic>
+<!--                  <font>-->
+<!--                     <Font size="14.0" />-->
+<!--                  </font>-->
+                  <VBox.margin>
+                     <Insets />
+                  </VBox.margin></MFXButton>
+               <MFXButton maxWidth="1.7976931348623157E308" onAction="#toSimulationPage" prefHeight="40.0" style="-fx-background-color: #333F50;" text=" How to use      " textFill="WHITE">
+                  <graphic>
+                     <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                        <image>
+                           <Image url="@images/Side_bar/How_to_use.png" />
+                        </image>
+                     </ImageView>
+                  </graphic>
+                  <font>
+                     <Font size="14.0" />
+                  </font>
+                  <VBox.margin>
+                     <Insets top="350.0" />
+                  </VBox.margin>
+               </MFXButton>
+               <ImageView fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
+                  <image>
+                     <Image url="@images/Side_bar/KT.png" />
+                  </image>
+                  <VBox.margin>
+                     <Insets top="35.0" />
+                  </VBox.margin>
+               </ImageView>
             </children>
          </VBox>
       </children>
