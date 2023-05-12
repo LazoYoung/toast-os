@@ -34,7 +34,7 @@ public class ToastRecorder {
         int completeListener = ToastEvent.registerListener(ProcessCompleteEvent.class, this::recordProcessComplete);
         int readyListener = ToastEvent.registerListener(ProcessReadyEvent.class, this::recordProcessReady);
 
-        Collections.addAll(watcherList, runListener, completeListener);
+        Collections.addAll(watcherList, runListener, completeListener, readyListener);
     }
 
     private void recordProcessRun(ToastEvent e) {
