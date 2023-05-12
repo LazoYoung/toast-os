@@ -221,45 +221,49 @@
                                           <Insets bottom="10.0" />
                                        </VBox.margin>
                                     </HBox>
-                                    <VBox style="-fx-border-width: 3; -fx-border-radius: 10; -fx-border-color: #D9D9D9;">
+                                    <HBox prefHeight="100.0" prefWidth="200.0">
                                        <children>
-                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="- JavaFX">
-                                             <font>
-                                                <Font name="System Bold" size="26.0" />
-                                             </font>
-                                             <VBox.margin>
-                                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                             </VBox.margin>
-                                          </Text>
-                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="openjfx.io / MaterialFX">
-                                             <font>
-                                                <Font size="16.0" />
-                                             </font>
-                                             <VBox.margin>
-                                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                             </VBox.margin>
-                                          </Text>
-                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="- CPU scheduling">
-                                             <font>
-                                                <Font name="System Bold" size="26.0" />
-                                             </font>
-                                             <VBox.margin>
-                                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                             </VBox.margin>
-                                          </Text>
-                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="geeksforgeeks.org / GitHub ">
-                                             <font>
-                                                <Font size="16.0" />
-                                             </font>
-                                             <VBox.margin>
-                                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                             </VBox.margin>
-                                          </Text>
+                                          <VBox prefHeight="180.0" prefWidth="362.0" style="-fx-border-width: 3; -fx-border-radius: 10; -fx-border-color: #D9D9D9;">
+                                             <children>
+                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="- JavaFX">
+                                                   <font>
+                                                      <Font name="System Bold" size="26.0" />
+                                                   </font>
+                                                   <VBox.margin>
+                                                      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                                   </VBox.margin>
+                                                </Text>
+                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="openjfx.io / MaterialFX">
+                                                   <font>
+                                                      <Font size="16.0" />
+                                                   </font>
+                                                   <VBox.margin>
+                                                      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                                   </VBox.margin>
+                                                </Text>
+                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="- CPU scheduling">
+                                                   <font>
+                                                      <Font name="System Bold" size="26.0" />
+                                                   </font>
+                                                   <VBox.margin>
+                                                      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                                   </VBox.margin>
+                                                </Text>
+                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="geeksforgeeks.org / GitHub ">
+                                                   <font>
+                                                      <Font size="16.0" />
+                                                   </font>
+                                                   <VBox.margin>
+                                                      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                                   </VBox.margin>
+                                                </Text>
+                                             </children>
+                                             <padding>
+                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                             </padding>
+                                          </VBox>
                                        </children>
-                                       <padding>
-                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                       </padding>
-                                    </VBox>
+                                    </HBox>
                                  </children>
                               </VBox>
                            </children>
@@ -268,6 +272,9 @@
                      <padding>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                      </padding>
+                     <HBox.margin>
+                        <Insets left="15.0" />
+                     </HBox.margin>
                   </VBox>
                   <VBox alignment="CENTER" style="-fx-background-color: #8497B0;">
                      <children>
@@ -400,21 +407,22 @@
                               <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
                            </padding>
                         </VBox>
-                        <HBox prefHeight="100.0" prefWidth="200.0">
+                        <HBox>
                            <children>
-                              <ImageView fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
+                              <ImageView fitHeight="56.0" fitWidth="51.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@../images/Home/About_this_Simulator.png" />
                                  </image>
+                                 <HBox.margin>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </HBox.margin>
                               </ImageView>
                               <VBox>
                                  <children>
-                                    <ImageView fitHeight="60.0" fitWidth="120.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../images/Home/Notion.png" />
-                                       </image>
-                                    </ImageView>
-                                    <Hyperlink text="https://difficult-algebra-4c9.notion.site/TOAST-OS-5dd0e91e94e045468c53bce80821a2ba" />
+                                    <Hyperlink fx:id="notionLink" onAction="#openNotion">
+                                       <font>
+                                          <Font size="1.0" />
+                                       </font></Hyperlink>
                                  </children>
                                  <padding>
                                     <Insets left="5.0" right="5.0" />
@@ -422,15 +430,10 @@
                               </VBox>
                               <VBox>
                                  <children>
-                                    <ImageView fitHeight="60.0" fitWidth="120.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../images/Home/GitHub.png" />
-                                       </image>
-                                       <VBox.margin>
-                                          <Insets left="5.0" right="5.0" />
-                                       </VBox.margin>
-                                    </ImageView>
-                                    <Hyperlink text="https://github.com/LazoYoung/toast-os" />
+                                    <Hyperlink fx:id="githubLink" onAction="#openGithub">
+                                       <font>
+                                          <Font size="1.0" />
+                                       </font></Hyperlink>
                                  </children>
                               </VBox>
                            </children>
@@ -439,12 +442,18 @@
                            </padding>
                         </HBox>
                      </children>
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                     <padding>
+                        <Insets left="5.0" right="15.0" />
+                     </padding>
                   </VBox>
                </children>
             </HBox>
          </children>
          <padding>
-            <Insets bottom="10.0" top="10.0" />
+            <Insets bottom="20.0" top="20.0" />
          </padding>
       </HBox>
     </children>
