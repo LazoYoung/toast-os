@@ -5,7 +5,7 @@
 - [API 사용법 (기능명세서)](https://www.notion.so/Scheduler-API-adfdeb0754d94d7eb195fc12540fbe5e)
 
 ## 개발자
-- 박찬영: Scheduler API, SPN algorithm, HRRN algorithm
+- 박찬영: Scheduler API, SPN algorithm, HRRN algorithm, Satellite Algorithm
 - 박한수: Scheduler API, RR algorithm, SRTN algorithm 
 - 이우탁: FCFS algorithm
 - 표승현: Satellite algorithm
