@@ -6,7 +6,7 @@ plugins {
 }
 
 application {
-    mainClassName = 'toast.MainApp'
+    mainClassName = 'toast.ToastMain'
 }
 
 javafx {
@@ -16,7 +16,7 @@ javafx {
 
 tasks.jar {
     manifest {
-        attributes['Main-Class'] = 'toast.Main'
+        attributes['Main-Class'] = 'toast.ToastMain'
     }
 }
 
