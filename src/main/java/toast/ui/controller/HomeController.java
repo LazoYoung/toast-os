@@ -51,7 +51,7 @@ public class HomeController extends PageController {
     private static ImageView makeImageView(String url) {
         ImageView notionImage = new ImageView();
         notionImage.setFitHeight(55);
-        notionImage.setFitWidth(100);
+        notionImage.setFitWidth(120);
         notionImage.setImage(new Image(url));
         return notionImage;
     }

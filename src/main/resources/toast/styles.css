@@ -84,3 +84,19 @@
     font-family: Malgun Gothic;
     -fx-font-weight: bold;
 }
+
+.button {
+    -fx-font-family: "Malgun Gothic";
+}
+.button:hover {
+    -fx-font-family: "Malgun Gothic";
+}
+.button:selected {
+    -fx-font-family: "Malgun Gothic";
+}
+
+.root {
+    font-size: 100%;
+    -fx-font: Malgun Gothic;
+    -fx-font-weight: bold;
+}
