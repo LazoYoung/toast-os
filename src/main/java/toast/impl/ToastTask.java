@@ -19,6 +19,7 @@ public class ToastTask implements Runnable {
     private int elapsedTime = 0;
     private double powerConsumed = 0;
     private boolean finish = false;
+    private boolean pause = false;
 
     public ToastTask(ToastScheduler scheduler) {
         this.scheduler = scheduler;
@@ -30,6 +31,8 @@ public class ToastTask implements Runnable {
     @Override
     public void run() {
         try {
+            if (pause) return;
+
             System.out.printf("┌ Before run: %ds\n", elapsedTime);
 
             enqueueProcesses();
@@ -56,11 +59,8 @@ public class ToastTask implements Runnable {
         }
     }
 
-    private void syncProcessorTime() {
-        for (Processor p : scheduler.getProcessorList()) {
-            ToastProcessor processor = (ToastProcessor) p;
-            processor.updateTime(this.elapsedTime);
-        }
+    public boolean isPaused() {
+        return pause;
     }
 
     public int getElapsedTime() {
@@ -71,8 +71,31 @@ public class ToastTask implements Runnable {
         return powerConsumed;
     }
 
+    public void pause() {
+        if (isPaused()) {
+            throw new IllegalStateException("Task is already paused!");
+        }
+
+        pause = true;
+    }
+
+    public void resume() {
+        if (!isPaused()) {
+            throw new IllegalStateException("Task is not paused!");
+        }
+
+        pause = false;
+    }
+
     public void finish() {
-        this.finish = true;
+        finish = true;
+    }
+
+    private void syncProcessorTime() {
+        for (Processor p : scheduler.getProcessorList()) {
+            ToastProcessor processor = (ToastProcessor) p;
+            processor.updateTime(this.elapsedTime);
+        }
     }
 
     private boolean isIdle() {

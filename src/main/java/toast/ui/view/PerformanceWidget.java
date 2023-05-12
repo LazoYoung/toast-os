@@ -79,7 +79,7 @@ public class PerformanceWidget extends ProcessWidget {
                 SchedulerConfig config = super.scheduler.getConfig();
                 double used = super.scheduler.getPowerConsumed();
 
-                if (super.scheduler.isRunning() && config.getInitPower() != null) {
+                if (super.scheduler.isStarted() && config.getInitPower() != null) {
                     drawBattery(used, config.getInitPower());
                 } else {
                     drawMetric(used, "W∙s");

@@ -28,7 +28,7 @@ public class ToastScheduler implements Scheduler {
     private Algorithm algorithm = null;
     private ToastTask task = null;
     private ScheduledFuture<?> taskFuture = null;
-    private boolean running = false;
+    private boolean started = false;
 
     public static ToastScheduler getInstance() {
         return instance;
@@ -40,7 +40,7 @@ public class ToastScheduler implements Scheduler {
     }
 
     public void start() {
-        if (this.running) {
+        if (started) {
             throw new RuntimeException("Scheduler already started.");
         }
         if (this.config == null) {
@@ -50,7 +50,7 @@ public class ToastScheduler implements Scheduler {
         populateProcessor(this.config);
         populateProcess(this.config);
         this.algorithm = this.config.getAlgorithm();
-        this.running = true;
+        this.started = true;
         this.recorder.eraseRecords();
         this.recorder.startRecording();
         this.recorder.startLoggingEvents();
@@ -65,13 +65,27 @@ public class ToastScheduler implements Scheduler {
     }
 
     @Override
+    public void pause() {
+        if (!started) {
+            throw new IllegalStateException("Scheduler not started yet!");
+        }
+
+        task.pause();
+    }
+
+    @Override
+    public void resume() {
+        task.resume();
+    }
+
+    @Override
     public void finish(SchedulerFinishEvent.Cause cause) {
-        if (!running) {
-            throw new IllegalStateException("Scheduler not started yet.");
+        if (!started) {
+            throw new IllegalStateException("Scheduler not started yet!");
         }
 
         deactivateProcessors();
-        running = false;
+        started = false;
         task.finish();
         taskFuture.cancel(false);
         recorder.stopLoggingEvents();
@@ -156,16 +170,22 @@ public class ToastScheduler implements Scheduler {
         processor.halt();
     }
 
+    @Override
+    public boolean isStarted() {
+        return started;
+    }
+
+    @Override
+    public boolean isPaused() {
+        return started && task.isPaused();
+    }
+
     public Algorithm getAlgorithm() {
         return algorithm;
     }
 
     public SchedulerConfig getConfig() {
         return config;
-    }
-
-    public boolean isRunning() {
-        return running;
     }
 
     public boolean isConfigured() {
