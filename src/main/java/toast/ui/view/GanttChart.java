@@ -147,7 +147,7 @@ public class GanttChart extends ProcessWidget {
             double timelineY = getTimelineY(processor);
             int length = 0;
 
-            for (int i = 0; i < this.timeSpan; i++) {
+            for (int i = 0; i <= this.timeSpan; i++) {
                 Optional<Process> now = record.getProcessAtTime(getTime(i));
 
                 if (prev.isPresent() && !prev.equals(now)) {
