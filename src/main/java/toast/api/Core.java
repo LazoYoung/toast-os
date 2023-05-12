@@ -31,4 +31,21 @@ public enum Core {
     public double getWattPerBoot() {
         return wattPerBoot;
     }
+
+    public static Core mappingFor(int idx) {
+        if (idx == 0) {
+            return PERFORMANCE;
+        }
+        return idx == 1 ? PERFORMANCE : EFFICIENCY;
+    }
+
+    public int getIdx() {
+        if (EFFICIENCY.equals(this)) {
+            return 1;
+        } else if (PERFORMANCE.equals(this)) {
+            return 2;
+        }
+
+        throw new RuntimeException("해당하는 코어가 없음");
+    }
 }

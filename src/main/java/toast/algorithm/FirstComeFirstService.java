@@ -33,4 +33,9 @@ public class FirstComeFirstService implements Algorithm {
             readyQueue.remove();
         }
     }
+
+    @Override
+    public Iterator<Process> getStandardQueue() {
+        return readyQueue.iterator();
+    }
 }

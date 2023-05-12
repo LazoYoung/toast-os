@@ -23,6 +23,11 @@ public interface Process {
     int getWaitingTime();
 
     /**
+     * @return total burst time in seconds
+     */
+    int getBurstTime();
+
+    /**
      * TT = WT + BT
      * @return turnaround time in seconds
      */
@@ -60,6 +65,18 @@ public interface Process {
      * @return true if this process is a critical mission for satellite system
      */
     boolean isMission();
+
+    /**
+     * 프로세스가 CPU Time 을 할당받아 실행중인지 여부를 반환한다
+     * @return true if this process is running on a processor
+     */
+    boolean isRunning();
+
+    /**
+     * 프로세스 수행이 완료되었는지 여부를 반환한다
+     * @return true if this process has finished all of its workload
+     */
+    boolean isComplete();
 
     /**
      * 선점시 제거해야 하는 리스너를 ID를 통해 제거한다

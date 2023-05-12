@@ -11,8 +11,7 @@ import toast.event.processor.ProcessorRebootEvent;
 
 import java.util.Optional;
 
-public class ToastProcessor implements Processor {
-    private static int newId = 1;
+public class ToastProcessor implements Processor, Cloneable {
     private final int id;
     private final Core core;
     private ToastProcess process;
@@ -22,8 +21,8 @@ public class ToastProcessor implements Processor {
     private int currentTime = 0;
     private int completionListenerIdx;
 
-    public ToastProcessor(Core core, boolean active) {
-        this.id = newId++;
+    public ToastProcessor(int id, Core core, boolean active) {
+        this.id = id;
         this.core = core;
         this.active = active;
     }
@@ -41,7 +40,11 @@ public class ToastProcessor implements Processor {
         }
 
         this.process = (ToastProcess) process;
-        this.completionListenerIdx = ToastEvent.registerListener(ProcessCompleteEvent.class, (event) -> halt());
+        this.completionListenerIdx = ToastEvent.registerListener(ProcessCompleteEvent.class, (ProcessCompleteEvent event) -> {
+            if (this.process.equals(event.getProcess())) {
+                halt();
+            }
+        });
 
         this.process.assign(this);
 
@@ -76,6 +79,11 @@ public class ToastProcessor implements Processor {
     @Override
     public boolean isIdle() {
         return process == null;
+    }
+
+    @Override
+    public boolean isRunning() {
+        return process != null;
     }
 
     @Override
@@ -138,5 +146,23 @@ public class ToastProcessor implements Processor {
 
         process.work(workload);
         return power;
+    }
+
+    /**
+     * Clone this instance
+     * @return a deep copied clone of this object
+     * @throws IllegalStateException thrown if this processor is running
+     */
+    @Override
+    public ToastProcessor clone() {
+        if (this.process != null) {
+            throw new IllegalStateException("Unable to clone a running processor!");
+        }
+
+        try {
+            return (ToastProcessor) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
