@@ -1,11 +1,15 @@
 package toast.ui.view;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import javafx.application.Platform;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import toast.api.Process;
+import toast.enums.Palette;
 import toast.event.ToastEvent;
 import toast.event.scheduler.SchedulerFinishEvent;
 import toast.event.scheduler.SchedulerStartEvent;
@@ -73,10 +77,57 @@ public abstract class ProcessWidget extends Pane {
      */
     protected abstract void repaint();
 
+    private static int missionColorSeq = 0;
+    private static int notMissionColorSeq = 0;
+
+    public static Color getMissionColor() {
+        int ret = missionColorSeq++;
+
+        missionColorSeq %= missionColors.size();
+        return missionColors.get(ret);
+    }
+
+    public static Color getNotMissionColor() {
+        int ret = notMissionColorSeq++;
+
+        notMissionColorSeq %= notMissionColors.size();
+
+        return notMissionColors.get(ret);
+    }
+
+    public static final List<Color> missionColors = List.of(
+            Palette.PROCESS_MISSION_1.color(),
+            Palette.PROCESS_MISSION_2.color(),
+            Palette.PROCESS_MISSION_3.color(),
+            Palette.PROCESS_MISSION_4.color(),
+            Palette.PROCESS_MISSION_5.color(),
+            Palette.PROCESS_MISSION_6.color()
+    );
+    public static final List<Color> notMissionColors = List.of(
+            Palette.PROCESS_NOT_MISSION_1.color(),
+            Palette.PROCESS_NOT_MISSION_2.color(),
+            Palette.PROCESS_NOT_MISSION_3.color(),
+            Palette.PROCESS_NOT_MISSION_4.color(),
+            Palette.PROCESS_NOT_MISSION_5.color(),
+            Palette.PROCESS_NOT_MISSION_6.color()
+    );
+
+    private static Color getColor(Process process) {
+        if(hashData.containsKey(process.getId())) {
+            return hashData.get(process.getId());
+        }
+
+        Color color = process.isMission() ? getMissionColor() : getNotMissionColor();
+        hashData.put(process.getId(), color);
+        return color;
+    }
+
+    private static final Map<Integer, Color> hashData = new HashMap<>();
+
     protected Color getProcessColor(Process process) {
-        Color color = process.isMission() ? P_CORE.color() : E_CORE.color();
-        double saturation = (double) ((this.seed * process.getId()) % this.variation) / this.variation;
-        return color.deriveColor(1.0, saturation, 1.0, 1.0);
+        return getColor(process);
+//        double saturation = (double) ((this.seed * process.getId()) % this.variation) / this.variation;
+//        return color.deriveColor(1.0, saturation, 1.0, 1.0);
     }
 
     private void reloadProperties() {

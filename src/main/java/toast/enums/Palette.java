@@ -54,6 +54,21 @@ public enum Palette {
      * 비활성화된 코어 색상
      */
     CORE_OFF("#F8F9FD"),
+
+    PROCESS_NOT_MISSION_1("#5A81FA"),
+    PROCESS_NOT_MISSION_2("#96AEFC"),
+    PROCESS_NOT_MISSION_3("#D2DCFE"),
+    PROCESS_NOT_MISSION_4("#2C3D8F"),
+    PROCESS_NOT_MISSION_5("#4C61C8"),
+    PROCESS_NOT_MISSION_6("#95A1DF"),
+
+    PROCESS_MISSION_1("#DEA900"),
+    PROCESS_MISSION_2("#FFC000"),
+    PROCESS_MISSION_3("#FFD757"),
+    PROCESS_MISSION_4("#FFE48F"),
+    PROCESS_MISSION_5("#FFEEB7"),
+    PROCESS_MISSION_6("#FFF4D5"),
+
     ;
 
     private final String hexCode;
