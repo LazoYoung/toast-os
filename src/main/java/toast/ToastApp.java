@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import toast.api.Core;
 import toast.enums.AlgorithmName;
 import toast.impl.ToastProcess;
@@ -17,25 +18,25 @@ import java.util.List;
 import java.util.Scanner;
 
 public class ToastApp extends Application {
+    public static Stage splashStage = null;
+
     @Override
     public void start(Stage primaryStage) {
+        splashStage = primaryStage;
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("scene.fxml"));
-            Scene scene = new Scene(root);
-            scene.getStylesheets().add(getClass().getResource("/toast/styles.css").toExternalForm());
+            Parent splash = FXMLLoader.load(getClass().getResource("splash.fxml"));
+            Scene splashScene = new Scene(splash);
 
-            primaryStage.setTitle("Process Scheduling Simulator");
-            primaryStage.setScene(scene);
+            primaryStage.setScene(splashScene);
+            primaryStage.initStyle(StageStyle.UNDECORATED);
             primaryStage.show();
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException(e.getMessage(), e.getCause());
         }
     }
 
     public static void start(String[] args) {
         Application.launch(args);
-
 //        startSchedulerWithTerminal();
     }
 
