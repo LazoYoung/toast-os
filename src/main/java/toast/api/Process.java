@@ -23,6 +23,11 @@ public interface Process {
     int getWaitingTime();
 
     /**
+     * @return total burst time in seconds
+     */
+    int getBurstTime();
+
+    /**
      * TT = WT + BT
      * @return turnaround time in seconds
      */

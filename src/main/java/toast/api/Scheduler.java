@@ -94,8 +94,32 @@ public interface Scheduler {
     void preempt(Processor processor, Process process);
 
     /**
-     * Finish the process scheduling simulation. <br>
-     * 프로세스 스케줄링 시뮬레이터를 종료한다
+     * Pause the simulation. <br>
+     * 스케줄링 시뮬레이션을 일시정지한다
+     */
+    void pause();
+
+    /**
+     * Resume the simulation. <br>
+     * 스케줄링 시뮬레이션을 재개한다
+     */
+    void resume();
+
+    /**
+     * 스케줄링 시뮬레이션이 진행중인지 여부를 반환한다
+     * @return true if this simulator has been started
+     */
+    boolean isStarted();
+
+    /**
+     * 스케줄링 시뮬레이션이 일시정지된 여부를 반환한다
+     * @return ture if this simulator is paused
+     */
+    boolean isPaused();
+
+    /**
+     * Finish the simulation. <br>
+     * 스케줄링 시뮬레이션을 종료한다
      * @param cause The cause of this event
      */
     void finish(SchedulerFinishEvent.Cause cause);

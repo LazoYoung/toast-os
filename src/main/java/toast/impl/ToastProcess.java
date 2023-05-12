@@ -47,6 +47,11 @@ public class ToastProcess implements Process, Cloneable {
     }
 
     @Override
+    public int getBurstTime() {
+        return burstTime;
+    }
+
+    @Override
     public int getTurnaroundTime() {
         if (!isComplete()) {
             throw new IllegalStateException("Process not complete!");

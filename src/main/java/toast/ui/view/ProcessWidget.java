@@ -39,7 +39,7 @@ public abstract class ProcessWidget extends Pane {
         ToastEvent.registerListener(SchedulerStartEvent.class, (e) -> startPainting());
         ToastEvent.registerListener(SchedulerFinishEvent.class, (e) -> stopPainting());
 
-        if (ToastScheduler.getInstance().isRunning()) {
+        if (ToastScheduler.getInstance().isStarted()) {
             startPainting();
         }
     }
