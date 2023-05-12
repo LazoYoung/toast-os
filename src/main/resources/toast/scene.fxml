@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/17.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="toast.ui.controller.FXMLController">
+<AnchorPane prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="toast.ui.controller.FXMLController">
    <AnchorPane layoutY="48.0" prefWidth="150.0" style="-fx-background-color: #787878;" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
       <children>
          <VBox alignment="TOP_CENTER" style="-fx-background-color: #333F50;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -21,7 +21,7 @@
                   <VBox.margin>
                      <Insets bottom="80.0" top="30.0" />
                   </VBox.margin></ImageView>
-               <MFXButton id="sidebar-button" fx:id="homeButton" maxWidth="1.7976931348623157E308" onAction="#toHomePage" prefHeight="40.0" style="-fx-background-color: #333F50;" text="  Home               " textFill="WHITE">
+               <MFXButton id="sidebar-button" fx:id="homeButton" maxWidth="1.7976931348623157E308" onAction="#toHomePage" prefHeight="40.0" style="-fx-background-color: #333F50;" text="  Home              " textFill="WHITE">
 <!--                  <cursor>-->
 <!--                     <Cursor fx:constant="E_RESIZE" />-->
 <!--                  </cursor>-->
@@ -37,7 +37,10 @@
                   </graphic>
                   <VBox.margin>
                      <Insets />
-                  </VBox.margin></MFXButton>
+                  </VBox.margin>
+                  <font>
+                     <Font name="Malgun Gothic Bold" size="12.0" />
+                  </font></MFXButton>
                <MFXButton id="sidebar-button" fx:id="settingButton" maxWidth="1.7976931348623157E308" onAction="#toSettingsPage" prefHeight="40.0" style="-fx-background-color: #333F50;" text=" Setting              " textFill="WHITE">
 <!--                  <font>-->
 <!--                     <Font size="14.0" />-->
@@ -51,7 +54,10 @@
                   </graphic>
                   <VBox.margin>
                      <Insets bottom="5.0" top="5.0" />
-                  </VBox.margin></MFXButton>
+                  </VBox.margin>
+                  <font>
+                     <Font name="Malgun Gothic Bold" size="12.0" />
+                  </font></MFXButton>
                <MFXButton id="sidebar-button" fx:id="simulationButton" maxWidth="1.7976931348623157E308" onAction="#toSimulationPage" prefHeight="40.0" style="-fx-background-color: #333F50;" text="  Simulation        " textFill="WHITE">
                   <graphic>
                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -65,8 +71,11 @@
 <!--                  </font>-->
                   <VBox.margin>
                      <Insets />
-                  </VBox.margin></MFXButton>
-               <MFXButton maxWidth="1.7976931348623157E308" onAction="#toSimulationPage" prefHeight="40.0" style="-fx-background-color: #333F50;" text=" How to use      " textFill="WHITE">
+                  </VBox.margin>
+                  <font>
+                     <Font name="Malgun Gothic Bold" size="12.0" />
+                  </font></MFXButton>
+               <MFXButton maxWidth="1.7976931348623157E308" onAction="#toSimulationPage" prefHeight="40.0" style="-fx-background-color: #333F50;" text=" How to use    " textFill="WHITE">
                   <graphic>
                      <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                         <image>
@@ -75,7 +84,7 @@
                      </ImageView>
                   </graphic>
                   <font>
-                     <Font size="14.0" />
+                     <Font name="Malgun Gothic Bold" size="14.0" />
                   </font>
                   <VBox.margin>
                      <Insets top="350.0" />

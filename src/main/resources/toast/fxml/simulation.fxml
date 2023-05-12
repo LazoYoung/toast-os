@@ -13,18 +13,18 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<?import toast.ui.view.GanttChart?>
-
-<?import toast.ui.view.PerformanceWidget?>
 <?import toast.ui.view.ActionButton?>
+<?import toast.ui.view.GanttChart?>
+<?import toast.ui.view.PerformanceWidget?>
 <?import toast.ui.view.ReadyQueue?>
-<AnchorPane prefHeight="720.0" prefWidth="1130.0" style="-fx-background-color: #F3F5F7;" xmlns="http://javafx.com/javafx/17.0.7" xmlns:fx="http://javafx.com/fxml/1" fx:controller="toast.ui.controller.SimulationController">
+
+<AnchorPane prefHeight="720.0" prefWidth="1130.0" style="-fx-background-color: #F3F5F7;" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="toast.ui.controller.SimulationController">
    <children>
       <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <HBox VBox.vgrow="ALWAYS">
                <children>
-                  <AnchorPane style="-fx-effect: dropshadow(gaussian,rgba(0,0,0,0.7),5,0,1,1); -fx-background-color: #FFFFFF; -fx-background-radius: 20;" HBox.hgrow="ALWAYS">
+                  <AnchorPane style="-fx-effect: dropshadow(gaussian,rgba(0,0,0,0.4),20,0,1,1); -fx-background-color: #FFFFFF; -fx-background-radius: 20;" HBox.hgrow="ALWAYS">
                      <children>
                         <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
@@ -38,9 +38,9 @@
                                           <Insets right="10.0" />
                                        </HBox.margin>
                                     </ImageView>
-                                    <Label text="Performance">
+                                    <Label text="Performance" textFill="#333f50">
                                        <font>
-                                          <Font name="System Bold" size="18.0" />
+                                          <Font name="Malgun Gothic Bold" size="18.0" />
                                        </font>
                                     </Label>
                                  </children>
@@ -59,7 +59,10 @@
                                 </rowConstraints>
                                  <children>
                                       <PerformanceWidget height="30" metric="elapsed-time" width="100" />
-                                      <PerformanceWidget height="30" metric="average-tt" width="100" GridPane.rowIndex="1" />
+                                      <PerformanceWidget height="30" metric="average-tt" width="100" GridPane.rowIndex="1">
+                                       <opaqueInsets>
+                                          <Insets />
+                                       </opaqueInsets></PerformanceWidget>
                                       <PerformanceWidget height="30" metric="power" width="100" GridPane.columnIndex="1" />
                                       <ActionButton maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-background-color: transparent;" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                                  </children>
@@ -74,7 +77,7 @@
                         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                      </padding>
                   </AnchorPane>
-                  <AnchorPane style="-fx-effect: dropshadow(gaussian,rgba(0,0,0,0.7),5,0,1,1); -fx-background-color: #FFFFFF; -fx-background-radius: 20;" HBox.hgrow="ALWAYS">
+                  <AnchorPane style="-fx-effect: dropshadow(gaussian,rgba(0,0,0,0.4),20,0,1,1); -fx-background-color: #FFFFFF; -fx-background-radius: 20;" HBox.hgrow="ALWAYS">
                      <children>
                         <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
@@ -88,9 +91,9 @@
                                           <Insets right="10.0" />
                                        </HBox.margin>
                                     </ImageView>
-                                    <Label text="Process Table">
+                                    <Label text="Process Table" textFill="#333f50">
                                        <font>
-                                          <Font name="System Bold" size="18.0" />
+                                          <Font name="Malgun Gothic Bold" size="18.0" />
                                        </font>
                                     </Label>
                                  </children>
@@ -114,7 +117,7 @@
                   </AnchorPane>
                </children>
             </HBox>
-            <AnchorPane style="-fx-effect: dropshadow(gaussian,rgba(0,0,0,0.7),5,0,1,1); -fx-background-color: #FFFFFF; -fx-background-radius: 20;">
+            <AnchorPane style="-fx-effect: dropshadow(gaussian,rgba(0,0,0,0.4),20,0,1,1); -fx-background-color: #FFFFFF; -fx-background-radius: 20;">
                <children>
                   <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
@@ -130,9 +133,9 @@
                                           <Insets right="10.0" />
                                        </HBox.margin>
                                     </ImageView>
-                                    <Label text="Ready Queue">
+                                    <Label text="Ready Queue" textFill="#333f50">
                                        <font>
-                                          <Font name="System Bold" size="18.0" />
+                                          <Font name="Malgun Gothic Bold" size="18.0" />
                                        </font>
                                     </Label>
                                  </children>
@@ -149,7 +152,7 @@
                                     </ImageView>
                                     <Label text="Standard" textFill="#8497b0">
                                        <font>
-                                          <Font name="System Bold" size="14.0" />
+                                          <Font name="Malgun Gothic Bold" size="14.0" />
                                        </font>
                                        <HBox.margin>
                                           <Insets left="10.0" right="20.0" />
@@ -164,7 +167,7 @@
                                     </ImageView>
                                     <Label text="Mission" textFill="#8497b0">
                                        <font>
-                                          <Font name="System Bold" size="14.0" />
+                                          <Font name="Malgun Gothic Bold" size="14.0" />
                                        </font>
                                        <HBox.margin>
                                           <Insets left="10.0" right="20.0" />
@@ -193,9 +196,9 @@
                                           <Insets right="10.0" />
                                        </HBox.margin>
                                     </ImageView>
-                                    <Label text="Gantt Chart">
+                                    <Label text="Gantt Chart" textFill="#333f50">
                                        <font>
-                                          <Font name="System Bold" size="18.0" />
+                                          <Font name="Malgun Gothic Bold" size="18.0" />
                                        </font>
                                     </Label>
                                  </children>
