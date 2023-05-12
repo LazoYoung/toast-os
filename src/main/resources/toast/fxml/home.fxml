@@ -18,7 +18,7 @@
     <children>
       <HBox alignment="CENTER">
          <children>
-            <HBox style="-fx-effect: dropshadow(gaussian,rgba(0,0,0,0.7),5,0,1,1); -fx-background-radius: 10; -fx-background-color: #FAFAFF;">
+            <HBox style="-fx-effect: dropshadow(gaussian,rgba(0,0,0,0.7),5,0,1,1); -fx-background-radius: 25; -fx-background-color: #FAFAFF;">
                <children>
                   <VBox>
                      <children>
@@ -55,7 +55,7 @@
                                     </Text>
                                  </children>
                                  <VBox.margin>
-                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="15.0" />
                                  </VBox.margin>
                                  <padding>
                                     <Insets bottom="5.0" top="10.0" />
@@ -71,7 +71,7 @@
                               </Text>
                               <Text strokeType="OUTSIDE" strokeWidth="0.0" text="You can check about detail &amp; explanations of algorithms here :" wrappingWidth="696.435546875">
                                  <VBox.margin>
-                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                    <Insets bottom="15.0" left="5.0" right="5.0" top="5.0" />
                                  </VBox.margin>
                                  <font>
                                     <Font name="Malgun Gothic Semilight" size="14.0" />
@@ -192,7 +192,7 @@
                                     </HBox>
                                  </children>
                                  <padding>
-                                    <Insets bottom="16.0" top="16.0" />
+                                    <Insets bottom="16.0" left="24.0" top="16.0" />
                                  </padding>
                               </GridPane>
                            </children>
@@ -218,7 +218,7 @@
                                           <Insets bottom="5.0" top="10.0" />
                                        </padding>
                                        <VBox.margin>
-                                          <Insets bottom="10.0" />
+                                          <Insets bottom="25.0" top="15.0" />
                                        </VBox.margin>
                                     </HBox>
                                     <HBox prefHeight="100.0" prefWidth="200.0">
@@ -276,7 +276,7 @@
                         <Insets left="15.0" />
                      </HBox.margin>
                   </VBox>
-                  <VBox alignment="CENTER" style="-fx-background-color: #8497B0;">
+                  <VBox alignment="CENTER" prefWidth="0.0" style="-fx-background-color: #8497B0;">
                      <children>
                         <ImageView fitHeight="114.0" fitWidth="112.0" pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -446,7 +446,7 @@
                         <Insets />
                      </HBox.margin>
                      <padding>
-                        <Insets left="5.0" right="15.0" />
+                        <Insets left="5.0" />
                      </padding>
                   </VBox>
                </children>

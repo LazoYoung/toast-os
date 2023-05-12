@@ -1,18 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
-<?import toast.ui.view.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import toast.ui.view.GanttChart?>
+
 <AnchorPane prefHeight="720.0" prefWidth="1130.0" style="-fx-background-color: #F3F5F7;" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="toast.ui.controller.SimulationController">
    <children>
       <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <HBox VBox.vgrow="ALWAYS">
                <children>
-                  <AnchorPane style="-fx-background-color: #FFFFFF; -fx-background-radius: 20;" HBox.hgrow="ALWAYS">
+                  <AnchorPane style="-fx-effect: dropshadow(gaussian,rgba(0,0,0,0.7),5,0,1,1); -fx-background-color: #FFFFFF; -fx-background-radius: 20;" HBox.hgrow="ALWAYS">
                      <children>
                         <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
@@ -62,7 +71,7 @@
                         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                      </padding>
                   </AnchorPane>
-                  <AnchorPane style="-fx-background-color: #FFFFFF; -fx-background-radius: 20;" HBox.hgrow="ALWAYS">
+                  <AnchorPane style="-fx-effect: dropshadow(gaussian,rgba(0,0,0,0.7),5,0,1,1); -fx-background-color: #FFFFFF; -fx-background-radius: 20;" HBox.hgrow="ALWAYS">
                      <children>
                         <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
@@ -102,7 +111,7 @@
                   </AnchorPane>
                </children>
             </HBox>
-            <AnchorPane style="-fx-background-color: #FFFFFF; -fx-background-radius: 20;">
+            <AnchorPane style="-fx-effect: dropshadow(gaussian,rgba(0,0,0,0.7),5,0,1,1); -fx-background-color: #FFFFFF; -fx-background-radius: 20;">
                <children>
                   <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
