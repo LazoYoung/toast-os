@@ -46,7 +46,7 @@ public class SimulationController extends PageController {
         var columnNTT = new TableColumn<ProcessTableModel, Double>("NTT");
         columnPID.setCellValueFactory(e -> e.getValue().getPid());
         columnAT.setCellValueFactory(e -> e.getValue().getArrivalTime());
-        columnWL.setCellValueFactory(e -> e.getValue().getWorkload());
+        columnWL.setCellValueFactory(e -> e.getValue().getBurstTime());
         columnWT.setCellValueFactory(e -> e.getValue().getWaitingTime());
         columnTT.setCellValueFactory(e -> e.getValue().getTurnaroundTime());
         columnNTT.setCellValueFactory(e -> e.getValue().getNormalizedTT());
