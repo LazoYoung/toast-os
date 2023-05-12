@@ -10,6 +10,7 @@ import toast.api.Core;
 import toast.api.Process;
 import toast.api.Processor;
 import toast.enums.Palette;
+import toast.persistence.domain.FlagRecord;
 import toast.persistence.domain.ProcessorRecord;
 import toast.persistence.domain.SchedulerRecord;
 
@@ -54,6 +55,7 @@ public class GanttChart extends ProcessWidget {
         drawTimeline();
         drawProcessBars();
         drawCoreIndicators();
+        drawFlags();
     }
 
     private void drawBackground() {
@@ -173,6 +175,44 @@ public class GanttChart extends ProcessWidget {
         }
     }
 
+    private void drawFlags() {
+        FlagRecord record = SchedulerRecord.getInstance().getFlagRecord();
+
+        for (int i = 0; i < this.timeSpan; i++) {
+            final int time = getTime(i);
+
+            record.getFlagAtTime(time).ifPresent((process) -> {
+                drawFlag(process, time);
+            });
+        }
+    }
+
+    private void drawFlag(Process process, int time) {
+        GraphicsContext g = super.canvas.getGraphicsContext2D();
+        double timelineX = getTimelineX(getIndex(time));
+        double x0 = timelineX;
+        double y0 = 3;
+        double x1 = x0;
+        double y1 = rowHeight;
+        double x2 = timelineX + rowHeight;
+        double y2 = 3;
+
+        g.setStroke(STROKE.color());
+        g.setLineWidth(3);
+        g.strokeLine(x0, y0, x1, y1);
+        g.strokeLine(x0, y0, x2, y2);
+        g.strokeLine(x1, y1, x2, y2);
+
+        Color color = getProcessColor(process);
+        g.setFill(color);
+        g.fillPolygon(new double[]{x0, x1, x2}, new double[]{y0, y1, y2}, 3);
+
+        double offset = rowHeight * 0.3;
+        g.setFont(processFont);
+        g.setFill(Palette.getTextColor(color));
+        g.fillText(String.valueOf(process.getId()), x0 + offset, y0 + offset);
+    }
+
     private double getTimelineX(int index) {
         if (index < 0 || index > this.timeSpan) {
             throw new IllegalArgumentException("Timeline index out of range: " + index);
@@ -198,5 +238,9 @@ public class GanttChart extends ProcessWidget {
         int time = super.scheduler.getElapsedTime();
         int offset = Math.max(time - this.timeSpan, 0);
         return index + offset;
+    }
+
+    private int getIndex(int time) {
+        return Math.min(time, this.timeSpan);
     }
 }

@@ -6,6 +6,7 @@ import toast.event.ToastEvent;
 import toast.event.process.*;
 import toast.event.processor.ProcessorDeactivateEvent;
 import toast.event.processor.ProcessorRebootEvent;
+import toast.persistence.domain.FlagRecord;
 import toast.persistence.domain.ProcessorRecord;
 import toast.persistence.domain.SchedulerRecord;
 
@@ -31,6 +32,7 @@ public class ToastRecorder {
 
         int runListener = ToastEvent.registerListener(ProcessRunEvent.class, this::recordProcessRun);
         int completeListener = ToastEvent.registerListener(ProcessCompleteEvent.class, this::recordProcessComplete);
+        int readyListener = ToastEvent.registerListener(ProcessReadyEvent.class, this::recordProcessReady);
 
         Collections.addAll(watcherList, runListener, completeListener);
     }
@@ -45,6 +47,12 @@ public class ToastRecorder {
         ProcessCompleteEvent event = (ProcessCompleteEvent) e;
         ProcessorRecord record = schedulerRecord.getProcessorRecord(event.getLastProcessor());
         record.setProcessAtTime(event.getProcess(), event.getTime());
+    }
+
+    private void recordProcessReady(ToastEvent e) {
+        ProcessReadyEvent event = (ProcessReadyEvent) e;
+        FlagRecord flagRecord = schedulerRecord.getFlagRecord();
+        flagRecord.setFlagAtTime(event.getProcess(), event.getTime());
     }
 
     public void startLoggingEvents() {

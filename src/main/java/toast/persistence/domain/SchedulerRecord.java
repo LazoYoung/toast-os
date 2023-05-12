@@ -9,6 +9,7 @@ public class SchedulerRecord {
 
     private static final SchedulerRecord instance = new SchedulerRecord();
     private final Map<Integer, ProcessorRecord> processorData = new HashMap<>();
+    private FlagRecord flagRecord = null;
 
     public static SchedulerRecord getInstance() {
         return instance;
@@ -16,6 +17,10 @@ public class SchedulerRecord {
 
     public ProcessorRecord getProcessorRecord(Processor processor) {
         return processorData.get(processor.getId());
+    }
+
+    public FlagRecord getFlagRecord() {
+        return flagRecord;
     }
 
     public void addProcessorRecord(Processor processor) {
@@ -30,6 +35,7 @@ public class SchedulerRecord {
 
     public void clear() {
         processorData.clear();
+        flagRecord = new FlagRecord();
     }
 
 }
