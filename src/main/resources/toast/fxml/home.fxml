@@ -1,19 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.Hyperlink?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
-<?import javafx.scene.text.Text?>
-
-<StackPane prefHeight="720.0" prefWidth="1130.0" style="-fx-background-color: #F3F5F7;" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="toast.ui.controller.HomeController">
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<StackPane prefHeight="720.0" prefWidth="1130.0" style="-fx-background-color: #F3F5F7;" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="toast.ui.controller.HomeController">
 
     <children>
       <HBox alignment="CENTER" style="-fx-background-color: #F3F5F7;">
@@ -22,15 +14,18 @@
                <children>
                   <VBox>
                      <children>
-                        <VBox>
+                        <HBox alignment="BOTTOM_LEFT">
                            <children>
-                              <Text fill="#333f50" strokeType="OUTSIDE" strokeWidth="0.0" text="Process Scheduling Simulator">
+                              <Text fill="#333f50" strokeType="OUTSIDE" strokeWidth="0.0" text="Orbit">
                                  <font>
-                                    <Font name="Malgun Gothic Bold" size="34.0" />
+                                    <Font name="Malgun Gothic Bold" size="40.0" />
                                  </font>
                                  <VBox.margin>
                                     <Insets top="20.0" />
                                  </VBox.margin>
+                                 <HBox.margin>
+                                    <Insets top="15.0" />
+                                 </HBox.margin>
                               </Text>
                               <Text fill="#333f50" strokeType="OUTSIDE" strokeWidth="0.0" text="Satellite specific program">
                                  <VBox.margin>
@@ -39,9 +34,15 @@
                                  <font>
                                     <Font name="Malgun Gothic Semilight" size="15.0" />
                                  </font>
+                                 <HBox.margin>
+                                    <Insets bottom="5.0" left="15.0" />
+                                 </HBox.margin>
                               </Text>
                            </children>
-                        </VBox>
+                           <opaqueInsets>
+                              <Insets />
+                           </opaqueInsets>
+                        </HBox>
                         <VBox>
                            <children>
                               <HBox alignment="CENTER_LEFT">
@@ -304,9 +305,9 @@
                               <Insets top="32.0" />
                            </VBox.margin>
                         </ImageView>
-                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Produced by...">
+                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="TOAST">
                            <font>
-                              <Font name="Malgun Gothic Bold" size="24.0" />
+                              <Font name="Malgun Gothic Bold" size="30.0" />
                            </font>
                            <VBox.margin>
                               <Insets top="18.0" />
