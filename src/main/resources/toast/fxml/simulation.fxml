@@ -15,7 +15,10 @@
 <?import javafx.scene.text.Font?>
 <?import toast.ui.view.GanttChart?>
 
-<AnchorPane prefHeight="720.0" prefWidth="1130.0" style="-fx-background-color: #F3F5F7;" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="toast.ui.controller.SimulationController">
+<?import toast.ui.view.PerformanceWidget?>
+<?import toast.ui.view.ActionButton?>
+<?import toast.ui.view.ReadyQueue?>
+<AnchorPane prefHeight="720.0" prefWidth="1130.0" style="-fx-background-color: #F3F5F7;" xmlns="http://javafx.com/javafx/17.0.7" xmlns:fx="http://javafx.com/fxml/1" fx:controller="toast.ui.controller.SimulationController">
    <children>
       <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -152,7 +155,7 @@
                                           <Insets left="10.0" right="20.0" />
                                        </HBox.margin>
                                     </Label>
-                                      <ReadyQueue height="50" mission="true" width="300" />
+                                      <ReadyQueue height="50" mission="false" width="300" />
                                     <Region HBox.hgrow="ALWAYS" />
                                     <ImageView fitHeight="26.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
@@ -167,7 +170,7 @@
                                           <Insets left="10.0" right="20.0" />
                                        </HBox.margin>
                                     </Label>
-                                      <ReadyQueue height="50" mission="false" width="300" />
+                                      <ReadyQueue height="50" mission="true" width="300" />
                                  </children>
                                  <VBox.margin>
                                     <Insets left="30.0" right="30.0" />

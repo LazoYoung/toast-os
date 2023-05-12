@@ -13,7 +13,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<StackPane prefHeight="720.0" prefWidth="1130.0" style="-fx-background-color: #F3F5F7;" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="toast.ui.controller.HomeController">
+<StackPane prefHeight="720.0" prefWidth="1130.0" style="-fx-background-color: #F3F5F7;" xmlns="http://javafx.com/javafx/17.0.7" xmlns:fx="http://javafx.com/fxml/1" fx:controller="toast.ui.controller.HomeController">
 
     <children>
       <HBox alignment="CENTER">
