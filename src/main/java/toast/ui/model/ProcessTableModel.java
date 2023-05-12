@@ -43,7 +43,8 @@ public class ProcessTableModel {
     }
 
     public ObservableValue<Double> getNormalizedTT() {
-        return new ReadOnlyObjectWrapper<>(normalizedTT.get());
+        double value = Math.round(normalizedTT.get() * 100) / 100.0;
+        return new ReadOnlyObjectWrapper<>(value);
     }
 
     public void setPid(int pid) {
