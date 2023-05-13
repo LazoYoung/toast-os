@@ -170,12 +170,23 @@ public class SettingsController extends PageController {
             SetUpMapper.setTimeQuantumValue(timeQuantum.getText());
         }
 
+        switch (algorithm) {
+            case RR -> SetUpMapper.setTimeQuantumValue(timeQuantum.getText());
+            case CUSTOM -> {
+                SetUpMapper.setTimeQuantumValue(timeQuantum.getText());
+                SetUpMapper.setInitPowerValue(initPowerText);
+                SetUpMapper.setPowerThresholdValue(powerThresholdText);
+                initPowerText = null;
+                powerThresholdText = null;
+            }
+        }
+
         if (initPowerText != null && !initPowerText.isBlank()) {
-            SetUpMapper.setInitPowerValue(initPower.getText());
+            SetUpMapper.setInitPowerValue(initPowerText);
         }
 
         if (powerThresholdText != null && !powerThresholdText.isBlank()) {
-            SetUpMapper.setPowerThresholdValue(powerThreshold.getText());
+            SetUpMapper.setPowerThresholdValue(powerThresholdText);
         }
 
         SetUpMapper.setProcessors(core1.getIdx(), core2.getIdx(), core3.getIdx(), core4.getIdx());
