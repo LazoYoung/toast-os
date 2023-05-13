@@ -18,4 +18,8 @@ public class FlagRecord {
         processMap.put(time, process);
     }
 
+    public void clear() {
+        processMap.clear();
+    }
+
 }
